@@ -162,6 +162,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .cal-help,.hint,.rm-hint{color:#b9bcb9}.footer{color:#898c8e}
 @media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}.date-line .date-picker #dateDisplay{font-size:clamp(23px,6.7vw,36px)!important}}
 
+.memo-quick{margin:2px 0 8px!important}.memo-quick textarea{min-height:66px!important}.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}.preview{margin-top:20px!important}
 </style>
 </head>
 <body>
@@ -179,17 +180,16 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
         <div id="setList" class="set-list" aria-live="polite"></div>
-        <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button>
-        <div class="duration-field"><label for="duration">筋トレ時間（分）</label><input id="duration" type="number" min="1" max="1440" step="1" inputmode="numeric" placeholder="例：45" aria-label="筋トレ時間（分）"><span>分</span></div>
+        <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button><div class="field memo-quick"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div><div class="notice" id="previous" role="status"></div><input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary save-exercise">この種目終了！保存する！</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
+        
         <div class="preview" aria-live="polite">
           <div class="preview-item"><div class="label">セット数</div><strong id="previewSets">0</strong><small>セット</small></div>
           <div class="preview-item"><div class="label">総重量</div><strong id="previewVolume">0</strong><small>kg</small></div>
           <div class="preview-item"><div class="label">最高推定1RM</div><strong id="preview1rm">—</strong><small>kg</small></div>
         </div>
         <p class="rm-hint">推定1RMはEpley式で計算した目安。1回なら入力重量、2回以上なら「重量 × (1＋回数÷30)」。高回数ほど誤差が大きくなるよ。</p>
-        <div class="field"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div>
-        <div class="notice" id="previous" role="status"></div>
-        <input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary">このトレーニングを保存する ✨</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
+        
+        
       </form>
     </div>
     <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
@@ -300,20 +300,20 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   $('exercise').addEventListener('invalid',e=>{e.preventDefault();$('exercise').setCustomValidity('種目名を入力してください');$('exercise').reportValidity();});
   $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();refreshExerciseSuggestions();});
   $('exercise').addEventListener('change',autoFillPrevious);
-  $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);const durationRaw=$('duration').value.trim();const durationMinutes=durationRaw===''?(startedAt?Math.max(1,Math.ceil((Date.now()-startedAt)/60000)):null):Number(durationRaw);if(durationRaw!==''&&(!Number.isInteger(durationMinutes)||durationMinutes<1||durationMinutes>1440)){notify('筋トレ時間は1〜1440分で入力してね');return;}if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
+  $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);const durationMinutes=null;if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
     const editId=$('editingId').value,old=[...entries],prior=entries.find(z=>z.id===editId);
     const bestBefore=Math.max(0,...entries.filter(z=>z.exercise===exercise&&z.id!==editId).flatMap(z=>z.setsData.map(v=>v.weight)));
     const x={id:editId||Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:prior?.createdAt||Date.now(),date,exercise,setsData,memo,durationMinutes,bodyParts:getSelectedParts(),bodyPart:getSelectedParts()[0]||'',completed:setRows.map(z=>z.querySelector('.donebox').checked),sessionId:prior?.sessionId||activeSession||'session-'+Date.now()};
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
-    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;
+    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目終了！保存する！';$('cancelEditing').hidden=true;
     // A workout is saved separately; the selected muscle groups remain on the current date.
     const partsAtSave=getSelectedParts();
     if(!Object.prototype.hasOwnProperty.call(dayParts,date))saveDayParts(date,partsAtSave);
     setSelectedParts(partsForDay($('date').value));
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
-  document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';$('duration').value=x.durationMinutes||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
-  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
+  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目終了！保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
   $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
