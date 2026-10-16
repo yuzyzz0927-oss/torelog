@@ -161,7 +161,8 @@
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
   function getExerciseName(){return $('exercise').value;}
-  $('exercise').addEventListener('input',updatePrevious);
+  $('exercise').addEventListener('invalid',e=>{e.preventDefault();$('exercise').setCustomValidity('種目名を入力してください');$('exercise').reportValidity();});
+  $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();});
   $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);const durationRaw=$('duration').value.trim();const durationMinutes=durationRaw===''?null:Number(durationRaw);if(durationRaw!==''&&(!Number.isInteger(durationMinutes)||durationMinutes<1||durationMinutes>1440)){notify('筋トレ時間は1〜1440分で入力してね');return;}if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
     const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:Date.now(),date,exercise,setsData,memo,durationMinutes};const old=[...entries];entries.push(x);if(!save()){entries=old;return;}$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();redraw();notify(`${setsData.length}セットを保存したよ！`);});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
