@@ -55,6 +55,14 @@
 .exercise-suggestion{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #41375f;background:transparent;color:#fff;padding:12px 14px;font-size:16px;font-weight:700}
 .exercise-suggestion:last-child{border-bottom:0}
 .exercise-suggestion:active,.exercise-suggestion:focus-visible{background:#45346d}
+
+    /* Compact today's workout summary, with volume and 1RM aligned on one row. */
+    #todayList .entry{padding:11px 12px}
+    #todayList .entry-sets{margin-top:7px;gap:5px}
+    #todayList .set-chip{padding:4px 7px}
+    #todayList .entry-bottom{display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:12px;margin-top:8px}
+    #todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:12px;white-space:nowrap}
+    @media(max-width:380px){#todayList .entry-bottom{gap:8px}#todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:11px}}
 </style>
 </head>
 <body>
