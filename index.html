@@ -38,7 +38,7 @@
       <h3>今日のトレーニング</h3><p class="hint">種目を選んで、セットごとに重量・回数を入力しよう。</p>
       <form id="workoutForm">
         <div class="fields">
-          <div class="field wide"><label for="exercise">種目名</label><input id="exercise" type="text" list="exerciseList" maxlength="48" placeholder="例：ベンチプレス" autocomplete="off" required><datalist id="exerciseList"><option value="ベンチプレス"><option value="スクワット"><option value="デッドリフト"><option value="ショルダープレス"><option value="ラットプルダウン"><option value="ダンベルカール"><option value="レッグプレス"><option value="懸垂"><option value="腕立て伏せ"></datalist></div>
+          <div class="field wide"><input id="exercise" type="text" list="exerciseList" maxlength="48" placeholder="種目名" aria-label="種目名" autocomplete="off" required><datalist id="exerciseList"><option value="ベンチプレス"><option value="スクワット"><option value="デッドリフト"><option value="ショルダープレス"><option value="ラットプルダウン"><option value="ダンベルカール"><option value="レッグプレス"><option value="懸垂"><option value="腕立て伏せ"></datalist></div>
           <div class="field wide"><label for="date">トレーニング日</label><input id="date" type="date" required></div>
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
