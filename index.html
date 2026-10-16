@@ -50,7 +50,12 @@
     .duration-field{display:flex;align-items:center;gap:9px;margin:0 0 16px;color:#fff;font-size:16px;font-weight:800;flex-wrap:wrap}
     .duration-field input{width:85px;max-width:100%;padding:9px 10px;color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:10px;font-size:16px;text-align:center}
     .duration-field span{font-size:14px;color:var(--muted)}
-  </style>
+  .exercise-suggestions{margin-top:6px;border:1px solid #6a5b98;border-radius:12px;background:#201b40;max-height:210px;overflow-y:auto;box-shadow:0 8px 20px #0005}
+.exercise-suggestions[hidden]{display:none}
+.exercise-suggestion{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #41375f;background:transparent;color:#fff;padding:12px 14px;font-size:16px;font-weight:700}
+.exercise-suggestion:last-child{border-bottom:0}
+.exercise-suggestion:active,.exercise-suggestion:focus-visible{background:#45346d}
+</style>
 </head>
 <body>
 <main class="page">
@@ -60,7 +65,7 @@
       <form id="workoutForm">
         <div class="fields">
           <div class="field wide"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
-          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" list="exerciseSuggestions" required><datalist id="exerciseSuggestions"></datalist></div>
+          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
           
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
@@ -163,12 +168,24 @@
   function refreshExerciseSuggestions(){
     const seen=new Set();
     const names=[...entries].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).map(x=>x.exercise.trim()).filter(name=>{const key=name.toLocaleLowerCase('ja');if(!name||seen.has(key))return false;seen.add(key);return true;});
-    const list=$('exerciseSuggestions');list.replaceChildren();
-    names.forEach(name=>{const option=document.createElement('option');option.value=name;list.appendChild(option);});
+    const list=$('exerciseSuggestions');
+    const query=$('exercise').value.trim().toLocaleLowerCase('ja');
+    list.replaceChildren();
+    names.filter(name=>name.toLocaleLowerCase('ja').includes(query)).slice(0,12).forEach(name=>{
+      const button=document.createElement('button');
+      button.type='button';button.className='exercise-suggestion';button.setAttribute('role','option');button.textContent=name;
+      button.addEventListener('click',()=>{$('exercise').value=name;$('exercise').setCustomValidity('');updatePrevious();hideExerciseSuggestions();});
+      list.appendChild(button);
+    });
+    const visible=document.activeElement===$('exercise')&&list.children.length>0;
+    list.hidden=!visible;$('exercise').setAttribute('aria-expanded',String(visible));
   }
+  function hideExerciseSuggestions(){$('exerciseSuggestions').hidden=true;$('exercise').setAttribute('aria-expanded','false');}
+  $('exercise').addEventListener('focus',refreshExerciseSuggestions);
+  document.addEventListener('pointerdown',e=>{if(!e.target.closest('#exerciseSuggestions')&&e.target!==$('exercise'))hideExerciseSuggestions();});
   function getExerciseName(){return $('exercise').value;}
   $('exercise').addEventListener('invalid',e=>{e.preventDefault();$('exercise').setCustomValidity('種目名を入力してください');$('exercise').reportValidity();});
-  $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();});
+  $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();refreshExerciseSuggestions();});
   $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);const durationRaw=$('duration').value.trim();const durationMinutes=durationRaw===''?null:Number(durationRaw);if(durationRaw!==''&&(!Number.isInteger(durationMinutes)||durationMinutes<1||durationMinutes>1440)){notify('筋トレ時間は1〜1440分で入力してね');return;}if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
     const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:Date.now(),date,exercise,setsData,memo,durationMinutes};const old=[...entries];entries.push(x);if(!save()){entries=old;return;}$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();redraw();notify(`${setsData.length}セットを保存したよ！`);});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
