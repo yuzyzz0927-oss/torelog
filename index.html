@@ -40,7 +40,7 @@
       <form id="workoutForm">
         <div class="fields">
           <div class="field wide"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
-          <div class="field wide"><select id="exercise" aria-label="種目名" required><option value="" selected disabled>種目名を入力</option><option value="ベンチプレス">ベンチプレス</option><option value="スクワット">スクワット</option><option value="デッドリフト">デッドリフト</option><option value="ショルダープレス">ショルダープレス</option><option value="ラットプルダウン">ラットプルダウン</option><option value="ダンベルカール">ダンベルカール</option><option value="レッグプレス">レッグプレス</option><option value="懸垂">懸垂</option><option value="腕立て伏せ">腕立て伏せ</option><option value="__custom__">その他（自分で入力）</option></select><input id="customExercise" type="text" maxlength="48" placeholder="種目名を入力" aria-label="自由入力の種目名" autocomplete="off" hidden></div>
+          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" required></div>
           
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
@@ -139,9 +139,8 @@
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<div class="entry"><div class="entry-top"><div class="exercise">${escape(name)}</div><div class="amount">最高重量 ${fmt(s.weight)} kg</div></div><div class="rmvalue" style="margin-top:6px">最高推定1RM ${s.rm?fmt(s.rm)+' kg':'—'}</div></div>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
-  function getExerciseName(){return $('exercise').value==='__custom__'?$('customExercise').value:$('exercise').value;}
-  $('exercise').addEventListener('change',()=>{const custom=$('exercise').value==='__custom__';$('customExercise').hidden=!custom;$('customExercise').required=custom;if(custom)$('customExercise').focus();updatePrevious();});
-  $('customExercise').addEventListener('input',updatePrevious);
+  function getExerciseName(){return $('exercise').value;}
+  $('exercise').addEventListener('input',updatePrevious);
   $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
     const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:Date.now(),date,exercise,setsData,memo};const old=[...entries];entries.push(x);if(!save()){entries=old;return;}$('memo').value='';setList.innerHTML='';addSetRow();redraw();notify(`${setsData.length}セットを保存したよ！`);});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
