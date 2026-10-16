@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#161337">
+  <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
+  <title>トレログ Ver.0.2 | 筋トレ記録</title>
+  <style>
+    :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
+    *{box-sizing:border-box} html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--fg);background:radial-gradient(ellipse at 10% 0%,#442364 0,transparent 35%),radial-gradient(ellipse at 95% 12%,#124259 0,transparent 31%),var(--bg);line-height:1.5}
+    button,input,textarea{font:inherit} button{cursor:pointer;touch-action:manipulation} button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:3px} button:disabled{opacity:.45;cursor:not-allowed}
+    .page{max-width:980px;padding:22px 18px 76px;margin:auto}.brandbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{height:52px;width:52px;flex:none;display:grid;place-items:center;font-size:26px;color:#1c1338;border-radius:17px;background:linear-gradient(135deg,var(--cyan),var(--purple) 46%,var(--pink));box-shadow:0 7px 25px #bf6ef755}.eyebrow{font-weight:900;font-size:11px;letter-spacing:.16em;color:var(--cyan)}h1{margin:0;font-size:27px;line-height:1.1;letter-spacing:-.04em}.subtitle{font-size:12px;color:var(--muted);margin-top:5px}.version{padding:8px 11px;border:1px solid #ab75de;background:#3a285e;color:#f6d4ff;border-radius:30px;font-size:11px;font-weight:900;white-space:nowrap}
+    .hero{border-radius:23px;padding:24px 25px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(115deg,#53338c,#24366c 53%,#145963);border:1px solid #7f69b2;box-shadow:var(--shadow);margin-bottom:14px}.hero h2{font-size:27px;letter-spacing:-.03em;line-height:1.3;margin:6px 0}.hero p{font-size:13px;color:#e4ddfa;margin:0}.hero .emoji{font-size:46px;transform:rotate(-8deg)}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:17px}.stat{border-radius:17px;padding:14px 15px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden}.stat:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--purple)}.stat:nth-child(1):before{background:var(--pink)}.stat:nth-child(2):before{background:var(--cyan)}.stat:nth-child(3):before{background:var(--lime)}.stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:26px;line-height:1.45;font-weight:900;font-variant-numeric:tabular-nums}.stat small{color:var(--muted);font-size:11px}
+    .tabs{display:flex;background:#1c193d;border:1px solid #413761;border-radius:15px;padding:5px;gap:5px;margin-bottom:18px}.tab{flex:1;border:0;background:transparent;color:var(--muted);border-radius:11px;padding:12px 8px;font-weight:800}.tab.active{background:linear-gradient(110deg,var(--cyan),#a9e8f8);color:#101531}.panel{display:none}.panel.active{display:block}.card{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);margin-bottom:15px}h3{font-size:20px;letter-spacing:-.03em;margin:0 0 4px}.hint{color:var(--muted);font-size:13px;margin:0 0 18px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;min-width:0}.field.wide{grid-column:span 2}.field label,.set-field label{font-size:13px;color:#eee3fb;font-weight:800}.field input,.field textarea,.set-field input,.filter input{color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:11px;padding:13px;width:100%;min-width:0;font-size:16px}.field input::placeholder,.field textarea::placeholder,.set-field input::placeholder{color:#8b83b1}.field textarea{resize:vertical;min-height:70px}.field small{font-size:11px;color:var(--muted)}
+    .sets-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:13px 0 10px}.sets-title{font-size:18px;font-weight:900}.sets-count{font-size:12px;font-weight:800;color:var(--orange)}.set-list{display:flex;flex-direction:column;gap:10px}.set-row{border:1px solid #594477;border-radius:15px;padding:14px;background:linear-gradient(112deg,#292147,#24203f);position:relative}.set-row:nth-child(4n+2){border-color:#3a6889;background:linear-gradient(112deg,#202f50,#242141)}.set-row:nth-child(4n+3){border-color:#755079;background:linear-gradient(112deg,#322044,#242040)}.set-row:nth-child(4n+4){border-color:#527250;background:linear-gradient(112deg,#203c36,#242141)}.set-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}.set-number{display:inline-flex;align-items:center;gap:7px;font-weight:900;color:var(--orange)}.set-number .dot{width:8px;height:8px;background:var(--pink);border-radius:50%}.remove-set{background:transparent;border:1px solid #82627b;color:#ffb6d9;border-radius:9px;padding:6px 10px;min-height:35px;font-weight:700;font-size:12px}.set-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.set-field{display:flex;flex-direction:column;gap:5px;min-width:0}.set-foot{margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}.set-foot .rm{color:var(--cyan);font-weight:900}
+    .add-set{width:100%;min-height:52px;border-radius:13px;border:2px dashed #8270b8;background:#32264b;color:#fbe1ff;font-weight:900;font-size:15px;margin:12px 0 15px}.add-set:hover{background:#43305d}.add-set .plus{font-size:21px;color:var(--lime);vertical-align:-1px;margin-right:5px}
+    .preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:3px 0 17px}.preview-item{background:#14122d;border:1px solid #554778;border-radius:14px;padding:13px 9px;text-align:center}.preview-item:nth-child(1){border-top:3px solid var(--lime)}.preview-item:nth-child(2){border-top:3px solid var(--pink)}.preview-item:nth-child(3){border-top:3px solid var(--cyan)}.preview-item .label{color:var(--muted);font-size:11px}.preview-item strong{font-size:22px;font-weight:900;display:block;margin:3px 0;font-variant-numeric:tabular-nums}.preview-item small{font-size:11px;color:var(--muted)}.rm-hint{color:var(--muted);font-size:11px;margin:-8px 0 14px}.primary,.secondary,.ghost,.danger{border-radius:12px;border:1px solid transparent;min-height:48px;padding:11px 15px;font-weight:900}.primary{width:100%;background:linear-gradient(110deg,#fd70bd,#ffba66);color:#2f1335;box-shadow:0 5px 20px #fa5b9950}.secondary{background:linear-gradient(115deg,#65e7f5,#a5a1ff);color:#18203c}.ghost{background:#31294f;color:#f0eaff;border-color:#635780}.btnrow{display:flex;flex-wrap:wrap;gap:9px}.tiny{min-height:34px;padding:6px 10px;font-size:12px}.notice{font-size:12px;color:var(--lime);margin:3px 0 15px}.notice:empty{display:none}
+    .topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.topline h3{margin:0}.tag{font-size:11px;font-weight:800;border-radius:10px;padding:5px 9px;background:#48315f;color:#ffb7e2}.list{display:flex;flex-direction:column;gap:11px}.entry{padding:15px;border:1px solid #50446e;background:var(--panel2);border-radius:15px}.entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.entry .exercise{font-weight:900;font-size:16px;overflow-wrap:anywhere}.entry .meta{color:var(--muted);font-size:12px;margin-top:2px;overflow-wrap:anywhere}.entry-sets{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}.set-chip{font-size:12px;padding:5px 8px;color:#e9defa;background:#3c315f;border-radius:8px}.entry-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:11px}.amount{font-weight:900;color:var(--lime);font-size:14px}.rmvalue{color:var(--cyan);font-size:13px;font-weight:800}.delete{border:1px solid #815577;border-radius:8px;background:transparent;color:#ffb5d7;font-weight:700;font-size:12px;padding:7px 10px}.empty{color:var(--muted);text-align:center;border:1px dashed #665980;border-radius:12px;padding:26px 11px;font-size:13px}.filter{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:15px}.filter input{width:auto;max-width:100%}.filter label{font-size:13px}.chart{display:flex;align-items:end;gap:9px;min-height:200px;padding-top:18px;border-bottom:1px solid #625777}.barcol{flex:1;min-width:0;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}.bar{min-height:4px;width:min(78%,42px);border-radius:8px 8px 0 0;background:linear-gradient(180deg,#fa78c5,#935eee)}.barcol:nth-child(2n) .bar{background:linear-gradient(180deg,#61e8fa,#4d7ee6)}.barval{color:var(--muted);font-size:10px;white-space:nowrap}.barlabel{color:var(--muted);font-size:11px}.analysisline{margin-top:15px;font-size:14px;color:#ece7fc}.analysisline strong{color:var(--lime)}.footer{font-size:12px;color:#aca5c9;text-align:center;max-width:620px;margin:28px auto 0}.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;max-width:90vw;z-index:12;background:#d7ffbb;color:#223123;font-size:13px;font-weight:900;border-radius:12px;box-shadow:0 10px 30px #0009;padding:12px 16px;display:none}.toast.show{display:block}.separator{height:1px;background:#554875;margin:14px 0}
+    @media(max-width:600px){.page{padding:16px 12px 60px}.logo{width:45px;height:45px;font-size:23px}.brand{gap:9px}h1{font-size:24px}.hero{padding:18px}.hero h2{font-size:23px}.hero .emoji{font-size:35px}.stats{gap:6px}.stat{padding:12px 9px}.stat .label{font-size:11px}.stat strong{font-size:22px}.card{padding:16px}.set-row{padding:12px}.preview{gap:6px}.preview-item{padding:12px 4px}.preview-item strong{font-size:19px}.tabs{gap:2px}.tab{font-size:13px;padding:12px 5px}}
+    @media(max-width:355px){.version{font-size:10px;padding:7px}h1{font-size:21px}.hero .emoji{display:none}.stat strong{font-size:19px}.preview-item strong{font-size:17px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">🏋️</div><div><div class="eyebrow">COLOR YOUR PROGRESS</div><h1>トレログ</h1><div class="subtitle">1セットずつ、進化を記録。</div></div></div><span class="version">Ver.0.2</span></header>
+  <div class="hero"><div><div class="eyebrow" style="color:#d0fff6">MAKE EVERY SET COUNT</div><h2>昨日の自分を、<br>超えていこう。</h2><p>重量も回数も、セットごとに自由自在！</p></div><div class="emoji" aria-hidden="true">💪</div></div>
+  <div class="stats"><div class="stat"><div class="label">今日のセット</div><strong id="todaySets">0</strong><small>セット</small></div><div class="stat"><div class="label">直近7日の記録</div><strong id="weekWorkouts">0</strong><small>日</small></div><div class="stat"><div class="label">累計記録</div><strong id="totalEntries">0</strong><small>件</small></div></div>
+  <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button">＋ 記録する</button><button class="tab" data-tab="history" type="button">履歴</button><button class="tab" data-tab="analysis" type="button">分析</button></nav>
+  <section id="record" class="panel active" aria-label="記録する">
+    <div class="card">
+      <h3>今日のトレーニング</h3><p class="hint">種目を選んで、セットごとに重量・回数を入力しよう。</p>
+      <form id="workoutForm">
+        <div class="fields">
+          <div class="field wide"><label for="exercise">種目名</label><input id="exercise" type="text" list="exerciseList" maxlength="48" placeholder="例：ベンチプレス" autocomplete="off" required><datalist id="exerciseList"><option value="ベンチプレス"><option value="スクワット"><option value="デッドリフト"><option value="ショルダープレス"><option value="ラットプルダウン"><option value="ダンベルカール"><option value="レッグプレス"><option value="懸垂"><option value="腕立て伏せ"></datalist></div>
+          <div class="field wide"><label for="date">トレーニング日</label><input id="date" type="date" required></div>
+        </div>
+        <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
+        <div id="setList" class="set-list" aria-live="polite"></div>
+        <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button>
+        <div class="preview" aria-live="polite">
+          <div class="preview-item"><div class="label">セット数</div><strong id="previewSets">0</strong><small>セット</small></div>
+          <div class="preview-item"><div class="label">総重量</div><strong id="previewVolume">0</strong><small>kg</small></div>
+          <div class="preview-item"><div class="label">最高推定1RM</div><strong id="preview1rm">—</strong><small>kg</small></div>
+        </div>
+        <p class="rm-hint">推定1RMはEpley式で計算した目安。1回なら入力重量、2回以上なら「重量 × (1＋回数÷30)」。高回数ほど誤差が大きくなるよ。</p>
+        <div class="field"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div>
+        <div class="notice" id="previous" role="status"></div>
+        <button type="submit" class="primary">このトレーニングを保存する ✨</button>
+      </form>
+    </div>
+    <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
+  </section>
+  <section id="history" class="panel" aria-label="履歴">
+    <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="filter"><label for="filterDate">日付で絞る</label><input id="filterDate" type="date"><button class="ghost tiny" id="showAll" type="button">すべて表示</button></div><div id="historyList" class="list"></div></div>
+    <div class="card"><h3>バックアップ</h3><p class="hint">記録はこのブラウザに保存されます。機種変更・データ削除などに備えてバックアップを取ってね。公開更新だけでは通常データは消えないけれど、保存を保証するものではありません。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
+  </section>
+  <section id="analysis" class="panel" aria-label="分析">
+    <div class="card"><h3>直近7日間の総重量</h3><p class="hint">全セットの「重量 × 回数」の合計。重量0kgの自重運動は総重量に含まれません。</p><div class="chart" id="volumeChart" role="img" aria-label="過去7日間の総重量グラフ"></div><div class="analysisline" id="weekVolume"></div></div>
+    <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
+  </section>
+  <p class="footer">トレログ Ver.0.2（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  'use strict';
+  const KEY='torelog.entries.v2', OLD_KEY='torelog.entries.v1', MAX_SETS=60;
+  const $=id=>document.getElementById(id);
+  const fmt=n=>Number(n||0).toLocaleString('ja-JP',{maximumFractionDigits:1});
+  const pad=n=>String(n).padStart(2,'0');
+  const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today=iso(new Date());
+  const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const safeNum=v=>typeof v==='number'&&Number.isFinite(v);
+  const validSet=s=>s&&safeNum(s.weight)&&s.weight>=0&&s.weight<=1000&&Number.isInteger(s.reps)&&s.reps>=1&&s.reps<=1000;
+  const validEntry=x=>x&&typeof x.id==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&typeof x.exercise==='string'&&x.exercise.trim().length>0&&x.exercise.length<=48&&Array.isArray(x.setsData)&&x.setsData.length>=1&&x.setsData.length<=MAX_SETS&&x.setsData.every(validSet)&&(!x.memo||typeof x.memo==='string');
+  const maxRm=sets=>Math.max(0,...sets.map(s=>oneRm(s.weight,s.reps)||0));
+  const volume=sets=>sets.reduce((n,s)=>n+s.weight*s.reps,0);
+  const oneRm=(w,r)=>{if(!(w>0&&r>=1&&r<=30))return null;return r===1?w:w*(1+r/30);};
+  const totalSets=x=>x.setsData.length;
+  function normalize(x){
+    if(!x||typeof x!=='object')return null;
+    if(Array.isArray(x.setsData))return x;
+    if(safeNum(x.weight)&&Number.isInteger(x.reps)&&Number.isInteger(x.sets)&&x.sets>=1&&x.sets<=MAX_SETS){return {...x,setsData:Array.from({length:x.sets},()=>({weight:x.weight,reps:x.reps}))};}
+    return null;
+  }
+  let entries=[],storageWorks=true,migrated=false;
+  try{
+    const newData=localStorage.getItem(KEY);
+    const original=JSON.parse(newData!==null?newData:(localStorage.getItem(OLD_KEY)||'[]'));
+    if(Array.isArray(original))entries=original.map(normalize).filter(validEntry);
+    migrated=newData===null&&localStorage.getItem(OLD_KEY)!==null;
+  }catch(e){storageWorks=false;entries=[];}
+  $('date').value=today;
+  function notify(message){const n=$('toast');n.textContent=message;n.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>n.classList.remove('show'),3200);}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));storageWorks=true;return true;}catch(e){storageWorks=false;notify('保存できません。ブラウザの設定・空き容量を確認してね');return false;}}
+  if(migrated&&entries.length>0)save();
+  let setId=0;
+  const setList=$('setList');
+  function addSetRow(weight='',reps=''){
+    if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
+    const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><label>重量 (kg)<input class="set-weight" type="number" min="0" max="1000" step="0.5" inputmode="decimal" placeholder="例：60" required></label></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    setList.appendChild(row);
+    row.querySelector('.set-weight').value=weight;
+    row.querySelector('.set-reps').value=reps;
+    renumberSets();refreshPreview();
+  }
+  function renumberSets(){const count=setList.children.length;Array.from(setList.children).forEach((r,i)=>{r.querySelector('.number-label').textContent=`${i+1}セット目`;r.querySelector('.remove-set').disabled=count===1;r.querySelector('.remove-set').setAttribute('aria-label',`${i+1}セット目を削除`);});$('setCount').textContent=`${count} セット`;$('addSet').disabled=count>=MAX_SETS;}
+  function setValues(row){const w=row.querySelector('.set-weight').value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:Number(w),reps:Number(r)};return validSet(obj)?obj:null;}
+  function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});$('previewSets').textContent=fmt(count);$('previewVolume').textContent=fmt(sum);$('preview1rm').textContent=rms.length?fmt(Math.max(...rms)):'—';}
+  $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();field.select();});
+  setList.addEventListener('input',refreshPreview);
+  setList.addEventListener('click',e=>{const btn=e.target.closest('.remove-set');if(!btn||setList.children.length<=1)return;btn.closest('.set-row').remove();renumberSets();refreshPreview();});
+  addSetRow();
+  const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||Number(b.createdAt||0)-Number(a.createdAt||0));
+  function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);a.push(iso(d));}return a;}
+  function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
+    sorted(list).forEach(x=>{const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${escape(x.date)} ・ ${totalSets(x)}セット${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom"><span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span><span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
+  }
+  function redraw(){const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+    const vals=week.map(day=>entries.filter(x=>x.date===day).reduce((n,x)=>n+volume(x.setsData),0));const max=Math.max(1,...vals);const chart=$('volumeChart');chart.innerHTML='';week.forEach((day,i)=>{const bar=document.createElement('div');bar.className='barcol';bar.innerHTML=`<div class="barval">${vals[i]?fmt(vals[i]):''}</div><div class="bar" style="height:${Math.max(4,vals[i]/max*145)}px" title="${escape(day)}：${fmt(vals[i])}kg"></div><div class="barlabel">${Number(day.slice(-2))}日</div>`;chart.appendChild(bar);});$('weekVolume').innerHTML=`直近7日間の総重量：<strong>${fmt(vals.reduce((a,b)=>a+b,0))} kg</strong>`;
+    const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<div class="entry"><div class="entry-top"><div class="exercise">${escape(name)}</div><div class="amount">最高重量 ${fmt(s.weight)} kg</div></div><div class="rmvalue" style="margin-top:6px">最高推定1RM ${s.rm?fmt(s.rm)+' kg':'—'}</div></div>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();
+  }
+  function updatePrevious(){const name=$('exercise').value.trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
+  $('exercise').addEventListener('input',updatePrevious);
+  $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=$('exercise').value.trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
+    const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:Date.now(),date,exercise,setsData,memo};const old=[...entries];entries.push(x);if(!save()){entries=old;return;}$('memo').value='';setList.innerHTML='';addSetRow();redraw();notify(`${setsData.length}セットを保存したよ！`);});
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
+  $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
+  function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+  $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
+  $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:2,entries},null,2),'application/json');notify('バックアップを保存したよ');});
+  $('importJson').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('ファイルが大きすぎます');const obj=JSON.parse(await file.text());if(obj.app!=='torelog'||!Array.isArray(obj.entries)||obj.entries.length>10000)throw new Error('トレログのバックアップではありません');const parsed=obj.entries.map(normalize);if(!parsed.every(validEntry))throw new Error('データ形式が正しくありません');if(!confirm(`バックアップの${parsed.length}件で、現在の${entries.length}件を置き換えますか？`))return;const old=entries;entries=parsed;if(!save()){entries=old;return;}redraw();notify('バックアップを復元したよ');}catch(err){alert('読み込みできませんでした：'+err.message);}finally{e.target.value='';}});
+  redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
+})();
+</script>
+</body>
+</html>
