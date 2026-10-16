@@ -295,8 +295,8 @@
   function restoreDayParts(){setSelectedParts(partsForDay($('date').value))}
   $('date').addEventListener('change',restoreDayParts);
   $('date').addEventListener('input',restoreDayParts);
-  function getSelectedParts(){return [...document.querySelectorAll('.part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
-  function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('.part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
+  function getSelectedParts(){return [...document.querySelectorAll('#partButtons .part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
+  function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('#partButtons .part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
   function resetSelectedParts(){setSelectedParts([])}
   $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;const old=getSelectedParts();b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));const date=$('date').value;if(!saveDayParts(date,getSelectedParts())){setSelectedParts(old);return;}drawCalendar();notify('部位を自動保存したよ');});
   let activeSession=null,startedAt=0,monthOffset=0;
