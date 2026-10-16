@@ -276,20 +276,33 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     let seenSession='';
     sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${(x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):''}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
+  // A reproducible daily absurd comparison. Approximate reference masses, not exact specifications.
   function updateVolumeComparison(kg){
     const target=$('monthVolumeComparison');
-    if(!(kg>0)){target.textContent='記録すると、持ち上げた重さを身近なものに例えるよ！';return;}
-    const examples=[
-      {min:20000,kg:5000,name:'アフリカゾウ',emoji:'🐘',unit:'頭'},
-      {min:3000,kg:1500,name:'普通乗用車',emoji:'🚗',unit:'台'},
-      {min:500,kg:180,name:'ゴリラ',emoji:'🦍',unit:'頭'},
-      {min:50,kg:10,name:'お米10kg袋',emoji:'🍚',unit:'袋'},
-      {min:0,kg:2,name:'2Lペットボトル',emoji:'🧴',unit:'本'}
+    if(!(kg>0)){target.textContent='今月の総重量が、何に化けるかお楽しみ。';return;}
+    const oddities=[
+      {name:'学校の黒板消し',kg:0.11,unit:'個',emoji:'🧽'},
+      {name:'コンビニおにぎり',kg:0.11,unit:'個',emoji:'🍙'},
+      {name:'カップ焼きそば',kg:0.17,unit:'個',emoji:'🍜'},
+      {name:'片方だけのビーチサンダル',kg:0.12,unit:'足',emoji:'🩴'},
+      {name:'トイレットペーパー1ロール',kg:0.2,unit:'個',emoji:'🧻'},
+      {name:'一般的なボウリング球',kg:6,unit:'個',emoji:'🎳'},
+      {name:'大人用の着ぐるみ',kg:8,unit:'着',emoji:'🧸'},
+      {name:'カラオケ店のミラーボール',kg:3,unit:'個',emoji:'🪩'},
+      {name:'大きめのスイカ',kg:7,unit:'玉',emoji:'🍉'},
+      {name:'家庭用冷蔵庫',kg:75,unit:'台',emoji:'🧊'},
+      {name:'自動販売機',kg:300,unit:'台',emoji:'🥤'},
+      {name:'昔の電話ボックス',kg:250,unit:'基',emoji:'☎️'},
+      {name:'グランドピアノ',kg:350,unit:'台',emoji:'🎹'},
+      {name:'等身大の恐竜模型',kg:100,unit:'体',emoji:'🦖'},
+      {name:'駅の自動改札機',kg:180,unit:'台',emoji:'🚉'},
+      {name:'業務用たこ焼き器',kg:20,unit:'台',emoji:'🐙'}
     ];
-    const item=examples.find(x=>kg>=x.min);
-    const n=kg/item.kg;
-    const amount=n>=10?Math.round(n).toLocaleString('ja-JP'):Number(n.toFixed(1)).toLocaleString('ja-JP');
-    target.textContent=item.emoji+' 今月は'+item.name+'約'+amount+item.unit+'分を持ち上げた！';
+    const dayNumber=Math.floor(Date.now()/86400000);
+    const item=oddities[(dayNumber+new Date().getTimezoneOffset()*-1/1440 | 0) % oddities.length];
+    const count=kg/item.kg;
+    const amount=(count>=100?Math.round(count):Number(count.toFixed(1))).toLocaleString('ja-JP');
+    target.textContent=item.emoji+' 今月は'+item.name+'約'+amount+item.unit+'分を持ち上げた計算。何を鍛えてるんだ。';
   }
   function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const monthPrefix=today.slice(0,7);$('todayVolumeTotal').innerHTML=fmt(t.reduce((sum,x)=>sum+volume(x.setsData),0))+' <small>kg</small>';$('monthVolumeTotal').innerHTML=fmt(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0))+' <small>kg</small>';updateVolumeComparison(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0));$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
