@@ -236,7 +236,10 @@
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
     if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;
-    resetSelectedParts();
+    // A workout is saved separately; the selected muscle groups remain on the current date.
+    const partsAtSave=getSelectedParts();
+    if(!Object.prototype.hasOwnProperty.call(dayParts,date))saveDayParts(date,partsAtSave);
+    setSelectedParts(partsForDay($('date').value));
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';$('duration').value=x.durationMinutes||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
   $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
@@ -245,13 +248,25 @@
   $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
   function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
   $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
-  $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:2,entries},null,2),'application/json');notify('バックアップを保存したよ');});
-  $('importJson').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('ファイルが大きすぎます');const obj=JSON.parse(await file.text());if(obj.app!=='torelog'||!Array.isArray(obj.entries)||obj.entries.length>10000)throw new Error('トレログのバックアップではありません');const parsed=obj.entries.map(normalize);if(!parsed.every(validEntry))throw new Error('データ形式が正しくありません');if(!confirm(`バックアップの${parsed.length}件で、現在の${entries.length}件を置き換えますか？`))return;const old=entries;entries=parsed;if(!save()){entries=old;return;}redraw();notify('バックアップを復元したよ');}catch(err){alert('読み込みできませんでした：'+err.message);}finally{e.target.value='';}});
+  $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:3,entries,dayParts},null,2),'application/json');notify('バックアップを保存したよ');});
+  $('importJson').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('ファイルが大きすぎます');const obj=JSON.parse(await file.text());if(obj.app!=='torelog'||!Array.isArray(obj.entries)||obj.entries.length>10000)throw new Error('トレログのバックアップではありません');const parsed=obj.entries.map(normalize);if(!parsed.every(validEntry))throw new Error('データ形式が正しくありません');if(!confirm(`バックアップの${parsed.length}件で、現在の${entries.length}件を置き換えますか？`))return;const old=entries,oldParts=dayParts;let importedParts={};if(obj.dayParts!=null){if(!obj.dayParts||typeof obj.dayParts!=='object'||Array.isArray(obj.dayParts))throw new Error('部位情報の形式が正しくありません');for(const [date,parts] of Object.entries(obj.dayParts)){if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)||!Array.isArray(parts)||parts.some(p=>!VALID_PARTS.includes(p)))throw new Error('部位情報が正しくありません');importedParts[date]=cleanParts(parts)}}entries=parsed;dayParts=importedParts;if(!save()){entries=old;dayParts=oldParts;return;}try{localStorage.setItem(PARTS_KEY,JSON.stringify(dayParts))}catch(err){entries=old;dayParts=oldParts;save();notify('部位を復元できませんでした');return;}restoreDayParts();redraw();notify('バックアップを復元したよ');}catch(err){alert('読み込みできませんでした：'+err.message);}finally{e.target.value='';}});
 
+  // Calendar-only day selections are independent of saved weight/repetition records.
+  const PARTS_KEY='torelog.dayParts.v1';
+  const VALID_PARTS=['胸','背中','足','肩','お腹'];
+  function cleanParts(v){return Array.isArray(v)?[...new Set(v.filter(x=>VALID_PARTS.includes(x)))]:[]}
+  let dayParts={};
+  try{const saved=JSON.parse(localStorage.getItem(PARTS_KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [date,parts] of Object.entries(saved)){if(/^\\d{4}-\\d{2}-\\d{2}$/.test(date))dayParts[date]=cleanParts(parts)}}}catch(e){}
+  function partsFromEntries(date){const out=new Set();entries.filter(x=>x.date===date).forEach(x=>(x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).forEach(p=>{const v=p==='背'?'背中':p==='腹'?'お腹':p;if(VALID_PARTS.includes(v))out.add(v)}));return [...out]}
+  function partsForDay(date){return Object.prototype.hasOwnProperty.call(dayParts,date)?dayParts[date]:partsFromEntries(date)}
+  function saveDayParts(date,parts){if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return false;const normalized=cleanParts(parts),old=dayParts;dayParts={...dayParts,[date]:normalized};try{localStorage.setItem(PARTS_KEY,JSON.stringify(dayParts));return true}catch(e){dayParts=old;notify('部位を自動保存できなかったよ');return false}}
+  function restoreDayParts(){setSelectedParts(partsForDay($('date').value))}
+  $('date').addEventListener('change',restoreDayParts);
+  $('date').addEventListener('input',restoreDayParts);
   function getSelectedParts(){return [...document.querySelectorAll('.part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
   function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('.part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
   function resetSelectedParts(){setSelectedParts([])}
-  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(b)b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'))});
+  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;const old=getSelectedParts();b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));const date=$('date').value;if(!saveDayParts(date,getSelectedParts())){setSelectedParts(old);return;}drawCalendar();notify('部位を自動保存したよ');});
   let activeSession=null,startedAt=0,monthOffset=0;
   function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase();const p=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];if(p){setList.replaceChildren();p.setsData.forEach(v=>addSetRow(v.weight,v.reps));setSelectedParts(p.bodyParts||p.bodyPart||[])}updatePrevious()}
   setList.addEventListener('input',e=>{if(e.target.matches('.set-weight,.set-reps')&&!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now()}});
@@ -268,11 +283,8 @@
     ['日','月','火','水','木','金','土'].forEach(n=>{const el=document.createElement('span');el.textContent=n;box.appendChild(el)});
     for(let i=0;i<first;i++)box.appendChild(document.createElement('span'));
     const trained=new Map();
-    entries.forEach(entry=>{
-      let p=trained.get(entry.date);if(!p){p=new Set();trained.set(entry.date,p)}
-      const parts=entry.bodyParts?.length?entry.bodyParts:(entry.bodyPart?[entry.bodyPart]:[]);
-      parts.forEach(v=>p.add(v==='背'?'背中':v==='腹'?'お腹':v));
-    });
+    const dates=new Set([...entries.map(x=>x.date),...Object.keys(dayParts)]);
+    dates.forEach(date=>trained.set(date,new Set(partsForDay(date))));
     for(let day=1;day<=days;day++){
       const key=iso(new Date(y,m,day)),el=document.createElement('button');el.type='button';
       const parts=partOrder.filter(p=>trained.get(key)?.has(p));
@@ -290,7 +302,7 @@
   }
   $('calPrev').addEventListener('click',()=>{monthOffset--;drawCalendar()});
   $('calNext').addEventListener('click',()=>{monthOffset++;drawCalendar()});
-  redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
+  restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
 </script>
 </body>
