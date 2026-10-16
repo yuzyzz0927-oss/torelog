@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <title>ゆずる式トレログ Ver.0.2 | 筋トレ記録</title>
+  <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
     :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
     *{box-sizing:border-box} html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--fg);background:radial-gradient(ellipse at 10% 0%,#442364 0,transparent 35%),radial-gradient(ellipse at 95% 12%,#124259 0,transparent 31%),var(--bg);line-height:1.5}
@@ -63,6 +63,19 @@
     #todayList .entry-bottom{display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:12px;margin-top:8px}
     #todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:12px;white-space:nowrap}
     @media(max-width:380px){#todayList .entry-bottom{gap:8px}#todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:11px}}
+
+.extra-controls{border:1px solid #655481;border-radius:13px;padding:12px;margin-bottom:12px;background:#211d43}
+.extra-controls .row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0}
+.extra-controls button{min-height:35px}
+.extra-controls select,.extra-controls input{background:#13112b;color:#fff;border:1px solid #655481;border-radius:8px;padding:9px;font-size:16px;max-width:100%}
+.extra-controls strong{font-size:21px;color:var(--lime)}
+.donebox{width:21px;height:21px;accent-color:#b3fc73}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-grid span,.cal-grid button{border:1px solid #594773;border-radius:8px;text-align:center;padding:8px 0;background:#282141;color:white}
+.cal-grid button.trained{background:#185a51;border-color:#a2efbe;font-weight:900}
+.cal-grid button.current{outline:2px solid #ff69bb}
+.progress-bars{display:flex;align-items:flex-end;height:140px;gap:5px;padding-top:10px;overflow:auto}
+.progress-bars div{min-width:23px;background:linear-gradient(#ff69bb,#7d65f6);border-radius:6px 6px 0 0}
 </style>
 </head>
 <body>
@@ -71,7 +84,17 @@
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
       <form id="workoutForm">
+
+        <div class="extra-controls">
+          <div class="row"><strong id="elapsedClock">00:00</strong><button type="button" class="secondary tiny" id="beginWorkout">▶ 開始</button><button type="button" class="ghost tiny" id="finishWorkout">■ 終了</button></div>
+          <div class="row">休憩 <select id="restDuration"><option value="60">60秒</option><option value="90" selected>90秒</option><option value="120">120秒</option><option value="180">180秒</option></select><strong id="restClock">01:30</strong><button type="button" class="secondary tiny" id="restStart">開始</button><button type="button" class="ghost tiny" id="restStop">停止</button></div>
+        </div>
+        <details class="extra-controls"><summary>📋 メニューの登録・呼び出し</summary>
+          <div class="row"><select id="menuChoose"><option value="">メニューを選択</option></select><button type="button" class="ghost tiny" id="menuLoad">呼び出す</button><button type="button" class="ghost tiny" id="menuRemove">削除</button></div>
+          <div class="row"><input id="menuName" maxlength="30" placeholder="胸の日、背中の日など"><button type="button" class="secondary tiny" id="menuSave">現在の種目を登録</button></div><p class="hint" id="menuStatus">メニューには種目を複数登録できるよ。</p>
+        </details>
         <div class="fields">
+          <div class="field wide"><label for="bodyPart">部位</label><select id="bodyPart"><option>胸</option><option>背中</option><option>足</option><option>肩</option><option>お腹</option></select></div>
           <div class="field wide"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
           <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
           
@@ -88,7 +111,7 @@
         <p class="rm-hint">推定1RMはEpley式で計算した目安。1回なら入力重量、2回以上なら「重量 × (1＋回数÷30)」。高回数ほど誤差が大きくなるよ。</p>
         <div class="field"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div>
         <div class="notice" id="previous" role="status"></div>
-        <button type="submit" class="primary">このトレーニングを保存する ✨</button>
+        <input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary">このトレーニングを保存する ✨</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
       </form>
     </div>
     <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
@@ -102,9 +125,13 @@
   </section>
   <section id="analysis" class="panel" aria-label="分析">
     <div class="card"><h3>直近7日間の総重量</h3><p class="hint">全セットの「重量 × 回数」の合計。重量0kgの自重運動は総重量に含まれません。</p><div class="chart" id="volumeChart" role="img" aria-label="過去7日間の総重量グラフ"></div><div class="analysisline" id="weekVolume"></div></div>
+
+    <div class="card"><h3>種目別成長グラフ</h3><p class="hint">最高使用重量の推移</p><select id="progressSelect" style="padding:10px;max-width:100%;background:#13112b;color:white;border:1px solid #655481"></select><div id="progressBars" class="progress-bars"></div><p id="progressCaption" class="hint"></p></div>
     <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
   </section>
-  <p class="footer">ゆずる式トレログ Ver.0.2（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
+
+  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div></div>
+  <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
 </main>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
@@ -150,7 +177,7 @@
   function addSetRow(weight='',reps=''){
     if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
     const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
-    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><label>重量 (kg)<input class="set-weight" type="number" min="0" max="1000" step="0.5" inputmode="decimal" placeholder="例：60" required></label></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><label>重量 (kg)<input class="set-weight" type="number" min="0" max="1000" step="0.5" inputmode="decimal" placeholder="例：60" required></label></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
     setList.appendChild(row);
     row.querySelector('.set-weight').value=weight;
     row.querySelector('.set-reps').value=reps;
@@ -166,11 +193,11 @@
   const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||Number(b.createdAt||0)-Number(a.createdAt||0));
   function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);a.push(iso(d));}return a;}
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
-    sorted(list).forEach(x=>{const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom"><span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span><span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
+    sorted(list).forEach(x=>{const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom"><span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span><span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
   function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const vals=week.map(day=>entries.filter(x=>x.date===day).reduce((n,x)=>n+volume(x.setsData),0));const max=Math.max(1,...vals);const chart=$('volumeChart');chart.innerHTML='';week.forEach((day,i)=>{const bar=document.createElement('div');bar.className='barcol';bar.innerHTML=`<div class="barval">${vals[i]?fmt(vals[i]):''}</div><div class="bar" style="height:${Math.max(4,vals[i]/max*145)}px" title="${escape(day)}：${fmt(vals[i])}kg"></div><div class="barlabel">${Number(day.slice(-2))}日</div>`;chart.appendChild(bar);});$('weekVolume').innerHTML=`直近7日間の総重量：<strong>${fmt(vals.reduce((a,b)=>a+b,0))} kg</strong>`;
-    const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<div class="entry"><div class="entry-top"><div class="exercise">${escape(name)}</div><div class="amount">最高重量 ${fmt(s.weight)} kg</div></div><div class="rmvalue" style="margin-top:6px">最高推定1RM ${s.rm?fmt(s.rm)+' kg':'—'}</div></div>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();
+    const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<div class="entry"><div class="entry-top"><div class="exercise">${escape(name)}</div><div class="amount">最高重量 ${fmt(s.weight)} kg</div></div><div class="rmvalue" style="margin-top:6px">最高推定1RM ${s.rm?fmt(s.rm)+' kg':'—'}</div></div>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
   function refreshExerciseSuggestions(){
@@ -182,7 +209,7 @@
     names.filter(name=>name.toLocaleLowerCase('ja').includes(query)).slice(0,12).forEach(name=>{
       const button=document.createElement('button');
       button.type='button';button.className='exercise-suggestion';button.setAttribute('role','option');button.textContent=name;
-      button.addEventListener('click',()=>{$('exercise').value=name;$('exercise').setCustomValidity('');updatePrevious();hideExerciseSuggestions();});
+      button.addEventListener('click',()=>{$('exercise').value=name;$('exercise').setCustomValidity('');autoFillPrevious();hideExerciseSuggestions();});
       list.appendChild(button);
     });
     const visible=document.activeElement===$('exercise')&&list.children.length>0;
@@ -194,8 +221,18 @@
   function getExerciseName(){return $('exercise').value;}
   $('exercise').addEventListener('invalid',e=>{e.preventDefault();$('exercise').setCustomValidity('種目名を入力してください');$('exercise').reportValidity();});
   $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();refreshExerciseSuggestions();});
+  $('exercise').addEventListener('change',autoFillPrevious);
   $('workoutForm').addEventListener('submit',e=>{e.preventDefault();const exercise=getExerciseName().trim(),date=$('date').value,memo=$('memo').value.trim(),setRows=Array.from(setList.children);const setsData=setRows.map(setValues);const durationRaw=$('duration').value.trim();const durationMinutes=durationRaw===''?null:Number(durationRaw);if(durationRaw!==''&&(!Number.isInteger(durationMinutes)||durationMinutes<1||durationMinutes>1440)){notify('筋トレ時間は1〜1440分で入力してね');return;}if(!exercise||exercise.length>48||!/^\d{4}-\d{2}-\d{2}$/.test(date)||setsData.some(s=>!s)){notify('各セットの重量・回数を正しく入力してね');return;}
-    const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:Date.now(),date,exercise,setsData,memo,durationMinutes};const old=[...entries];entries.push(x);if(!save()){entries=old;return;}$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();redraw();notify(`${setsData.length}セットを保存したよ！`);});
+    const editId=$('editingId').value,old=[...entries],prior=entries.find(z=>z.id===editId);
+    const bestBefore=Math.max(0,...entries.filter(z=>z.exercise===exercise&&z.id!==editId).flatMap(z=>z.setsData.map(v=>v.weight)));
+    const x={id:editId||Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:prior?.createdAt||Date.now(),date,exercise,setsData,memo,durationMinutes,bodyPart:$('bodyPart').value,completed:setRows.map(z=>z.querySelector('.donebox').checked),sessionId:prior?.sessionId||activeSession||'session-'+Date.now()};
+    if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
+    if(!save()){entries=old;return;}
+    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';$('duration').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;
+    if(menuQueue.length){const next=menuQueue.shift();$('exercise').value=next.name;$('bodyPart').value=next.part;autoFillPrevious();}
+    redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;$('bodyPart').value=x.bodyPart||'胸';$('memo').value=x.memo||'';$('duration').value=x.durationMinutes||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
+  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='このトレーニングを保存する ✨';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
   $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
@@ -203,6 +240,31 @@
   $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
   $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:2,entries},null,2),'application/json');notify('バックアップを保存したよ');});
   $('importJson').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('ファイルが大きすぎます');const obj=JSON.parse(await file.text());if(obj.app!=='torelog'||!Array.isArray(obj.entries)||obj.entries.length>10000)throw new Error('トレログのバックアップではありません');const parsed=obj.entries.map(normalize);if(!parsed.every(validEntry))throw new Error('データ形式が正しくありません');if(!confirm(`バックアップの${parsed.length}件で、現在の${entries.length}件を置き換えますか？`))return;const old=entries;entries=parsed;if(!save()){entries=old;return;}redraw();notify('バックアップを復元したよ');}catch(err){alert('読み込みできませんでした：'+err.message);}finally{e.target.value='';}});
+
+  const MENU_KEY='torelog.menus.v1';
+  let menus=[];try{const stored=JSON.parse(localStorage.getItem(MENU_KEY)||'[]');if(Array.isArray(stored))menus=stored.filter(z=>z&&typeof z.name==='string'&&Array.isArray(z.items))}catch(e){}
+  let menuQueue=[],activeSession=null,startedAt=0,totalSeconds=0,restUntil=0,monthOffset=0;
+  function timeText(n){n=Math.max(0,Math.floor(n));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+  function updateClocks(){$('elapsedClock').textContent=timeText(totalSeconds+(startedAt?(Date.now()-startedAt)/1000:0));const left=Math.max(0,Math.ceil((restUntil-Date.now())/1000));$('restClock').textContent=timeText(restUntil?left:Number($('restDuration').value));if(restUntil&&left===0){restUntil=0;notify('休憩終了！')}}
+  setInterval(updateClocks,1000);updateClocks();
+  $('beginWorkout').addEventListener('click',()=>{if(!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now();notify('トレーニング開始！')}});
+  $('finishWorkout').addEventListener('click',()=>{if(startedAt){totalSeconds+=(Date.now()-startedAt)/1000;startedAt=0}$('duration').value=Math.max(1,Math.ceil(totalSeconds/60));activeSession=null;menuQueue=[];notify('トレーニング終了！ 計測時間を入力したよ');updateClocks()});
+  $('restStart').addEventListener('click',()=>{restUntil=Date.now()+Number($('restDuration').value)*1000;updateClocks()});
+  $('restStop').addEventListener('click',()=>{restUntil=0;updateClocks()});
+  $('restDuration').addEventListener('change',updateClocks);
+  setList.addEventListener('change',e=>{if(e.target.matches('.donebox')&&e.target.checked){restUntil=Date.now()+Number($('restDuration').value)*1000;updateClocks()}});
+  function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase();const previous=sorted(entries.filter(z=>z.exercise.trim().toLowerCase()===name))[0];if(previous){setList.replaceChildren();previous.setsData.forEach(v=>addSetRow(v.weight,v.reps));$('bodyPart').value=previous.bodyPart||'胸'}updatePrevious()}
+  function refreshMenus(){const select=$('menuChoose'),v=select.value;select.innerHTML='<option value="">メニューを選択</option>';menus.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=m.name+' ('+m.items.length+'種目)';select.appendChild(o)});if([...select.options].some(o=>o.value===v))select.value=v}
+  $('menuSave').addEventListener('click',()=>{const name=$('menuName').value.trim(),exercise=$('exercise').value.trim();if(!name||!exercise){notify('メニュー名と種目を入力してね');return}let m=menus.find(z=>z.name===name);if(!m){m={name,items:[]};menus.push(m)}if(!m.items.some(z=>z.name===exercise))m.items.push({name:exercise,part:$('bodyPart').value});try{localStorage.setItem(MENU_KEY,JSON.stringify(menus));refreshMenus();$('menuChoose').value=String(menus.indexOf(m));$('menuStatus').textContent=m.items.map(z=>z.name).join(' → ');notify('メニューに追加したよ')}catch(e){notify('メニューを保存できなかったよ')}});
+  $('menuLoad').addEventListener('click',()=>{const v=$('menuChoose').value;if(v==='')return notify('メニューを選んでね');const m=menus[Number(v)];if(!m||!m.items.length)return;menuQueue=m.items.slice();const item=menuQueue.shift();$('exercise').value=item.name;$('bodyPart').value=item.part;autoFillPrevious();activeSession=activeSession||'session-'+Date.now();$('menuStatus').textContent='このメニュー：'+m.items.map(z=>z.name).join(' → ');notify('メニューを呼び出したよ')});
+  $('menuRemove').addEventListener('click',()=>{const v=$('menuChoose').value;if(v==='')return;if(!confirm('このメニューを削除する？'))return;menus.splice(Number(v),1);localStorage.setItem(MENU_KEY,JSON.stringify(menus));refreshMenus()});
+  refreshMenus();
+  function renderExtras(){const select=$('progressSelect'),previous=select.value,names=[...new Set(entries.map(z=>z.exercise))].sort();select.replaceChildren();names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)});if(names.includes(previous))select.value=previous;drawProgress();drawCalendar();}
+  function drawProgress(){const records=sorted(entries.filter(z=>z.exercise===$('progressSelect').value)).reverse().slice(-12),area=$('progressBars');area.replaceChildren();const top=Math.max(1,...records.flatMap(z=>z.setsData.map(v=>v.weight)));records.forEach(z=>{const v=Math.max(...z.setsData.map(v=>v.weight)),bar=document.createElement('div');bar.style.height=Math.max(4,Math.round(v/top*120))+'px';bar.style.flex='1';bar.title=z.date+' '+v+'kg';area.appendChild(bar)});$('progressCaption').textContent=records.length?'最高 '+top+'kg ／ '+records.length+'記録（古い順）':'記録ができるとグラフを表示するよ';}
+  $('progressSelect').addEventListener('change',drawProgress);
+  function drawCalendar(){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+monthOffset);const y=d.getFullYear(),m=d.getMonth(),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay();$('calTitle').textContent=y+'年'+(m+1)+'月';const box=$('calGrid');box.replaceChildren();['日','月','火','水','木','金','土'].forEach(n=>{const el=document.createElement('span');el.textContent=n;box.appendChild(el)});for(let k=0;k<first;k++)box.appendChild(document.createElement('span'));const used=new Set(entries.map(z=>z.date));for(let day=1;day<=days;day++){const key=iso(new Date(y,m,day)),el=document.createElement('button');el.type='button';el.textContent=day;el.className=(used.has(key)?'trained ':'')+(key===today?'current':'');el.addEventListener('click',()=>{$('filterDate').value=key;document.querySelector('[data-tab="history"]').click();redraw()});box.appendChild(el)}}
+  $('calPrev').addEventListener('click',()=>{monthOffset--;drawCalendar()});
+  $('calNext').addEventListener('click',()=>{monthOffset++;drawCalendar()});
   redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
 </script>
