@@ -82,8 +82,8 @@
 .part-button[data-part="足"][aria-pressed="true"]{background:#eeff00;color:#1f1934}
 .part-button[data-part="肩"][aria-pressed="true"]{background:#a5ff27}
 .part-button[data-part="お腹"][aria-pressed="true"]{background:#b700ff}
-.cal-grid .part-day{font-weight:900;text-shadow:0 1px 2px #0009}
-.cal-grid .part-day .day-number{background:#18132cbd;border-radius:5px;padding:2px 5px;display:inline-block}
+.cal-grid .part-day{font-weight:900;text-shadow:none;color:#fff}
+.cal-grid .part-day .day-number{background:none;border-radius:0;padding:0;display:inline-block;color:#fff;text-shadow:none}
 .cal-key{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;font-size:12px;color:#ddd}
 .cal-key i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;background:var(--c)}.part-button:active{transform:scale(.96)}.date-line{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:center;gap:8px;width:100%}
 .date-line .date-picker{height:44px;min-width:0}
@@ -163,7 +163,7 @@
     <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
   </section>
 
-  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">部位を選んで日付をタップ。同じ組み合わせをもう一度押すと解除できるよ！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="true">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div></div>
+  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 同じ日付を3回連続でタップすると、その日の色が全部消えるよ！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div></div>
   <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
 </main>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -198,7 +198,7 @@
     migrated=newData===null&&localStorage.getItem(OLD_KEY)!==null;
   }catch(e){storageWorks=false;entries=[];}
   $('date').value=today;
-  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').textContent=`${m[1]}/${pad(Number(m[2]))}/${pad(Number(m[3]))}（${day}）`;}
+  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').textContent=`${m[1]}年${Number(m[2])}月${Number(m[3])}日`;}
   $('date').addEventListener('change',updateDateDisplay);
   $('date').addEventListener('input',updateDateDisplay);
   updateDateDisplay();
@@ -301,8 +301,15 @@
   $('progressSelect').addEventListener('change',drawProgress);
   const partColors={'胸':'#ff1493','背中':'#39cfff','足':'#eeff00','肩':'#a5ff27','お腹':'#b700ff'};
   const partOrder=['胸','背中','足','肩','お腹'];
-  let calendarSelectedPart='胸';
-  $('calendarPartButtons').addEventListener('click',e=>{const b=e.target.closest('[data-part]');if(!b)return;calendarSelectedPart=b.dataset.part;document.querySelectorAll('#calendarPartButtons .part-button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
+  const calendarSelectedParts=new Set();
+  const calendarTapState={key:'',count:0,last:0,selection:''};
+  $('calendarPartButtons').addEventListener('click',e=>{
+    const b=e.target.closest('[data-part]');if(!b)return;
+    const p=b.dataset.part;
+    if(calendarSelectedParts.has(p))calendarSelectedParts.delete(p);else calendarSelectedParts.add(p);
+    b.setAttribute('aria-pressed',String(calendarSelectedParts.has(p)));
+    calendarTapState.key='';calendarTapState.count=0;
+  });
   function drawCalendar(){
     const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+monthOffset);
     const y=d.getFullYear(),m=d.getMonth(),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay();
@@ -324,7 +331,20 @@
         const label=document.createElement('span');label.className='day-number';label.textContent=day;el.appendChild(label);
         el.setAttribute('aria-label',key+'：'+parts.join('、'));
       }else{el.textContent=day;}
-      el.addEventListener('click',()=>{const p=calendarSelectedPart;const current=partsForDay(key);const updated=current.includes(p)?current.filter(x=>x!==p):[...current,p];if(saveDayParts(key,updated)){drawCalendar();if($('date').value===key)restoreDayParts();notify((updated.includes(p)?'追加':'解除')+'：'+p+' '+(m+1)+'月'+day+'日');}});
+      el.addEventListener('click',()=>{
+        if(!calendarSelectedParts.size){notify('先にカレンダー下の部位を選んでね');return;}
+        const chosen=partOrder.filter(p=>calendarSelectedParts.has(p));
+        const signature=chosen.join('|'),now=Date.now();
+        const repeated=calendarTapState.key===key&&calendarTapState.selection===signature&&now-calendarTapState.last<=1800;
+        calendarTapState.count=repeated?calendarTapState.count+1:1;
+        calendarTapState.key=key;calendarTapState.selection=signature;calendarTapState.last=now;
+        const clearing=calendarTapState.count>=3;
+        if(saveDayParts(key,clearing?[]:chosen)){
+          if(clearing){calendarTapState.count=0;calendarTapState.key='';}
+          drawCalendar();if($('date').value===key)restoreDayParts();
+          notify(clearing?'この日の色を全部消したよ':chosen.length+'色で更新したよ');
+        }
+      });
       box.appendChild(el);
     }
   }
