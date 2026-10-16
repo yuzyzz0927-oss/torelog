@@ -37,11 +37,11 @@
   <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">🏋️</div><div><h1>ゆずる式トレログ</h1><div class="subtitle">1セットずつ、進化を記録。</div></div></div><span class="version">Ver.0.2</span></header>
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
-      <h3>今日のトレーニング</h3><p class="hint">種目を選んで、セットごとに重量・回数を入力しよう。</p>
       <form id="workoutForm">
         <div class="fields">
+          <div class="field wide"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
           <div class="field wide"><select id="exercise" aria-label="種目名" required><option value="" selected disabled>種目名を選択</option><option value="ベンチプレス">ベンチプレス</option><option value="スクワット">スクワット</option><option value="デッドリフト">デッドリフト</option><option value="ショルダープレス">ショルダープレス</option><option value="ラットプルダウン">ラットプルダウン</option><option value="ダンベルカール">ダンベルカール</option><option value="レッグプレス">レッグプレス</option><option value="懸垂">懸垂</option><option value="腕立て伏せ">腕立て伏せ</option><option value="__custom__">その他（自分で入力）</option></select><input id="customExercise" type="text" maxlength="48" placeholder="種目名を入力" aria-label="自由入力の種目名" autocomplete="off" hidden></div>
-          <div class="field wide"><label for="date">トレーニング日</label><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
+          
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
         <div id="setList" class="set-list" aria-live="polite"></div>
