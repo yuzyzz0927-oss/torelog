@@ -117,11 +117,56 @@
 .pr-rm{border-color:#eeff0099;background:#242c19}
 .pr-rm small{color:#d6ff7c}
 @media(max-width:600px){.logo{width:60px;height:60px;font-size:42px;margin-right:-9px}.brand-text{padding:8px 9px 8px 12px}.brand-text h1{font-size:clamp(17px,5.2vw,25px)}.version{font-size:9px;padding:6px}.date-line .date-picker #dateDisplay{font-size:clamp(21px,6.0vw,29px)}}
+
+/* YUZURU performance editorial redesign — only presentation changes */
+:root{--bg:#090a0b;--panel:#151719;--panel2:#1d2023;--line:#34383c;--fg:#f5f5f3;--muted:#9b9ea1;--cyan:#a5ff27;--pink:#ff1493;--orange:#e8eeea;--lime:#caff37;--purple:#c3c7cb;--shadow:none;color-scheme:dark}
+body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;letter-spacing:-.012em}
+.page{max-width:940px;padding-top:22px}
+.brandbar{margin-bottom:29px;padding:7px 0 23px;border-bottom:1px solid #484b4d;align-items:flex-start}
+.brand{gap:13px}.brand-copy{min-width:0}.brand-kicker{font-size:10px;font-weight:850;letter-spacing:.19em;color:#caff37;margin-bottom:3px}
+.logo{flex:none;width:52px;height:55px;margin:0;border:2px solid #f5f5f3;border-radius:3px;background:transparent;box-shadow:none;color:white;transform:none;display:flex;align-items:center;justify-content:center;font-family:Impact,"Arial Black",sans-serif;font-style:italic;font-size:43px;letter-spacing:-.1em}
+.logo-slash{font-size:31px;color:#caff37;transform:translate(-2px,7px) skew(-12deg)}
+.brand h1{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(29px,7.8vw,58px);font-weight:900;line-height:.98;white-space:nowrap;letter-spacing:-.045em;color:#fff}
+.brand-accent{color:#caff37}.subtitle{color:#b9bab9;font-size:11px;letter-spacing:.04em;margin-top:7px;font-weight:700}.subtitle-separator{color:#caff37;padding:0 5px}.version{border:1px solid #565b5b;border-radius:2px;background:transparent;color:#d1d3d2;font-family:monospace;font-size:11px;letter-spacing:.05em}
+.card,.stat,.tabs{background:#161819!important;box-shadow:none;border-color:#34383a;border-radius:5px}
+.card{padding:22px}.card h3{font-size:22px;font-weight:900;letter-spacing:-.035em;text-transform:uppercase}
+.hero{background:#202522!important;border:1px solid #353d36;border-radius:4px;box-shadow:none}
+.hero h2{font-size:clamp(25px,6.3vw,37px);font-weight:950;line-height:1.15}.hero .eyebrow{color:#caff37!important}.hero .emoji{filter:grayscale(1)}
+.stat{border-radius:3px}.stat:before{height:2px}.stat:nth-child(1):before,.stat:nth-child(2):before,.stat:nth-child(3):before{background:#caff37}
+.stat strong{font-family:Impact,"Arial Black",sans-serif;font-size:29px}
+.tabs{gap:0;padding:4px}.tab{border-radius:2px;letter-spacing:.03em}.tab.active{background:#d9ff43;color:#111!important}
+.field input,.field textarea,.field select,.set-field input,.filter input,.duration-field input,.extra-controls input,.extra-controls select{background:#0e1011;color:#f5f5f3;border:1px solid #505558;border-radius:3px}
+.date-line{grid-template-columns:minmax(0,1fr)!important;gap:3px;padding:10px 0 17px;border-bottom:1px solid #3c4142}
+.date-line .date-picker{background:transparent;border:0;border-radius:0;height:55px;overflow:hidden;max-width:100%}
+.date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:clamp(23px,7.2vw,47px)!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:100%;overflow:hidden;white-space:nowrap;color:#fff}
+.date-suffix{font-size:11px;letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:normal}
+.date-suffix .training-word{font-size:17px;font-weight:900;letter-spacing:.015em;color:white;margin-left:5px}
+.part-heading,.field label{letter-spacing:.035em}
+.part-button{border-radius:3px;background:#252729;border:1px solid #4a4f52;font-weight:950}
+.part-button[aria-pressed="true"]{box-shadow:none;border-color:white}
+.calendar-parts .part-button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #fff}
+.set-row,.set-row:nth-child(4n+2),.set-row:nth-child(4n+3),.set-row:nth-child(4n+4){background:#1e2123;border-color:#414649;border-radius:3px}
+.set-number,.sets-count{color:#d9ff43}.set-number .dot{background:#d9ff43}
+.add-set{background:#212522;border:1px dashed #849b63;border-radius:3px;color:#e9f3dc}.add-set .plus{color:#caff37}
+.preview-item,.entry,.pr-card,.pr-metric,.cal-grid span,.cal-grid button{border-radius:3px}
+.preview-item{background:#0d1011;border-color:#3f4446}.preview-item:nth-child(1),.preview-item:nth-child(2),.preview-item:nth-child(3){border-top:2px solid #caff37}
+.primary{background:#d9ff43;color:#101411;border-radius:3px;box-shadow:none;text-transform:uppercase;letter-spacing:.035em}
+.secondary{background:#e9ebe9;color:#171a1b;border-radius:3px}.ghost{background:#27292b;border-color:#484d50;border-radius:3px}
+.entry{background:#1e2123;border-color:#41474a}.entry .exercise{font-size:18px}.amount,.rmvalue{color:#d9ff43}
+.set-chip{border-radius:2px;background:#34383a}.tag{background:#d9ff43;color:#151715;border-radius:2px}
+.pr-card{background:#1e2222;box-shadow:none;border-color:#4a5050}.pr-metric{background:#101314;border-color:#4c5252}.pr-metric small,.pr-rm small{color:#d9ff43}
+.cal-grid{gap:5px}.cal-grid span,.cal-grid button{border-color:#363c3e;background:#232628;color:#fff}.cal-grid button{font-size:16px;font-weight:850}
+.cal-grid .part-day,.cal-grid .part-day .day-number{color:#000!important;text-shadow:none!important}
+.cal-grid .part-day .day-number{display:inline;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;outline:0!important}
+.cal-grid button.current{outline:2px solid #d9ff43;outline-offset:1px}
+.cal-help,.hint,.rm-hint{color:#b9bcb9}.footer{color:#898c8e}
+@media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}.date-line .date-picker #dateDisplay{font-size:clamp(23px,6.7vw,36px)!important}}
+
 </style>
 </head>
 <body>
 <main class="page">
-  <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">🏋️</div><div><h1>ゆずる式トレログ</h1><div class="subtitle">1セットずつ、進化を記録。</div></div></div><span class="version">Ver.0.3</span></header>
+  <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">Y<span class="logo-slash">/</span></div><div class="brand-copy"><div class="brand-kicker">BUILT FOR PROGRESS · EST. 2026</div><h1>YUZURU<span class="brand-accent">.</span> LOG</h1><div class="subtitle">ゆずる式トレログ <span class="subtitle-separator">/</span> OWN YOUR PROGRESS.</div></div></div><span class="version">V.03</span></header>
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
       <form id="workoutForm">
