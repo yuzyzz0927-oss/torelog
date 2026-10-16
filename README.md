@@ -1,2 +1,2 @@
-# tolog
+torelog
 トレログ
