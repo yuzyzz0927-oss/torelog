@@ -60,7 +60,7 @@
       <form id="workoutForm">
         <div class="fields">
           <div class="field wide"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div></div>
-          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" required></div>
+          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" list="exerciseSuggestions" required><datalist id="exerciseSuggestions"></datalist></div>
           
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
@@ -155,11 +155,17 @@
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
     sorted(list).forEach(x=>{const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${escape(x.date)} ・ ${totalSets(x)}セット${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom"><span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span><span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
-  function redraw(){const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+  function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const vals=week.map(day=>entries.filter(x=>x.date===day).reduce((n,x)=>n+volume(x.setsData),0));const max=Math.max(1,...vals);const chart=$('volumeChart');chart.innerHTML='';week.forEach((day,i)=>{const bar=document.createElement('div');bar.className='barcol';bar.innerHTML=`<div class="barval">${vals[i]?fmt(vals[i]):''}</div><div class="bar" style="height:${Math.max(4,vals[i]/max*145)}px" title="${escape(day)}：${fmt(vals[i])}kg"></div><div class="barlabel">${Number(day.slice(-2))}日</div>`;chart.appendChild(bar);});$('weekVolume').innerHTML=`直近7日間の総重量：<strong>${fmt(vals.reduce((a,b)=>a+b,0))} kg</strong>`;
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<div class="entry"><div class="entry-top"><div class="exercise">${escape(name)}</div><div class="amount">最高重量 ${fmt(s.weight)} kg</div></div><div class="rmvalue" style="margin-top:6px">最高推定1RM ${s.rm?fmt(s.rm)+' kg':'—'}</div></div>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
+  function refreshExerciseSuggestions(){
+    const seen=new Set();
+    const names=[...entries].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).map(x=>x.exercise.trim()).filter(name=>{const key=name.toLocaleLowerCase('ja');if(!name||seen.has(key))return false;seen.add(key);return true;});
+    const list=$('exerciseSuggestions');list.replaceChildren();
+    names.forEach(name=>{const option=document.createElement('option');option.value=name;list.appendChild(option);});
+  }
   function getExerciseName(){return $('exercise').value;}
   $('exercise').addEventListener('invalid',e=>{e.preventDefault();$('exercise').setCustomValidity('種目名を入力してください');$('exercise').reportValidity();});
   $('exercise').addEventListener('input',()=>{$('exercise').setCustomValidity('');updatePrevious();});
