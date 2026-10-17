@@ -136,11 +136,12 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .stat strong{font-family:Impact,"Arial Black",sans-serif;font-size:29px}
 .tabs{gap:0;padding:4px}.tab{border-radius:2px;letter-spacing:.03em}.tab.active{background:#d9ff43;color:#111!important}
 .field input,.field textarea,.field select,.set-field input,.filter input,.duration-field input,.extra-controls input,.extra-controls select{background:#0e1011;color:#f5f5f3;border:1px solid #505558;border-radius:3px}
-.date-line{grid-template-columns:minmax(0,1fr)!important;gap:3px;padding:10px 0 17px;border-bottom:1px solid #3c4142}
-.date-line .date-picker{background:transparent;border:0;border-radius:0;height:55px;overflow:hidden;max-width:100%}
-.date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:clamp(23px,7.2vw,47px)!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:100%;overflow:hidden;white-space:nowrap;color:#fff}
-.date-suffix{font-size:11px;letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:normal}
-.date-suffix .training-word{font-size:17px;font-weight:900;letter-spacing:.015em;color:white;margin-left:5px}
+.date-line{display:flex;container-type:inline-size;align-items:baseline;gap:4px;padding:10px 0 17px;border-bottom:1px solid #3c4142}
+.date-line .date-picker{flex:none;width:max-content;background:transparent;border:0;border-radius:0;height:auto;overflow:hidden;max-width:100%}
+.date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:clamp(14px,5.5cqi,32px)!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:100%;overflow:hidden;white-space:nowrap;color:#fff;line-height:1.5}
+.date-number{color:#caff37}
+.date-suffix{flex:none;font-size:11px;letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:nowrap}
+.date-suffix .training-word{font-size:clamp(18px,7.5cqi,25.5px);font-weight:900;letter-spacing:.015em;color:white;margin-left:3px}
 .part-heading,.field label{letter-spacing:.035em}
 .part-button{border-radius:3px;background:#252729;border:1px solid #4a4f52;font-weight:950}
 .part-button[aria-pressed="true"]{box-shadow:none;border-color:white}
@@ -160,11 +161,18 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .cal-grid .part-day .day-number{display:inline;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;outline:0!important}
 .cal-grid button.current{outline:2px solid #d9ff43;outline-offset:1px}
 .cal-help,.hint,.rm-hint{color:#b9bcb9}.footer{color:#898c8e}
-@media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}.date-line .date-picker #dateDisplay{font-size:clamp(23px,6.7vw,36px)!important}}
+@media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}}
 
 .memo-quick{margin:2px 0 8px!important}.memo-quick textarea{min-height:66px!important}.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}.preview{margin-top:20px!important}
-.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:17px;padding-top:15px;border-top:1px solid #434849}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:block;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(22px,7vw,39px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-summary-item strong small{font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
+.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:17px;padding-top:15px;border-top:1px solid #434849}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-number{flex:none}.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
 .volume-comparison{margin-top:9px;font-size:12px;line-height:1.5;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}
+/* Text-based weight input keeps Japanese IME input intact, with independent 2.5kg arrows. */
+.weight-field{display:flex;align-items:center;gap:6px;min-width:0}
+.weight-control{position:relative;display:inline-flex;flex:0 1 76px;width:76px;min-width:0}
+.weight-control .set-weight{width:100%;flex:1;padding-right:18px}
+.weight-arrows{position:absolute;right:1px;top:1px;bottom:1px;width:17px;display:flex;flex-direction:column}
+.weight-arrows button{flex:1;min-height:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font-size:11px;line-height:1}
+@media(max-width:380px){.weight-field{gap:4px}.weight-control{width:61px;flex-basis:61px}.weight-control .set-weight{width:100%;padding-right:16px}}
 </style>
 </head>
 <body>
@@ -182,7 +190,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
         <div id="setList" class="set-list" aria-live="polite"></div>
-        <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button><div class="field memo-quick"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div><div class="notice" id="previous" role="status"></div><input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary save-exercise">この種目終了！保存する！</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
+        <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button><div class="field memo-quick"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div><div class="notice" id="previous" role="status"></div><input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary save-exercise">この種目を終了し保存する！</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
         
         <div class="preview" aria-live="polite">
           <div class="preview-item"><div class="label">セット数</div><strong id="previewSets">0</strong><small>セット</small></div>
@@ -245,7 +253,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     migrated=newData===null&&localStorage.getItem(OLD_KEY)!==null;
   }catch(e){storageWorks=false;entries=[];}
   $('date').value=today;
-  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').textContent=`${m[1]}年${Number(m[2])}月${Number(m[3])}日`;}
+  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').innerHTML=`<span class="date-number">${m[1]}</span>年<span class="date-number">${Number(m[2])}</span>月<span class="date-number">${Number(m[3])}</span>日`;}
   $('date').addEventListener('change',updateDateDisplay);
   $('date').addEventListener('input',updateDateDisplay);
   updateDateDisplay();
@@ -254,20 +262,43 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   if(migrated&&entries.length>0)save();
   let setId=0;
   const setList=$('setList');
+  // Normalize only after IME composition has finished; keep the user's caret in place.
+  const normalizeWeight=value=>value.replace(/[０-９．＋－]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xfee0));
+  function readWeight(value){const text=normalizeWeight(value).trim();return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(text)?Number(text):NaN;}
+  function syncWeight(input){
+    if(input.dataset.composing)return;
+    const start=input.selectionStart,end=input.selectionEnd,value=normalizeWeight(input.value);
+    if(value!==input.value){input.value=value;if(start!==null)input.setSelectionRange(start,end);}
+    const n=readWeight(value),valid=Number.isFinite(n)&&n>=0&&n<=1000;
+    input.setCustomValidity(value!==''&&!valid?'重量は0〜1000kgの数字で入力してね':'');
+    if(valid)input.setAttribute('aria-valuenow',String(n));else input.removeAttribute('aria-valuenow');
+  }
+  function stepWeight(input,direction){
+    if(input.dataset.composing)return;
+    const current=readWeight(input.value);
+    if(input.value.trim()!==''&&!Number.isFinite(current))return;
+    input.value=String(Math.max(0,Math.min(1000,Number(((Number.isFinite(current)?current:0)+direction*2.5).toFixed(10)))));
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
   function addSetRow(weight='',reps=''){
     if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
     const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
-    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><label>重量 (kg)<input class="set-weight" type="number" min="0" max="1000" step="0.5" inputmode="decimal" placeholder="例：60" required></label></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><div class="weight-field"><label for="weight-${setId}">重量 (kg)</label><span class="weight-control"><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="例：60" required><span class="weight-arrows"><button type="button" data-weight-step="1" aria-label="重量を2.5kg増やす">▴</button><button type="button" data-weight-step="-1" aria-label="重量を2.5kg減らす">▾</button></span></span></div></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
     setList.appendChild(row);
-    row.querySelector('.set-weight').value=weight;
+    row.querySelector('.set-weight').value=weight;syncWeight(row.querySelector('.set-weight'));
     row.querySelector('.set-reps').value=reps;
     renumberSets();refreshPreview();
   }
   function renumberSets(){const count=setList.children.length;Array.from(setList.children).forEach((r,i)=>{r.querySelector('.number-label').textContent=`${i+1}セット目`;r.querySelector('.remove-set').disabled=count===1;r.querySelector('.remove-set').setAttribute('aria-label',`${i+1}セット目を削除`);});$('setCount').textContent=`${count} セット`;$('addSet').disabled=count>=MAX_SETS;}
-  function setValues(row){const w=row.querySelector('.set-weight').value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:Number(w),reps:Number(r)};return validSet(obj)?obj:null;}
+  function setValues(row){const weightInput=row.querySelector('.set-weight');if(weightInput.dataset.composing)return null;const w=weightInput.value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:readWeight(w),reps:Number(r)};return validSet(obj)?obj:null;}
   function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});$('previewSets').textContent=fmt(count);$('previewVolume').textContent=fmt(sum);$('preview1rm').textContent=rms.length?fmt(Math.max(...rms)):'—';}
   $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();field.select();});
-  setList.addEventListener('input',refreshPreview);
+  setList.addEventListener('compositionstart',e=>{if(e.target.matches('.set-weight'))e.target.dataset.composing='true'});
+  setList.addEventListener('compositionend',e=>{if(e.target.matches('.set-weight')){delete e.target.dataset.composing;syncWeight(e.target);refreshPreview();}});
+  setList.addEventListener('input',e=>{if(e.isComposing||e.target.dataset.composing)return;if(e.target.matches('.set-weight'))syncWeight(e.target);refreshPreview();});
+  setList.addEventListener('change',e=>{if(e.target.matches('.set-weight')){syncWeight(e.target);refreshPreview();}});
+  setList.addEventListener('keydown',e=>{if(!e.target.matches('.set-weight')||e.isComposing||e.target.dataset.composing||e.keyCode===229)return;if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();stepWeight(e.target,e.key==='ArrowUp'?1:-1);}});
+  setList.addEventListener('click',e=>{const button=e.target.closest('[data-weight-step]');if(button)stepWeight(button.closest('.weight-control').querySelector('.set-weight'),Number(button.dataset.weightStep));});
   setList.addEventListener('click',e=>{const btn=e.target.closest('.remove-set');if(!btn||setList.children.length<=1)return;btn.closest('.set-row').remove();renumberSets();refreshPreview();});
   addSetRow();
   const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||Number(b.createdAt||0)-Number(a.createdAt||0));
@@ -280,31 +311,64 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function updateVolumeComparison(kg){
     const target=$('monthVolumeComparison');
     if(!(kg>0)){target.textContent='今月の総重量が、何に化けるかお楽しみ。';return;}
+    // Representative comparison masses in kg; people use published profile weights, not current weights.
     const oddities=[
-      {name:'学校の黒板消し',kg:0.11,unit:'個',emoji:'🧽'},
-      {name:'コンビニおにぎり',kg:0.11,unit:'個',emoji:'🍙'},
-      {name:'カップ焼きそば',kg:0.17,unit:'個',emoji:'🍜'},
-      {name:'片方だけのビーチサンダル',kg:0.12,unit:'足',emoji:'🩴'},
-      {name:'トイレットペーパー1ロール',kg:0.2,unit:'個',emoji:'🧻'},
-      {name:'一般的なボウリング球',kg:6,unit:'個',emoji:'🎳'},
-      {name:'大人用の着ぐるみ',kg:8,unit:'着',emoji:'🧸'},
-      {name:'カラオケ店のミラーボール',kg:3,unit:'個',emoji:'🪩'},
-      {name:'大きめのスイカ',kg:7,unit:'玉',emoji:'🍉'},
-      {name:'家庭用冷蔵庫',kg:75,unit:'台',emoji:'🧊'},
-      {name:'自動販売機',kg:300,unit:'台',emoji:'🥤'},
-      {name:'昔の電話ボックス',kg:250,unit:'基',emoji:'☎️'},
-      {name:'グランドピアノ',kg:350,unit:'台',emoji:'🎹'},
-      {name:'等身大の恐竜模型',kg:100,unit:'体',emoji:'🦖'},
-      {name:'駅の自動改札機',kg:180,unit:'台',emoji:'🚉'},
-      {name:'業務用たこ焼き器',kg:20,unit:'台',emoji:'🐙'}
+      // African elephant, representative of 4–7t: https://www.tobuzoo.com/zoo/list/2470.html
+      {name:'象',kg:5000,unit:'頭',emoji:'🐘'},
+      // Adult male example: https://zoo.city.kyoto.lg.jp/zoo/enjoy/blog/breeder-blog/20201012-42241.html
+      {name:'ゴリラ',kg:180,unit:'頭',emoji:'🦍'},
+      // NHM estimate: https://www.nhm.ac.uk/discover/dino-directory/tyrannosaurus.html
+      {name:'ティラノサウルス',kg:7000,unit:'頭',emoji:'🦖'},
+      // Yamaha C3X: https://jp.yamaha.com/musical-instruments/pianos/explore/size-comparison/
+      {name:'グランドピアノ',kg:320,unit:'台',emoji:'🎹'},
+      // April 2026 gasoline Z 2WD: https://toyota.jp/pages/contents/request/webcatalog/alphard/alphard_main_202604.pdf
+      {name:'アルファード',kg:2060,unit:'台',emoji:'🚐'},
+      // Panasonic NR-E457PX, 450L: https://panasonic.jp/reizo/products/NR-E457PX/spec.html
+      {name:'冷蔵庫',kg:94,unit:'台',emoji:'🧊'},
+      // JSA historical yokozuna profile: https://www.sumo.or.jp/Yokozuna/profile/65/
+      {name:'貴乃花',kg:150,unit:'人',emoji:'🏆'},
+      // JSA historical yokozuna profile: https://www.sumo.or.jp/Yokozuna/profile/64/
+      {name:'曙',kg:233,unit:'人',emoji:'🏆'},
+      // RIZIN profile: https://jp.rizinff.com/_tags/ボブ・サップ
+      {name:'ボブ・サップ',kg:159,unit:'人',emoji:'💪'},
+      // Original/Showa, 20,000t: https://godzilla.com/blogs/monsterpedia/godzilla-1954-1976
+      {name:'ゴジラ',kg:20000000,unit:'体',emoji:'🦖'},
+      // Heisei, 120t: https://cinemakadokawa.jp/gamera/character/
+      {name:'ガメラ',kg:120000,unit:'体',emoji:'🐢'},
+      // Ueno Zoo male estimate: https://www.tokyo-zoo.net/ueno/encyclopedia/giraffe/index.html
+      {name:'キリン',kg:1200,unit:'頭',emoji:'🦒'},
+      // Average statue, researcher explanation: https://www.cnn.co.jp/fringe/35240969.html
+      {name:'モアイ像',kg:12500,unit:'体',emoji:'🗿'},
+      // Approx. Earth mass: https://science.nasa.gov/moon/by-the-numbers/
+      {name:'地球',kg:5.97e24,unit:'個',emoji:'🌏'},
+      // Great Pyramid of Khufu, approx. 6 million t: https://www.nms.ac.uk/discover-catalogue/casing-stone-from-the-great-pyramid-of-giza
+      {name:'クフ王のピラミッド',kg:6e9,unit:'基',emoji:'🔺'},
+      // Approx. 109,000t: https://www.sanko-e.co.jp/read/read_memory_national-diet_01.pdf
+      {name:'国会議事堂',kg:109000000,unit:'棟',emoji:'🏛️'}
     ];
     const dayNumber=Math.floor(Date.now()/86400000);
     const item=oddities[(dayNumber+new Date().getTimezoneOffset()*-1/1440 | 0) % oddities.length];
     const count=kg/item.kg;
-    const amount=(count>=100?Math.round(count):Number(count.toFixed(1))).toLocaleString('ja-JP');
+    // Use two significant digits for small ratios, so positive totals never round to zero.
+    const exponentDigits={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+    const [mantissa,exponent]=count.toExponential(1).split('e');
+    const amount=count<0.0001?Number(mantissa)+'×10'+String(Number(exponent)).replace(/[-0-9]/g,c=>exponentDigits[c]):count<0.1?Number(count.toPrecision(2)).toLocaleString('ja-JP',{maximumSignificantDigits:2}):(count>=100?Math.round(count):Number(count.toFixed(1))).toLocaleString('ja-JP');
     target.textContent=item.emoji+' 今月は'+item.name+'約'+amount+item.unit+'分を持ち上げた計算。何を鍛えてるんだ。';
   }
-  function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const monthPrefix=today.slice(0,7);$('todayVolumeTotal').innerHTML=fmt(t.reduce((sum,x)=>sum+volume(x.setsData),0))+' <small>kg</small>';$('monthVolumeTotal').innerHTML=fmt(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0))+' <small>kg</small>';updateVolumeComparison(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0));$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+  function fitVolumeTotals(){
+    for(const total of document.querySelectorAll('.volume-summary-item strong')){
+      const number=total.querySelector('.volume-number');if(!number)continue;
+      number.style.fontSize='';
+      const available=total.clientWidth-total.querySelector('small').getBoundingClientRect().width-4;
+      if(number.getBoundingClientRect().width>available){
+        const size=parseFloat(getComputedStyle(number).fontSize);
+        number.style.fontSize=Math.max(1,Math.floor(size*available/number.getBoundingClientRect().width*10)/10)+'px';
+      }
+    }
+  }
+  const volumeResizeObserver=new ResizeObserver(fitVolumeTotals);
+  document.querySelectorAll('.volume-summary-item').forEach(item=>volumeResizeObserver.observe(item));
+  function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const monthPrefix=today.slice(0,7);$('todayVolumeTotal').innerHTML='<span class="volume-number">'+fmt(t.reduce((sum,x)=>sum+volume(x.setsData),0))+'</span> <small>kg</small>';$('monthVolumeTotal').innerHTML='<span class="volume-number">'+fmt(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0))+'</span> <small>kg</small>';fitVolumeTotals();updateVolumeComparison(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0));$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
@@ -336,14 +400,14 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     const x={id:editId||Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:prior?.createdAt||Date.now(),date,exercise,setsData,memo,durationMinutes,bodyParts:getSelectedParts(),bodyPart:getSelectedParts()[0]||'',completed:setRows.map(z=>z.querySelector('.donebox').checked),sessionId:prior?.sessionId||activeSession||'session-'+Date.now()};
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
-    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目終了！保存する！';$('cancelEditing').hidden=true;
+    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
     // A workout is saved separately; the selected muscle groups remain on the current date.
     const partsAtSave=getSelectedParts();
     if(!Object.prototype.hasOwnProperty.call(dayParts,date))saveDayParts(date,partsAtSave);
     setSelectedParts(partsForDay($('date').value));
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
-  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目終了！保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
+  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
   $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
