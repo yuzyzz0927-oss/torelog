@@ -77,11 +77,11 @@
 .progress-bars{display:flex;align-items:flex-end;height:140px;gap:5px;padding-top:10px;overflow:auto}
 .progress-bars div{min-width:23px;background:linear-gradient(#ff69bb,#7d65f6);border-radius:6px 6px 0 0}
 .part-heading{color:#eee3fb;font-size:13px;font-weight:800;margin-bottom:6px}.part-buttons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.part-button{min-width:0;border:1px solid #655481;border-radius:10px;background:#251e46;color:#eee7ff;min-height:48px;padding:5px 0;font-size:17px;font-weight:900}.part-button[aria-pressed="true"]{border-color:#fff;color:#fff;box-shadow:0 0 0 2px #ffffff48}
-.part-button[data-part="胸"][aria-pressed="true"]{background:#ff1493}
-.part-button[data-part="背中"][aria-pressed="true"]{background:#39cfff}
-.part-button[data-part="足"][aria-pressed="true"]{background:#eeff00;color:#1f1934}
-.part-button[data-part="肩"][aria-pressed="true"]{background:#a5ff27}
-.part-button[data-part="お腹"][aria-pressed="true"]{background:#b700ff}
+.part-button[data-part="胸"][aria-pressed="true"]{background:var(--part-chest)}
+.part-button[data-part="背中"][aria-pressed="true"]{background:var(--part-back)}
+.part-button[data-part="足"][aria-pressed="true"]{background:var(--part-leg);color:#1f1934}
+.part-button[data-part="肩"][aria-pressed="true"]{background:var(--part-shoulder)}
+.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}
 .cal-grid .part-day{font-weight:900;text-shadow:none;color:#fff}
 .cal-grid .part-day .day-number{background:none;border-radius:0;padding:0;display:inline-block;color:#fff;text-shadow:none}
 .cal-key{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;font-size:12px;color:#ddd}
@@ -96,11 +96,11 @@
 .date-line .date-picker #dateDisplay{font-size:clamp(23px,6.3vw,37px);font-weight:1000;letter-spacing:-.05em;padding:0 4px;white-space:nowrap;overflow:visible}
 .date-suffix{font-size:clamp(12px,3.8vw,19px);font-weight:500;letter-spacing:-.07em}
 .date-suffix .training-word{font-size:clamp(19px,5.5vw,31px);font-weight:1000;letter-spacing:-.07em}
-.part-button[data-part="胸"][aria-pressed="true"]{background:#ff1493}
-.part-button[data-part="背中"][aria-pressed="true"]{background:#39cfff;color:#101329}
-.part-button[data-part="足"][aria-pressed="true"]{background:#eeff00;color:#182013}
-.part-button[data-part="肩"][aria-pressed="true"]{background:#a5ff27;color:#182013}
-.part-button[data-part="お腹"][aria-pressed="true"]{background:#b700ff}
+.part-button[data-part="胸"][aria-pressed="true"]{background:var(--part-chest)}
+.part-button[data-part="背中"][aria-pressed="true"]{background:var(--part-back);color:#101329}
+.part-button[data-part="足"][aria-pressed="true"]{background:var(--part-leg);color:#182013}
+.part-button[data-part="肩"][aria-pressed="true"]{background:var(--part-shoulder);color:#182013}
+.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}
 .cal-help{color:#d5caef;font-size:12px;margin:12px 0 8px}
 .calendar-parts .part-button{min-height:55px;border-width:2px}
 .calendar-parts .part-button[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 18px currentColor}
@@ -119,7 +119,7 @@
 @media(max-width:600px){.logo{width:60px;height:60px;font-size:42px;margin-right:-9px}.brand-text{padding:8px 9px 8px 12px}.brand-text h1{font-size:clamp(17px,5.2vw,25px)}.version{font-size:9px;padding:6px}.date-line .date-picker #dateDisplay{font-size:clamp(21px,6.0vw,29px)}}
 
 /* YUZURU performance editorial redesign — only presentation changes */
-:root{--bg:#090a0b;--panel:#151719;--panel2:#1d2023;--line:#34383c;--fg:#f5f5f3;--muted:#9b9ea1;--cyan:#a5ff27;--pink:#ff1493;--orange:#e8eeea;--lime:#caff37;--purple:#c3c7cb;--shadow:none;color-scheme:dark}
+:root{--part-chest:#ff1493;--part-back:#39cfff;--part-leg:#eeff00;--part-shoulder:#a5ff27;--part-abdomen:#b700ff;--bg:#090a0b;--panel:#151719;--panel2:#1d2023;--line:#34383c;--fg:#f5f5f3;--muted:#9b9ea1;--cyan:#a5ff27;--pink:#ff1493;--orange:#e8eeea;--lime:#caff37;--purple:#c3c7cb;--shadow:none;color-scheme:dark}
 body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;letter-spacing:-.012em}
 .page{max-width:940px;padding-top:22px}
 .brandbar{margin-bottom:29px;padding:7px 0 23px;border-bottom:1px solid #484b4d;align-items:flex-start}
@@ -136,12 +136,14 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .stat strong{font-family:Impact,"Arial Black",sans-serif;font-size:29px}
 .tabs{gap:0;padding:4px}.tab{border-radius:2px;letter-spacing:.03em}.tab.active{background:#d9ff43;color:#111!important}
 .field input,.field textarea,.field select,.set-field input,.filter input,.duration-field input,.extra-controls input,.extra-controls select{background:#0e1011;color:#f5f5f3;border:1px solid #505558;border-radius:3px}
-.date-line{display:flex;container-type:inline-size;align-items:baseline;gap:4px;padding:10px 0 17px;border-bottom:1px solid #3c4142}
-.date-line .date-picker{flex:none;width:max-content;background:transparent;border:0;border-radius:0;height:auto;overflow:hidden;max-width:100%}
-.date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:clamp(14px,5.5cqi,32px)!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:100%;overflow:hidden;white-space:nowrap;color:#fff;line-height:1.5}
-.date-number{color:#caff37}
-.date-suffix{flex:none;font-size:11px;letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:nowrap}
-.date-suffix .training-word{font-size:clamp(18px,7.5cqi,25.5px);font-weight:900;letter-spacing:.015em;color:white;margin-left:3px}
+.date-line{display:block;container-type:inline-size;padding:10px 0 17px;border-bottom:1px solid #3c4142}
+.date-heading{--date-size:clamp(14px,5.5cqi,32px);--heading-scale:1;display:inline-flex;align-items:baseline;gap:calc(4px * var(--heading-scale));white-space:nowrap}
+.date-line .date-picker{flex:none;width:max-content;background:transparent;border:0;border-radius:0;height:auto;overflow:visible;max-width:none}
+.date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:calc(var(--date-size) * var(--heading-scale))!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:none;overflow:visible;white-space:nowrap;color:#fff;line-height:1.5}
+.date-number{color:#caff37;font-size:1.5em}
+.date-suffix{flex:none;font-size:calc(22px * var(--heading-scale));letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:nowrap}
+.date-suffix .training-word{font-size:calc(var(--date-size) * 1.5 * var(--heading-scale));font-weight:1000;letter-spacing:0;color:white;margin-left:calc(3px * var(--heading-scale))}
+.training-chest{color:var(--part-chest)}.training-back{color:var(--part-back)}.training-leg{color:var(--part-leg)}.training-shoulder{color:var(--part-shoulder)}.training-abdomen{color:var(--part-abdomen)}
 .part-heading,.field label{letter-spacing:.035em}
 .part-button{border-radius:3px;background:#252729;border:1px solid #4a4f52;font-weight:950}
 .part-button[aria-pressed="true"]{box-shadow:none;border-color:white}
@@ -164,8 +166,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 @media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}}
 
 .memo-quick{margin:2px 0 8px!important}.memo-quick textarea{min-height:66px!important}.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}.preview{margin-top:20px!important}
-.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:17px;padding-top:15px;border-top:1px solid #434849}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-number{flex:none}.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
-.volume-comparison{margin-top:9px;font-size:12px;line-height:1.5;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}
+.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:0;padding-top:0}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-number{flex:none}.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
+.volume-summary-note{font-size:11px;color:#b9bcb9}.volume-comparison{margin-top:9px;font-size:12px;line-height:1.5;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}
 /* Text-based weight input keeps Japanese IME input intact, with independent 2.5kg arrows. */
 .weight-field{display:flex;align-items:center;gap:6px;min-width:0}
 .weight-control{position:relative;display:inline-flex;flex:0 1 76px;width:76px;min-width:0}
@@ -183,7 +185,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
       <form id="workoutForm">
 
         <div class="fields">
-          <div class="field wide"><div class="date-line"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div><span class="date-suffix">の<span class="training-word">トレーニング</span></span></div></div>
+          <div class="field wide"><div class="date-line"><div class="date-heading"><div class="date-picker"><span id="dateDisplay" aria-hidden="true"></span><input id="date" type="date" required aria-label="トレーニング日"></div><span class="date-suffix">の<span class="training-word"><span class="training-chest">トレ</span><span class="training-back">ー</span><span class="training-leg">ニ</span><span class="training-shoulder">ン</span><span class="training-abdomen">グ</span></span></span></div></div></div>
           <div class="field wide"><span class="part-heading">部位（複数選択OK）</span><div id="partButtons" class="part-buttons" role="group" aria-label="鍛えた部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div></div>
           <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
           
@@ -202,8 +204,16 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
         
       </form>
     </div>
-    <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div><div class="volume-summary"><div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong></div><div class="volume-summary-item"><div class="volume-summary-label">THIS MONTH / 月間総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong><div id="monthVolumeComparison" class="volume-comparison" aria-live="polite">記録すると身近なものに例えるよ！</div></div></div></div>
-  <div class="hero"><div><div class="eyebrow" style="color:#d0fff6">MAKE EVERY SET COUNT</div><h2>昨日の自分を、<br>超えていこう。</h2><p>重量も回数も、セットごとに自由自在！</p></div><div class="emoji" aria-hidden="true">💪</div></div>
+    <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
+    <div class="card">
+      <div class="volume-summary">
+        <div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">THIS MONTH / 月間総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">THIS YEAR / 年間総重量</div><strong id="yearVolumeTotal">0 <small>kg</small></strong></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">LIFETIME / 累計総重量</div><strong id="lifetimeVolumeTotal">0 <small>kg</small></strong><div class="volume-summary-note">記録開始から</div></div>
+      </div>
+      <div id="monthVolumeComparison" class="volume-comparison" aria-live="polite">記録すると身近なものに例えるよ！</div>
+    </div>
   </section>
   <div class="stats"><div class="stat"><div class="label">今日のセット</div><strong id="todaySets">0</strong><small>セット</small></div><div class="stat"><div class="label">直近7日の記録</div><strong id="weekWorkouts">0</strong><small>日</small></div><div class="stat"><div class="label">累計記録</div><strong id="totalEntries">0</strong><small>件</small></div></div>
   <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button">＋ 記録する</button><button class="tab" data-tab="history" type="button">履歴</button><button class="tab" data-tab="analysis" type="button">分析</button></nav>
@@ -230,7 +240,13 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   const fmt=n=>Number(n||0).toLocaleString('ja-JP',{maximumFractionDigits:1});
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  const today=iso(new Date());
+  // Calendar periods use Japan time even when the device is in another timezone.
+  function japanDate(now=new Date()){
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
+    const value=type=>parts.find(part=>part.type===type).value;
+    return `${value('year')}-${value('month')}-${value('day')}`;
+  }
+  let today=japanDate();
   const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const safeNum=v=>typeof v==='number'&&Number.isFinite(v);
   const validSet=s=>s&&safeNum(s.weight)&&s.weight>=0&&s.weight<=1000&&Number.isInteger(s.reps)&&s.reps>=1&&s.reps<=1000;
@@ -253,7 +269,17 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     migrated=newData===null&&localStorage.getItem(OLD_KEY)!==null;
   }catch(e){storageWorks=false;entries=[];}
   $('date').value=today;
-  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').innerHTML=`<span class="date-number">${m[1]}</span>年<span class="date-number">${Number(m[2])}</span>月<span class="date-number">${Number(m[3])}</span>日`;}
+  function fitDateHeading(){
+    const line=document.querySelector('.date-line'),heading=line.querySelector('.date-heading');
+    if(!line.clientWidth)return;
+    heading.style.setProperty('--heading-scale','1');
+    const naturalWidth=heading.getBoundingClientRect().width;
+    if(naturalWidth>line.clientWidth)heading.style.setProperty('--heading-scale',String((line.clientWidth-1)/naturalWidth));
+  }
+  const dateHeadingResizeObserver=new ResizeObserver(fitDateHeading);
+  dateHeadingResizeObserver.observe(document.querySelector('.date-line'));
+  document.fonts.ready.then(fitDateHeading);
+  function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';fitDateHeading();return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').innerHTML=`<span class="date-number">${m[1]}</span>年<span class="date-number">${Number(m[2])}</span>月<span class="date-number">${Number(m[3])}</span>日`;fitDateHeading();}
   $('date').addEventListener('change',updateDateDisplay);
   $('date').addEventListener('input',updateDateDisplay);
   updateDateDisplay();
@@ -302,7 +328,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   setList.addEventListener('click',e=>{const btn=e.target.closest('.remove-set');if(!btn||setList.children.length<=1)return;btn.closest('.set-row').remove();renumberSets();refreshPreview();});
   addSetRow();
   const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||Number(b.createdAt||0)-Number(a.createdAt||0));
-  function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);a.push(iso(d));}return a;}
+  function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);a.push(d.toISOString().slice(0,10));}return a;}
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
     let seenSession='';
     sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${(x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):''}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
@@ -346,8 +372,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
       // Approx. 109,000t: https://www.sanko-e.co.jp/read/read_memory_national-diet_01.pdf
       {name:'国会議事堂',kg:109000000,unit:'棟',emoji:'🏛️'}
     ];
-    const dayNumber=Math.floor(Date.now()/86400000);
-    const item=oddities[(dayNumber+new Date().getTimezoneOffset()*-1/1440 | 0) % oddities.length];
+    const dayNumber=Math.floor(Date.parse(today+'T00:00:00Z')/86400000);
+    const item=oddities[dayNumber % oddities.length];
     const count=kg/item.kg;
     // Use two significant digits for small ratios, so positive totals never round to zero.
     const exponentDigits={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
@@ -368,7 +394,17 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   }
   const volumeResizeObserver=new ResizeObserver(fitVolumeTotals);
   document.querySelectorAll('.volume-summary-item').forEach(item=>volumeResizeObserver.observe(item));
-  function redraw(){refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const monthPrefix=today.slice(0,7);$('todayVolumeTotal').innerHTML='<span class="volume-number">'+fmt(t.reduce((sum,x)=>sum+volume(x.setsData),0))+'</span> <small>kg</small>';$('monthVolumeTotal').innerHTML='<span class="volume-number">'+fmt(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0))+'</span> <small>kg</small>';fitVolumeTotals();updateVolumeComparison(entries.filter(x=>x.date.startsWith(monthPrefix)).reduce((sum,x)=>sum+volume(x.setsData),0));$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+  function volumeTotals(records,date){
+    const totals={today:0,month:0,year:0,lifetime:0};
+    for(const record of records){
+      const kg=volume(record.setsData);totals.lifetime+=kg;
+      if(record.date===date)totals.today+=kg;
+      if(record.date.startsWith(date.slice(0,7)+'-'))totals.month+=kg;
+      if(record.date.startsWith(date.slice(0,4)+'-'))totals.year+=kg;
+    }
+    return totals;
+  }
+  function redraw(){today=japanDate();refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const totals=volumeTotals(entries,today);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals.month);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
@@ -438,7 +474,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function renderExtras(){const select=$('progressSelect'),previous=select.value,names=[...new Set(entries.map(z=>z.exercise))].sort();select.replaceChildren();names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)});if(names.includes(previous))select.value=previous;drawProgress();drawCalendar();}
   function drawProgress(){const records=sorted(entries.filter(z=>z.exercise===$('progressSelect').value)).reverse().slice(-12),area=$('progressBars');area.replaceChildren();const top=Math.max(1,...records.flatMap(z=>z.setsData.map(v=>v.weight)));records.forEach(z=>{const v=Math.max(...z.setsData.map(v=>v.weight)),bar=document.createElement('div');bar.style.height=Math.max(4,Math.round(v/top*120))+'px';bar.style.flex='1';bar.title=z.date+' '+v+'kg';area.appendChild(bar)});$('progressCaption').textContent=records.length?'最高 '+top+'kg ／ '+records.length+'記録（古い順）':'記録ができるとグラフを表示するよ';}
   $('progressSelect').addEventListener('change',drawProgress);
-  const partColors={'胸':'#ff1493','背中':'#39cfff','足':'#eeff00','肩':'#a5ff27','お腹':'#b700ff'};
+  const partStyles=getComputedStyle(document.documentElement);
+  const partColors=Object.fromEntries(Object.entries({'胸':'--part-chest','背中':'--part-back','足':'--part-leg','肩':'--part-shoulder','お腹':'--part-abdomen'}).map(([part,variable])=>[part,partStyles.getPropertyValue(variable).trim()]));
   const partOrder=['胸','背中','足','肩','お腹'];
   const calendarSelectedParts=new Set();
   const calendarTapState={key:'',count:0,last:0,selection:''};
@@ -489,6 +526,15 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   }
   $('calPrev').addEventListener('click',()=>{monthOffset--;drawCalendar()});
   $('calNext').addEventListener('click',()=>{monthOffset++;drawCalendar()});
+  // Refresh open pages at Japanese midnight, including month/year boundaries.
+  let dayRefreshTimer;
+  function scheduleDayRefresh(){
+    clearTimeout(dayRefreshTimer);
+    const nextMidnight=Date.parse(japanDate()+'T00:00:00+09:00')+86400000;
+    dayRefreshTimer=setTimeout(()=>{redraw();scheduleDayRefresh();},Math.max(50,nextMidnight-Date.now()+50));
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(today!==japanDate())redraw();scheduleDayRefresh();}});
+  scheduleDayRefresh();
   restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
 </script>
