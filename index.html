@@ -291,6 +291,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   // Normalize only after IME composition has finished; keep the user's caret in place.
   const normalizeWeight=value=>value.replace(/[０-９．＋－]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xfee0));
   function readWeight(value){const text=normalizeWeight(value).trim();return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(text)?Number(text):NaN;}
+  function readReps(value){const text=normalizeWeight(value).trim();return /^[0-9]+$/.test(text)?Number(text):NaN;}
   function syncWeight(input){
     if(input.dataset.composing)return;
     const start=input.selectionStart,end=input.selectionEnd,value=normalizeWeight(input.value);
@@ -298,6 +299,24 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     const n=readWeight(value),valid=Number.isFinite(n)&&n>=0&&n<=1000;
     input.setCustomValidity(value!==''&&!valid?'重量は0〜1000kgの数字で入力してね':'');
     if(valid)input.setAttribute('aria-valuenow',String(n));else input.removeAttribute('aria-valuenow');
+  }
+  function syncReps(input){
+    if(input.dataset.composing)return;
+    const start=input.selectionStart,end=input.selectionEnd,value=normalizeWeight(input.value);
+    if(value!==input.value){input.value=value;if(start!==null)input.setSelectionRange(start,end);}
+    const reps=readReps(value);
+    input.setCustomValidity(value!==''&&(!Number.isInteger(reps)||reps<1||reps>1000)?'回数は1〜1000の整数で入力してね':'');
+  }
+  function moveSetCaretToEnd(input){
+    if(input.dataset.composing)return;
+    const end=input.value.length;
+    input.setSelectionRange(end,end);
+  }
+  function clearSetInput(input){
+    if(input.value==='')return;
+    input.value='';
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+    moveSetCaretToEnd(input);
   }
   function stepWeight(input,direction){
     if(input.dataset.composing)return;
@@ -309,21 +328,65 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function addSetRow(weight='',reps=''){
     if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
     const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
-    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><div class="weight-field"><label for="weight-${setId}">重量 (kg)</label><span class="weight-control"><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="例：60" required><span class="weight-arrows"><button type="button" data-weight-step="1" aria-label="重量を2.5kg増やす">▴</button><button type="button" data-weight-step="-1" aria-label="重量を2.5kg減らす">▾</button></span></span></div></div><div class="set-field"><label>回数<input class="set-reps" type="number" min="1" max="1000" step="1" inputmode="numeric" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><div class="weight-field"><label for="weight-${setId}">重量 (kg)</label><span class="weight-control"><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="例：60" required><span class="weight-arrows"><button type="button" data-weight-step="1" aria-label="重量を2.5kg増やす">▴</button><button type="button" data-weight-step="-1" aria-label="重量を2.5kg減らす">▾</button></span></span></div></div><div class="set-field"><label>回数<input class="set-reps" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
     setList.appendChild(row);
     row.querySelector('.set-weight').value=weight;syncWeight(row.querySelector('.set-weight'));
-    row.querySelector('.set-reps').value=reps;
+    row.querySelector('.set-reps').value=reps;syncReps(row.querySelector('.set-reps'));
     renumberSets();refreshPreview();
   }
   function renumberSets(){const count=setList.children.length;Array.from(setList.children).forEach((r,i)=>{r.querySelector('.number-label').textContent=`${i+1}セット目`;r.querySelector('.remove-set').disabled=count===1;r.querySelector('.remove-set').setAttribute('aria-label',`${i+1}セット目を削除`);});$('setCount').textContent=`${count} セット`;$('addSet').disabled=count>=MAX_SETS;}
-  function setValues(row){const weightInput=row.querySelector('.set-weight');if(weightInput.dataset.composing)return null;const w=weightInput.value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:readWeight(w),reps:Number(r)};return validSet(obj)?obj:null;}
+  function setValues(row){const weightInput=row.querySelector('.set-weight');if(weightInput.dataset.composing)return null;const w=weightInput.value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:readWeight(w),reps:readReps(r)};return validSet(obj)?obj:null;}
   function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});$('previewSets').textContent=fmt(count);$('previewVolume').textContent=fmt(sum);$('preview1rm').textContent=rms.length?fmt(Math.max(...rms)):'—';}
-  $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();field.select();});
-  setList.addEventListener('compositionstart',e=>{if(e.target.matches('.set-weight'))e.target.dataset.composing='true'});
-  setList.addEventListener('compositionend',e=>{if(e.target.matches('.set-weight')){delete e.target.dataset.composing;syncWeight(e.target);refreshPreview();}});
-  setList.addEventListener('input',e=>{if(e.isComposing||e.target.dataset.composing)return;if(e.target.matches('.set-weight'))syncWeight(e.target);refreshPreview();});
-  setList.addEventListener('change',e=>{if(e.target.matches('.set-weight')){syncWeight(e.target);refreshPreview();}});
-  setList.addEventListener('keydown',e=>{if(!e.target.matches('.set-weight')||e.isComposing||e.target.dataset.composing||e.keyCode===229)return;if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();stepWeight(e.target,e.key==='ArrowUp'?1:-1);}});
+  $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();moveSetCaretToEnd(field);});
+  // On iPhone and desktop, tapping any set numeric field puts the caret after the units digit.
+  setList.addEventListener('focusin',e=>{
+    if(!e.target.matches('.set-weight,.set-reps'))return;
+    const input=e.target;
+    requestAnimationFrame(()=>{if(document.activeElement===input)moveSetCaretToEnd(input);});
+  });
+  setList.addEventListener('click',e=>{
+    if(!e.target.matches('.set-weight,.set-reps'))return;
+    const input=e.target;
+    requestAnimationFrame(()=>{if(document.activeElement===input)moveSetCaretToEnd(input);});
+  });
+  setList.addEventListener('compositionstart',e=>{if(e.target.matches('.set-weight,.set-reps'))e.target.dataset.composing='true'});
+  setList.addEventListener('compositionend',e=>{
+    if(!e.target.matches('.set-weight,.set-reps'))return;
+    delete e.target.dataset.composing;
+    if(e.target.matches('.set-weight'))syncWeight(e.target);
+    if(e.target.matches('.set-reps'))syncReps(e.target);
+    refreshPreview();
+  });
+  // A single Backspace/Delete clears the entire field, including the iOS software keyboard.
+  setList.addEventListener('beforeinput',e=>{
+    if(!e.target.matches('.set-weight,.set-reps')||e.isComposing||e.target.dataset.composing)return;
+    if(e.inputType==='deleteContentBackward'||e.inputType==='deleteContentForward'){
+      if(e.cancelable){e.preventDefault();clearSetInput(e.target);}
+    }
+  });
+  setList.addEventListener('input',e=>{
+    if(e.isComposing||e.target.dataset.composing)return;
+    if(e.target.matches('.set-weight,.set-reps')&&
+       (e.inputType==='deleteContentBackward'||e.inputType==='deleteContentForward')&&e.target.value!==''){
+      e.target.value=''; // Fallback for keyboards with non-cancelable beforeinput.
+    }
+    if(e.target.matches('.set-weight'))syncWeight(e.target);
+    if(e.target.matches('.set-reps'))syncReps(e.target);
+    refreshPreview();
+  });
+  setList.addEventListener('change',e=>{
+    if(e.target.matches('.set-weight')){syncWeight(e.target);refreshPreview();}
+    if(e.target.matches('.set-reps')){syncReps(e.target);refreshPreview();}
+  });
+  setList.addEventListener('keydown',e=>{
+    if(!e.target.matches('.set-weight,.set-reps')||e.isComposing||e.target.dataset.composing||e.keyCode===229)return;
+    if(e.key==='Backspace'||e.key==='Delete'){
+      e.preventDefault();clearSetInput(e.target);return;
+    }
+    if(e.target.matches('.set-weight')&&(e.key==='ArrowUp'||e.key==='ArrowDown')){
+      e.preventDefault();stepWeight(e.target,e.key==='ArrowUp'?1:-1);
+    }
+  });
   setList.addEventListener('click',e=>{const button=e.target.closest('[data-weight-step]');if(button)stepWeight(button.closest('.weight-control').querySelector('.set-weight'),Number(button.dataset.weightStep));});
   setList.addEventListener('click',e=>{const btn=e.target.closest('.remove-set');if(!btn||setList.children.length<=1)return;btn.closest('.set-row').remove();renumberSets();refreshPreview();});
   addSetRow();
