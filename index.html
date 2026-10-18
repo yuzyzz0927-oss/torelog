@@ -167,7 +167,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 
 .memo-quick{margin:2px 0 8px!important}.memo-quick textarea{min-height:66px!important}.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}.preview{margin-top:20px!important}
 .volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:0;padding-top:0}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-number{flex:none}.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
-.volume-summary-note{font-size:11px;color:#b9bcb9}.volume-comparison{margin-top:9px;font-size:12px;line-height:1.5;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}
+.volume-summary-note{font-size:11px;color:#b9bcb9}.volume-comparison{margin-top:10px;font-size:12px;line-height:1.45;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}.volume-comparison .compare-thing{display:block;color:#faffb0;font-size:12px}.volume-comparison .compare-joke{display:block;color:#cbd4c4;font-size:11px;margin-top:3px;font-weight:650}.volume-summary-item{display:flex;flex-direction:column}.volume-summary-item .volume-comparison{margin-top:auto;padding-top:12px;border-top:1px dashed #515d4c;min-height:65px}
 /* Text-based weight input keeps Japanese IME input intact, with independent 2.5kg arrows. */
 .weight-field{display:flex;align-items:center;gap:6px;min-width:0}
 .weight-control{position:relative;display:inline-flex;flex:0 1 76px;width:76px;min-width:0}
@@ -207,12 +207,11 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
     <div class="card">
       <div class="volume-summary">
-        <div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong></div>
-        <div class="volume-summary-item"><div class="volume-summary-label">THIS MONTH / 月間総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong></div>
-        <div class="volume-summary-item"><div class="volume-summary-label">THIS YEAR / 年間総重量</div><strong id="yearVolumeTotal">0 <small>kg</small></strong></div>
-        <div class="volume-summary-item"><div class="volume-summary-label">LIFETIME / 累計総重量</div><strong id="lifetimeVolumeTotal">0 <small>kg</small></strong><div class="volume-summary-note">記録開始から</div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong><div id="todayVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">THIS MONTH / 今月の総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong><div id="monthVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">THIS YEAR / 今年の総重量</div><strong id="yearVolumeTotal">0 <small>kg</small></strong><div id="yearVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label">LIFETIME / これまでの総重量</div><strong id="lifetimeVolumeTotal">0 <small>kg</small></strong><div id="lifetimeVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
       </div>
-      <div id="monthVolumeComparison" class="volume-comparison" aria-live="polite">記録すると身近なものに例えるよ！</div>
     </div>
   </section>
   <div class="stats"><div class="stat"><div class="label">今日のセット</div><strong id="todaySets">0</strong><small>セット</small></div><div class="stat"><div class="label">直近7日の記録</div><strong id="weekWorkouts">0</strong><small>日</small></div><div class="stat"><div class="label">累計記録</div><strong id="totalEntries">0</strong><small>件</small></div></div>
@@ -396,54 +395,26 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     let seenSession='';
     sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div><div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${(x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):''}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
-  // A reproducible daily absurd comparison. Approximate reference masses, not exact specifications.
-  function updateVolumeComparison(kg){
-    const target=$('monthVolumeComparison');
-    if(!(kg>0)){target.textContent='今月の総重量が、何に化けるかお楽しみ。';return;}
-    // Representative comparison masses in kg; people use published profile weights, not current weights.
-    const oddities=[
-      // African elephant, representative of 4–7t: https://www.tobuzoo.com/zoo/list/2470.html
-      {name:'象',kg:5000,unit:'頭',emoji:'🐘'},
-      // Adult male example: https://zoo.city.kyoto.lg.jp/zoo/enjoy/blog/breeder-blog/20201012-42241.html
-      {name:'ゴリラ',kg:180,unit:'頭',emoji:'🦍'},
-      // NHM estimate: https://www.nhm.ac.uk/discover/dino-directory/tyrannosaurus.html
-      {name:'ティラノサウルス',kg:7000,unit:'頭',emoji:'🦖'},
-      // Yamaha C3X: https://jp.yamaha.com/musical-instruments/pianos/explore/size-comparison/
-      {name:'グランドピアノ',kg:320,unit:'台',emoji:'🎹'},
-      // April 2026 gasoline Z 2WD: https://toyota.jp/pages/contents/request/webcatalog/alphard/alphard_main_202604.pdf
-      {name:'アルファード',kg:2060,unit:'台',emoji:'🚐'},
-      // Panasonic NR-E457PX, 450L: https://panasonic.jp/reizo/products/NR-E457PX/spec.html
-      {name:'冷蔵庫',kg:94,unit:'台',emoji:'🧊'},
-      // JSA historical yokozuna profile: https://www.sumo.or.jp/Yokozuna/profile/65/
-      {name:'貴乃花',kg:150,unit:'人',emoji:'🏆'},
-      // JSA historical yokozuna profile: https://www.sumo.or.jp/Yokozuna/profile/64/
-      {name:'曙',kg:233,unit:'人',emoji:'🏆'},
-      // RIZIN profile: https://jp.rizinff.com/_tags/ボブ・サップ
-      {name:'ボブ・サップ',kg:159,unit:'人',emoji:'💪'},
-      // Original/Showa, 20,000t: https://godzilla.com/blogs/monsterpedia/godzilla-1954-1976
-      {name:'ゴジラ',kg:20000000,unit:'体',emoji:'🦖'},
-      // Heisei, 120t: https://cinemakadokawa.jp/gamera/character/
-      {name:'ガメラ',kg:120000,unit:'体',emoji:'🐢'},
-      // Ueno Zoo male estimate: https://www.tokyo-zoo.net/ueno/encyclopedia/giraffe/index.html
-      {name:'キリン',kg:1200,unit:'頭',emoji:'🦒'},
-      // Average statue, researcher explanation: https://www.cnn.co.jp/fringe/35240969.html
-      {name:'モアイ像',kg:12500,unit:'体',emoji:'🗿'},
-      // Approx. Earth mass: https://science.nasa.gov/moon/by-the-numbers/
-      {name:'地球',kg:5.97e24,unit:'個',emoji:'🌏'},
-      // Great Pyramid of Khufu, approx. 6 million t: https://www.nms.ac.uk/discover-catalogue/casing-stone-from-the-great-pyramid-of-giza
-      {name:'クフ王のピラミッド',kg:6e9,unit:'基',emoji:'🔺'},
-      // Approx. 109,000t: https://www.sanko-e.co.jp/read/read_memory_national-diet_01.pdf
-      {name:'国会議事堂',kg:109000000,unit:'棟',emoji:'🏛️'}
-    ];
-    const dayNumber=Math.floor(Date.parse(today+'T00:00:00Z')/86400000);
-    const item=oddities[dayNumber % oddities.length];
-    const count=kg/item.kg;
-    // Use two significant digits for small ratios, so positive totals never round to zero.
-    const exponentDigits={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
-    const [mantissa,exponent]=count.toExponential(1).split('e');
-    const amount=count<0.0001?Number(mantissa)+'×10'+String(Number(exponent)).replace(/[-0-9]/g,c=>exponentDigits[c]):count<0.1?Number(count.toPrecision(2)).toLocaleString('ja-JP',{maximumSignificantDigits:2}):(count>=100?Math.round(count):Number(count.toFixed(1))).toLocaleString('ja-JP');
-    target.textContent=item.emoji+' 今月は'+item.name+'約'+amount+item.unit+'分を持ち上げた計算。何を鍛えてるんだ。';
+  // 採用済み57種類の重量比較。現実の重量は代表的な概算、架空のものは作品内の設定等に基づく目安。
+  const comparisonThings=[["ピカチュウ",6,"匹","⚡","充電器を探してる場合じゃない。トレーナーがバグってる。"],["ボウリングの球",7,"個","🎳","レーンに流したら床が先にストライク。"],["スイカ",8,"玉","🍉","夏祭りのスイカ割り、腕力だけで閉幕。"],["米袋",10,"袋","🍚","炊飯器が労働基準監督署へ駆け込んだ。"],["中型犬",15,"匹","🐕","散歩というより犬の引っ越し。"],["灯油ポリタンク",18,"本","🛢️","冬支度の規模が石油会社。"],["自転車",20,"台","🚲","駐輪場の管理人から指名手配。"],["電子レンジ",20,"台","🍱","温める前に持ち上げてどうする。"],["ビール樽",25,"樽","🍺","居酒屋の地下倉庫で伝説になれる。"],["小学生",30,"人分","🎒","運動会の組体操、発注先が間違ってる。"],["大型犬",40,"匹","🐕","ドッグランが重量挙げ会場に変わった。"],["洗濯機",45,"台","🫧","脱水より先に筋肉が遠心分離。"],["大人1人",65,"人分","🧍","満員電車の乗客をまとめて筋トレに換算。"],["冷蔵庫",94,"台","🧊","引っ越し業者から役員待遇でスカウト。"],["ドラえもん",129.3,"体","🔔","四次元ポケットから湿布を出してくれ。"],["貴乃花",150,"人分","🏆","土俵がなくても勝手に千秋楽。"],["ボブ・サップ",159,"人分","💪","筋肉が筋肉を持ち上げる無限ループ。"],["ゴリラ",180,"頭","🦍","親戚を何頭持ち上げるつもりだ。"],["曙",233,"人分","🏆","重量級すぎて行司が逃げた。"],["グランドピアノ",320,"台","🎹","ショパンも「持つんかい」って言う。"],["自動販売機",400,"台","🥤","飲み物じゃなく自販機ごとお持ち帰り。"],["シロクマ",500,"頭","🐻‍❄️","北極から「それ筋トレ？」と苦情。"],["競走馬",500,"頭","🐎","有馬記念が人力牽引レースに変更。"],["軽自動車",850,"台","🚙","駐車場でベンチプレスは禁止です。"],["キリン",1200,"頭","🦒","首が長くてもこの記録は二度見する。"],["カバ",1500,"頭","🦛","動物園の飼育員も二度見した。"],["アルファード",2060,"台","🚐","家族旅行、車を担いで出発。"],["サイ",2300,"頭","🦏","角の問題じゃない。全体が重い。"],["アフリカゾウ",5000,"頭","🐘","鼻で笑われる前にこっちがゾウを超えた。"],["ティラノサウルス",7000,"頭","🦖","ジュラ紀のジムなら入会初日に出禁。"],["スクールバス",9000,"台","🚌","遠足の集合場所が筋トレ会場に。"],["モアイ像",12500,"体","🗿","イースター島が「返して」と言っている。"],["大型トラック",20000,"台","🚚","物流会社が土下座で入社を頼む。"],["路面電車",30000,"両","🚃","線路より腕のほうが頑丈説。"],["初代ガンダム",43400,"機","🤖","アムロも「それは持てない」って言う。"],["新幹線1両",45000,"両","🚅","次の停車駅はプロテイン売り場。"],["戦艦大和",72800000,"隻","🚢","筋トレが海軍の極秘作戦になった。"],["クジラ",100000,"頭","🐋","海より先にダンベルが干上がる。"],["ガメラ",120000,"体","🐢","回転しながら飛ばれたらジムが終わる。"],["ジャンボジェット機",180000,"機","✈️","離陸しなくても腕だけが飛行中。"],["自由の女神",204000,"体","🗽","たいまつよりダンベル持たせたい。"],["エアバスA380",575000,"機","🛫","空港職員が全員ヘッドハンティング。"],["小型ロケット",1000000,"基","🚀","発射台がジムの床になった。"],["巨大観覧車",1500000,"基","🎡","回すんじゃない、持ち上げてる。"],["スペースシャトル",2000000,"機","🛰️","NASAから「筋トレの定義を教えて」。"],["潜水艦",3000000,"隻","🌊","潜る前に重量記録が浮上。"],["東京タワー",4000000,"基","🗼","東京の夜景が一瞬揺れた。"],["大型船",10000000,"隻","🛳️","船長も「積載量おかしくない？」。"],["エッフェル塔",10100000,"基","🇫🇷","パリから筋肉に感謝状。"],["初代ゴジラ",20000000,"体","🦖","怪獣映画じゃなくて筋トレの記録です。"],["東京スカイツリー",36000000,"基","🏙️","地上634mから拍手が聞こえる。"],["国会議事堂",109000000,"棟","🏛️","本日の議題「なぜ持ち上がった？」。"],["ピラミッド",6000000000,"基","🔺","ファラオも建設業者も困惑している。"],["富士山",1000000000000000,"座","🗻","登山するな。山ごと持つな。"],["月",7.35e+22,"個","🌙","ウサギが餅つきを中断した。"],["地球",5.97e+24,"個","🌏","ジムの住所が「惑星」になった。"],["太陽",1.99e+30,"個","☀️","もう日焼けでは済まない。宇宙規模。"]];
+  function weightComparison(kg,period){
+    if(!(kg>0))return '<span class="compare-joke">💤 まだ静かな筋肉。ここから伝説が始まる。</span>';
+    // 近い重さの物体を優先しつつ、期間ごとに異なる候補を選ぶ。
+    const ranked=comparisonThings.map((item,index)=>({item,index,distance:Math.abs(Math.log10(kg/item[1]))})).sort((a,b)=>a.distance-b.distance);
+    const nearby=ranked.filter(x=>x.distance<=ranked[0].distance+0.45).slice(0,8);
+    const salt={today:7,month:13,year:23,lifetime:31}[period];
+    const seed=Math.abs(Math.floor(kg*10)+salt*97+(Number(today.replaceAll('-',''))||0));
+    const [name,mass,unit,emoji,joke]=nearby[seed%nearby.length].item;
+    const amount=kg/mass;
+    const approx=amount>=100?Math.round(amount).toLocaleString('ja-JP'):amount>=10?amount.toFixed(1).replace(/\.0$/,''):amount>=1?amount.toFixed(2).replace(/0+$/,'').replace(/\.$/,''):amount>=0.01?amount.toFixed(3).replace(/0+$/,'').replace(/\.$/,''):amount.toExponential(1).replace('e',' × 10^');
+    return '<span class="compare-thing">'+emoji+' '+name+' 約'+approx+unit+'分！</span><span class="compare-joke">「'+joke+'」</span>';
   }
+  function updateVolumeComparison(totals){
+    for(const period of ['today','month','year','lifetime']){
+      $(period+'VolumeComparison').innerHTML=weightComparison(totals[period],period);
+    }
+  }
+
   function fitVolumeTotals(){
     for(const total of document.querySelectorAll('.volume-summary-item strong')){
       const number=total.querySelector('.volume-number');if(!number)continue;
@@ -467,7 +438,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     }
     return totals;
   }
-  function redraw(){today=japanDate();refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const totals=volumeTotals(entries,today);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals.month);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+  function redraw(){today=japanDate();refreshExerciseSuggestions();const week=dates7();$('todaySets').textContent=fmt(entries.filter(x=>x.date===today).reduce((s,x)=>s+totalSets(x),0));$('weekWorkouts').textContent=String(new Set(entries.filter(x=>week.includes(x.date)).map(x=>x.date)).size);$('totalEntries').textContent=fmt(entries.length);const t=entries.filter(x=>x.date===today);const totals=volumeTotals(entries,today);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
