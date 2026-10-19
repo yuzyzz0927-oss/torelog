@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261019-auto-refresh-1">
+  <meta name="torelog-build" content="20261019-custom-calendar-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
     :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -107,7 +107,7 @@
 .part-button[data-part="肩"][aria-pressed="true"]{background:var(--part-shoulder);color:#182013}
 .part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}
 .cal-help{color:#d5caef;font-size:12px;margin:12px 0 8px}
-.calendar-parts .part-button{min-height:55px;border-width:2px}.calendar-reset-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px}.calendar-reset-row button{border:2px solid #bbb;border-radius:7px;padding:11px 15px;background:#303335;color:#fff;font-weight:800;cursor:pointer}.calendar-reset-row button[aria-pressed="true"]{background:#fff;color:#161616;border-color:#caff37;box-shadow:0 0 0 2px #caff37}.calendar-reset-row span{font-size:12px;color:#dce0d6;line-height:1.5;flex:1 1 175px}
+.custom-calendar-parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:10px}.custom-calendar-parts .part-button{width:100%;padding:8px;min-height:50px;height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.4;font-size:13px}.custom-part-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px dashed #919b80;border-radius:8px}.custom-part-form input[type=text]{min-width:155px;flex:1;padding:10px;border-radius:6px;background:#18201b;color:white;border:1px solid #9ba696;font-size:16px}.custom-part-form label{display:flex;align-items:center;gap:5px}.custom-part-form button{padding:10px;border-radius:6px;background:#d9ff43;color:#111;border:0;font-weight:bold}.calendar-parts .part-button{min-height:55px;border-width:2px}.calendar-reset-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px}.calendar-reset-row button{border:2px solid #bbb;border-radius:7px;padding:11px 15px;background:#303335;color:#fff;font-weight:800;cursor:pointer}.calendar-reset-row button[aria-pressed="true"]{background:#fff;color:#161616;border-color:#caff37;box-shadow:0 0 0 2px #caff37}.calendar-reset-row span{font-size:12px;color:#dce0d6;line-height:1.5;flex:1 1 175px}
 .calendar-parts .part-button[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 18px currentColor}
 .cal-grid button{min-height:41px}
 .pr-card{padding:17px;border:1px solid #9866ff;border-radius:18px;background:linear-gradient(125deg,#3c225c,#1b2650 68%,#16374b);box-shadow:inset 0 1px #ffffff26,0 9px 22px #0004;overflow:hidden}
@@ -223,7 +223,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
   </section>
 
-  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div></div>
+  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><input id="customPartName" type="text" maxlength="50" required placeholder="名前（例：スタジオ）" aria-label="追加する項目の名前"><label>色 <input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label><button type="submit">＋追加</button></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div></div>
   <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
 
 <section id="developer-feedback" aria-labelledby="developer-feedback-title" style="margin:28px 0 12px;padding:20px 16px;border:1px solid #d6dce3;border-radius:16px;background:rgba(255,255,255,.06);">
@@ -514,7 +514,12 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   // Calendar-only day selections are independent of saved weight/repetition records.
   const PARTS_KEY='torelog.dayParts.v1';
   const VALID_PARTS=['胸','背中','足','肩','お腹'];
-  function cleanParts(v){return Array.isArray(v)?[...new Set(v.filter(x=>VALID_PARTS.includes(x)))]:[]}
+  const CUSTOM_KEY='torelog.customParts.v1';
+  let customParts=[];
+  try{const raw=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]');if(Array.isArray(raw))customParts=raw.filter(x=>x&&typeof x.id==='string'&&x.id.startsWith('custom:')&&typeof x.name==='string'&&/^#[0-9a-fA-F]{6}$/.test(x.color));}catch(e){}
+  function validCalendarPart(x){return VALID_PARTS.includes(x)||customParts.some(p=>p.id===x)}
+  function saveCustomParts(){try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customParts));return true}catch(e){notify('追加項目を保存できなかったよ');return false}}
+  function cleanParts(v){return Array.isArray(v)?[...new Set(v.filter(validCalendarPart))]:[]}
   let dayParts={};
   try{const saved=JSON.parse(localStorage.getItem(PARTS_KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [date,parts] of Object.entries(saved)){if(/^\d{4}-\d{2}-\d{2}$/.test(date))dayParts[date]=cleanParts(parts)}}}catch(e){}
   function partsFromEntries(date){const out=new Set();entries.filter(x=>x.date===date).forEach(x=>(x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).forEach(p=>{const v=p==='背'?'背中':p==='腹'?'お腹':p;if(VALID_PARTS.includes(v))out.add(v)}));return [...out]}
@@ -536,18 +541,36 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   const partStyles=getComputedStyle(document.documentElement);
   const partColors=Object.fromEntries(Object.entries({'胸':'--part-chest','背中':'--part-back','足':'--part-leg','肩':'--part-shoulder','お腹':'--part-abdomen'}).map(([part,variable])=>[part,partStyles.getPropertyValue(variable).trim()]));
   const partOrder=['胸','背中','足','肩','お腹'];
+  function drawCustomButtons(){
+    const box=$('customCalendarParts');box.replaceChildren();
+    customParts.forEach(p=>{
+      const button=document.createElement('button');button.type='button';button.className='part-button';button.dataset.part=p.id;button.textContent=p.name;button.title=p.name;button.setAttribute('aria-pressed',String(calendarSelectedParts.has(p.id)));button.style.borderColor=p.color;
+      if(calendarSelectedParts.has(p.id)){button.style.background=p.color;button.style.color='#121212';}
+      box.appendChild(button);
+    });
+  }
+  $('customPartForm').addEventListener('submit',e=>{
+    e.preventDefault();const name=$('customPartName').value.trim(),color=$('customPartColor').value;
+    if(!name)return;
+    if(customParts.some(p=>p.name===name)){notify('その名前はすでに追加されているよ');return;}
+    const item={id:'custom:'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name,color};
+    customParts.push(item);if(!saveCustomParts()){customParts.pop();return;}
+    $('customPartName').value='';drawCustomButtons();notify(name+'を追加したよ');
+  });
   const calendarSelectedParts=new Set();
    let calendarResetMode=false;
    $('calendarResetMode').addEventListener('click',()=>{calendarResetMode=!calendarResetMode;$('calendarResetMode').setAttribute('aria-pressed',String(calendarResetMode));if(calendarResetMode){calendarSelectedParts.clear();document.querySelectorAll('#calendarPartButtons [data-part]').forEach(b=>b.setAttribute('aria-pressed','false'));}calendarTapState.key='';calendarTapState.count=0;notify(calendarResetMode?'リセットモード：色を消したい日付を押してね':'リセットモードを終了したよ');});
   const calendarTapState={key:'',count:0,last:0,selection:''};
-  $('calendarPartButtons').addEventListener('click',e=>{
+  $('calendarPartButtons').addEventListener('click',handleCalendarPartClick);
+  $('customCalendarParts').addEventListener('click',handleCalendarPartClick);
+  function handleCalendarPartClick(e){
     const b=e.target.closest('[data-part]');if(!b)return;
     const p=b.dataset.part;
     if(calendarResetMode){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');}
     if(calendarSelectedParts.has(p))calendarSelectedParts.delete(p);else calendarSelectedParts.add(p);
     b.setAttribute('aria-pressed',String(calendarSelectedParts.has(p)));
-    calendarTapState.key='';calendarTapState.count=0;
-  });
+    drawCustomButtons();calendarTapState.key='';calendarTapState.count=0;
+  }
   function drawCalendar(){
     const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+monthOffset);
     const y=d.getFullYear(),m=d.getMonth(),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay();
@@ -560,19 +583,19 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     dates.forEach(date=>trained.set(date,new Set(partsForDay(date))));
     for(let day=1;day<=days;day++){
       const key=iso(new Date(y,m,day)),el=document.createElement('button');el.type='button';
-      const parts=partOrder.filter(p=>trained.get(key)?.has(p));
+      const parts=[...partOrder,...customParts.map(x=>x.id)].filter(p=>trained.get(key)?.has(p));
       el.className=(trained.has(key)?'trained ':'')+(key===today?'current':'');
       if(parts.length){
-        const stripes=parts.map((p,i)=>partColors[p]+' '+(i*100/parts.length)+'% '+((i+1)*100/parts.length)+'%').join(', ');
+        const stripes=parts.map((p,i)=>(partColors[p]||customParts.find(x=>x.id===p)?.color||'#888')+' '+(i*100/parts.length)+'% '+((i+1)*100/parts.length)+'%').join(', ');
         el.style.background='linear-gradient(90deg,'+stripes+')';
         el.classList.add('part-day');
         const label=document.createElement('span');label.className='day-number';label.textContent=day;el.appendChild(label);
-        el.setAttribute('aria-label',key+'：'+parts.join('、'));
+        el.setAttribute('aria-label',key+'：'+parts.map(x=>customParts.find(p=>p.id===x)?.name||x).join('、'));
       }else{el.textContent=day;}
       el.addEventListener('click',()=>{
         if(calendarResetMode){if(saveDayParts(key,[])){drawCalendar();if($('date').value===key)restoreDayParts();notify('この日のカレンダーの色をリセットしたよ（記録は残るよ）');}return;}
          if(!calendarSelectedParts.size){notify('先にカレンダー下の部位を選んでね');return;}
-        const chosen=partOrder.filter(p=>calendarSelectedParts.has(p));
+        const chosen=[...partOrder,...customParts.map(x=>x.id)].filter(p=>calendarSelectedParts.has(p));
         const signature=chosen.join('|'),now=Date.now();
         const repeated=calendarTapState.key===key&&calendarTapState.selection===signature&&now-calendarTapState.last<=1800;
         calendarTapState.count=repeated?calendarTapState.count+1:1;
@@ -598,7 +621,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   }
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(today!==japanDate())redraw();scheduleDayRefresh();}});
   scheduleDayRefresh();
-  restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
+  drawCustomButtons();restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
 </script>
 
