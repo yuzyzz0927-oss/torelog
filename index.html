@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261019-clock-design-1">
+  <meta name="torelog-build" content="20261020-daily-exercise-reset-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
     :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -500,7 +500,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
-  function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
+  function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const date=$('date').value;const recent=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`同じ日の記録：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
   function refreshExerciseSuggestions(){
     const selected=getSelectedParts();
     const frequency=new Map();
@@ -573,7 +573,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function resetSelectedParts(){setSelectedParts([])}
   $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;const old=getSelectedParts();b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));const date=$('date').value;if(!saveDayParts(date,getSelectedParts())){setSelectedParts(old);return;}refreshExerciseSuggestions();drawCalendar();notify('部位を選択したよ');});
   let activeSession=null,startedAt=0,monthOffset=0;
-  function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase();const p=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];if(p){setList.replaceChildren();p.setsData.forEach(v=>addSetRow(v.weight,v.reps));setSelectedParts(p.bodyParts||p.bodyPart||[])}updatePrevious()}
+  function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase(),date=$('date').value;const p=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];setList.replaceChildren();if(p){p.setsData.forEach(v=>addSetRow(v.weight,v.reps));setSelectedParts(p.bodyParts||p.bodyPart||[])}else{addSetRow()}updatePrevious()}
   setList.addEventListener('input',e=>{if(e.target.matches('.set-weight,.set-reps')&&!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now()}});
   function renderExtras(){const select=$('progressSelect'),previous=select.value,names=[...new Set(entries.map(z=>z.exercise))].sort();select.replaceChildren();names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)});if(names.includes(previous))select.value=previous;drawProgress();drawCalendar();}
   function drawProgress(){const records=sorted(entries.filter(z=>z.exercise===$('progressSelect').value)).reverse().slice(-12),area=$('progressBars');area.replaceChildren();const top=Math.max(1,...records.flatMap(z=>z.setsData.map(v=>v.weight)));records.forEach(z=>{const v=Math.max(...z.setsData.map(v=>v.weight)),bar=document.createElement('div');bar.style.height=Math.max(4,Math.round(v/top*120))+'px';bar.style.flex='1';bar.title=z.date+' '+v+'kg';area.appendChild(bar)});$('progressCaption').textContent=records.length?'最高 '+top+'kg ／ '+records.length+'記録（古い順）':'記録ができるとグラフを表示するよ';}
@@ -654,12 +654,13 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   $('calNext').addEventListener('click',()=>{monthOffset++;drawCalendar()});
   // Refresh open pages at Japanese midnight, including month/year boundaries.
   let dayRefreshTimer;
+  function refreshOnNewDay(){const newDay=japanDate();if(today===newDay)return;const wasOnToday=$('date').value===today;today=newDay;if(wasOnToday&&!$('editingId').value){$('date').value=newDay;updateDateDisplay();$('exercise').value='';$('memo').value='';setList.replaceChildren();addSetRow();restoreDayParts();hideExerciseSuggestions();}redraw();}
   function scheduleDayRefresh(){
     clearTimeout(dayRefreshTimer);
     const nextMidnight=Date.parse(japanDate()+'T00:00:00+09:00')+86400000;
-    dayRefreshTimer=setTimeout(()=>{redraw();scheduleDayRefresh();},Math.max(50,nextMidnight-Date.now()+50));
+    dayRefreshTimer=setTimeout(()=>{refreshOnNewDay();scheduleDayRefresh();},Math.max(50,nextMidnight-Date.now()+50));
   }
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(today!==japanDate())redraw();scheduleDayRefresh();}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshOnNewDay();scheduleDayRefresh();}});
   scheduleDayRefresh();
   drawCustomButtons();restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
