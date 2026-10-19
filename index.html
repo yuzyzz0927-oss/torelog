@@ -200,7 +200,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
         
       </form>
     </div>
-    <div class="card"><div class="topline"><h3>今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
+    <div class="card"><div class="topline"><h3 id="selectedDateRecordHeading">今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
     <div class="card">
       <div class="volume-summary">
         <div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong><div id="todayVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
@@ -297,8 +297,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   dateHeadingResizeObserver.observe(document.querySelector('.date-line'));
   document.fonts.ready.then(fitDateHeading);
   function updateDateDisplay(){const v=$('date').value;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m){$('dateDisplay').textContent='日付を選択';fitDateHeading();return;}const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));const day=['日','月','火','水','木','金','土'][d.getDay()];$('dateDisplay').innerHTML=`<span class="date-number">${m[1]}</span>年<span class="date-number">${Number(m[2])}</span>月<span class="date-number">${Number(m[3])}</span>日`;fitDateHeading();}
-  $('date').addEventListener('change',updateDateDisplay);
-  $('date').addEventListener('input',updateDateDisplay);
+  $('date').addEventListener('change',()=>{updateDateDisplay();redraw();});
+  $('date').addEventListener('input',()=>{updateDateDisplay();redraw();});
   updateDateDisplay();
   function notify(message){const n=$('toast');n.textContent=message;n.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>n.classList.remove('show'),3200);}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));storageWorks=true;return true;}catch(e){storageWorks=false;notify('保存できません。ブラウザの設定・空き容量を確認してね');return false;}}
@@ -456,7 +456,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     }
     return totals;
   }
-  function redraw(){today=japanDate();refreshExerciseSuggestions();const t=entries.filter(x=>x.date===today);const totals=volumeTotals(entries,today);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
+  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
     const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const recent=sorted(entries.filter(x=>x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`前回：${recent.date}｜${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
