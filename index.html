@@ -181,6 +181,21 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .weight-arrows button{flex:1;min-height:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font-size:11px;line-height:1}
 @media(max-width:380px){.weight-field{gap:4px}.weight-control{width:61px;flex-basis:61px}.weight-control .set-weight{width:100%;padding-right:16px}}
 .calendar-reset-row{display:flex!important;grid-column:1/-1;width:100%;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:13px 0 4px;padding:12px;background:#202622;border:1px solid #596657;border-radius:10px}.calendar-reset-row button{flex:none;min-height:44px}.calendar-reset-row span{flex:1 1 170px}.custom-calendar-parts{width:100%}
+
+/* Calendar controls: readable stacked layout, with reset last. */
+#customCalendarParts{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:12px}
+#customPartForm.custom-part-form{display:flex;flex-direction:column;align-items:stretch;gap:11px;padding:16px;margin-top:16px;border:1px solid #69786a;border-radius:12px;background:#1b2520}
+.custom-form-title{font-size:16px;font-weight:900;color:#f2f9ef}
+.custom-form-fields{display:grid;grid-template-columns:minmax(0,1fr) 105px;gap:12px;align-items:end;width:100%}
+.custom-form-fields label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:#dde9dc;min-width:0}
+#customPartName{width:100%;min-width:0;min-height:46px;box-sizing:border-box;padding:10px;font-size:16px}
+#customPartColor{display:block;width:100%;height:46px;min-width:0;padding:3px;background:#101812;border:1px solid #8d9d8e;border-radius:7px}
+#customPartForm .custom-save-button{display:block;width:100%;min-height:46px;border-radius:8px;background:#d9ff43;color:#131912;font-size:15px;font-weight:900}
+.custom-form-note{font-size:12px;line-height:1.5;color:#cbd9c7;margin:0}
+.calendar-reset-row{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;width:100%;padding:12px;margin-top:18px;border:1px solid #6b736f;border-radius:10px;background:#202522}
+.calendar-reset-row button{min-height:44px;flex:none}
+.calendar-reset-row span{flex:1 1 165px;line-height:1.5}
+@media(max-width:360px){.custom-form-fields{grid-template-columns:minmax(0,1fr) 90px;gap:8px}}
 </style>
 </head>
 <body>
@@ -224,7 +239,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
   </section>
 
-  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><input id="customPartName" type="text" maxlength="50" required placeholder="名前（例：スタジオ）" aria-label="追加する項目の名前"><label>色 <input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label><button type="submit">＋追加</button></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
+  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
   <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
 
 <section id="developer-feedback" aria-labelledby="developer-feedback-title" style="margin:28px 0 12px;padding:20px 16px;border:1px solid #d6dce3;border-radius:16px;background:rgba(255,255,255,.06);">
