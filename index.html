@@ -224,6 +224,29 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 
   <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 同じ日付を3回連続でタップすると、その日の色が全部消えるよ！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button></div></div>
   <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
+
+<section id="developer-feedback" aria-labelledby="developer-feedback-title" style="margin:28px 0 12px;padding:20px 16px;border:1px solid #d6dce3;border-radius:16px;background:rgba(255,255,255,.06);">
+  <h2 id="developer-feedback-title" style="margin:0 0 12px;font-size:1.1rem;">💬 開発者へのメッセージ</h2>
+  <p style="line-height:1.7;margin:0 0 12px;">テストプレイにご協力いただき、ありがとうございます！<br>トレログを使った感想や改善してほしい点、ご要望など、どんなことでもお気軽にお寄せください。</p>
+  <label for="developer-message" style="display:block;margin-bottom:6px;">メッセージ</label>
+  <textarea id="developer-message" rows="4" maxlength="3000" placeholder="ご意見・ご感想をご入力ください" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #aeb6c3;border-radius:10px;font:inherit;color:#20242c;background:#fff;resize:vertical;"></textarea>
+  <button type="button" id="developer-email-button" style="display:block;margin-top:12px;max-width:100%;padding:12px 18px;border:0;border-radius:10px;background:#1463a5;color:#fff;font:inherit;font-weight:bold;cursor:pointer;">📩 メールで送信する</button>
+  <p style="font-size:.8rem;line-height:1.5;opacity:.8;margin:10px 0 0;">ボタンを押すとメールアプリが開きます。内容を確認して、メールアプリから送信してください。送信先のアドレスは表示されます。</p>
+  <p style="font-size:.75rem;opacity:.7;text-align:center;margin:18px 0 0;">今後App Storeにて販売予定です。</p>
+</section>
+<script>
+(function(){
+  const button=document.getElementById('developer-email-button');
+  button.addEventListener('click',function(){
+    const message=document.getElementById('developer-message').value.trim();
+    if(!message){alert('メッセージを入力してください。');return;}
+    const subject=encodeURIComponent('【トレログ】開発者へのメッセージ');
+    const body=encodeURIComponent(message);
+    window.location.href='mailto:torelog2026@gmail.com?subject='+subject+'&body='+body;
+  });
+})();
+</script>
+
 </main>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
