@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261021-usability-fixes-1">
+  <meta name="torelog-build" content="20261021-electric-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -710,7 +710,7 @@ updatePrevious();renderExtras();
     const x={id:editId||Date.now().toString(36)+Math.random().toString(36).slice(2,9),createdAt:prior?.createdAt||Date.now(),date,exercise,setsData,memo,durationMinutes,bodyParts:getSelectedParts(),bodyPart:getSelectedParts()[0]||'',completed:setRows.map(z=>z.querySelector('.donebox').checked),sessionId:prior?.sessionId||activeSession||'session-'+Date.now()};
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
-    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
+    if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>{notify('⚡ 自己ベスト更新！おめでとう！');window.torelogStorm?.();},700);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
     // Keep the day's muscle-group history for the calendar, but clear the form selection after saving.
     const partsAtSave=getSelectedParts();
     if(partsAtSave.length)saveDayParts(date,[...partsForDay(date),...partsAtSave]);
@@ -934,5 +934,67 @@ updatePrevious();renderExtras();
 </script>
 <script>
 (()=>{const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});function tick(){const parts=Object.fromEntries(fmt.formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,Number(p.value)]));const h=document.getElementById('clockHour'),m=document.getElementById('clockMinute'),sec=document.getElementById('clockSecond'),digital=document.getElementById('liveDigitalTime');if(!h||!m||!sec||!digital)return;h.style.transform='rotate('+((parts.hour%12)*30+parts.minute*.5)+'deg)';m.style.transform='rotate('+(parts.minute*6+parts.second*.1)+'deg)';sec.style.transform='rotate('+(parts.second*6)+'deg)';digital.textContent=fmt.format(new Date())}tick();setInterval(tick,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()})})();
-</script></body>
+</script><script>
+/* v0.5: electric "zap" feedback on every button. Big burst + screen flash on save. */
+(()=>{
+  const NS='http://www.w3.org/2000/svg';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+  const layer=document.createElementNS(NS,'svg');
+  layer.setAttribute('aria-hidden','true');
+  layer.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60;overflow:visible';
+  document.body.appendChild(layer);
+  const flash=document.createElement('div');
+  flash.setAttribute('aria-hidden','true');
+  flash.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:59;opacity:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),#f1ffa8 0,#d9ff43 22%,#d9ff4300 70%)';
+  document.body.appendChild(flash);
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  function boltPoints(x,y,angle,len,segs){
+    const pts=[[x,y]];const cos=Math.cos(angle),sin=Math.sin(angle);
+    for(let i=1;i<=segs;i++){const d=len*i/segs,off=i===segs?rand(-.08,.08)*len:rand(-.22,.22)*len;pts.push([x+cos*d-sin*off,y+sin*d+cos*off]);}
+    return pts;
+  }
+  function drawBolt(pts,width,life){
+    const d=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    const g=document.createElementNS(NS,'g');
+    const glow=document.createElementNS(NS,'polyline');
+    glow.setAttribute('points',d);glow.setAttribute('fill','none');glow.setAttribute('stroke','#d9ff43');glow.setAttribute('stroke-width',String(width*3));glow.setAttribute('stroke-linejoin','round');glow.setAttribute('stroke-linecap','round');glow.setAttribute('opacity','0.35');
+    const core=document.createElementNS(NS,'polyline');
+    core.setAttribute('points',d);core.setAttribute('fill','none');core.setAttribute('stroke','#f7ffd6');core.setAttribute('stroke-width',String(width));core.setAttribute('stroke-linejoin','round');core.setAttribute('stroke-linecap','round');
+    g.append(glow,core);layer.appendChild(g);
+    const anim=g.animate([{opacity:1},{opacity:1,offset:.25},{opacity:.15,offset:.45},{opacity:.9,offset:.6},{opacity:0}],{duration:life,easing:'ease-out'});
+    anim.onfinish=()=>g.remove();
+  }
+  function zap(x,y,big){
+    const count=big?12:6,min=big?90:22,max=big?220:54,width=big?3:1.8,life=big?520:300;
+    for(let i=0;i<count;i++){
+      const angle=(i/count)*Math.PI*2+rand(-.35,.35),len=rand(min,max);
+      const pts=boltPoints(x,y,angle,len,big?7:4);drawBolt(pts,width,life+rand(-60,60));
+      if(big&&Math.random()<.6){const k=Math.floor(rand(2,pts.length-1)),p=pts[k];drawBolt(boltPoints(p[0],p[1],angle+rand(-.9,.9),len*rand(.25,.45),3),width*.7,life*.8);}
+    }
+  }
+  function charge(el,big){
+    el.animate([{filter:'brightness(1.7) saturate(1.3)',boxShadow:'0 0 0 2px #d9ff43, 0 0 '+(big?36:18)+'px #d9ff43'},{filter:'brightness(1)',boxShadow:'0 0 0 0 #d9ff4300'}],{duration:big?600:380,easing:'ease-out'});
+  }
+  function burst(x,y){
+    flash.style.setProperty('--x',x+'px');flash.style.setProperty('--y',y+'px');
+    flash.animate([{opacity:.55},{opacity:.1,offset:.3},{opacity:.35,offset:.45},{opacity:0}],{duration:520,easing:'ease-out'});
+    const page=document.querySelector('.page');
+    if(page)page.animate([{transform:'translate(0,0)'},{transform:'translate(-4px,2px)'},{transform:'translate(4px,-2px)'},{transform:'translate(-3px,-1px)'},{transform:'translate(2px,1px)'},{transform:'translate(0,0)'}],{duration:320,easing:'linear'});
+  }
+  document.addEventListener('click',e=>{
+    if(reduce.matches)return;
+    const el=e.target.closest('button,.calendar-change');
+    if(!el||el.disabled)return;
+    const r=el.getBoundingClientRect();
+    const x=e.clientX||r.left+r.width/2,y=e.clientY||r.top+r.height/2;
+    const big=el.matches('.save-exercise');
+    charge(el,big);zap(x,y,big);
+    if(big)burst(x,y);
+    if(navigator.vibrate)navigator.vibrate(big?[18,40,28]:10);
+  },true);
+  // Personal best: a bigger storm from the centre of the screen.
+  window.torelogStorm=()=>{if(reduce.matches)return;const x=innerWidth/2,y=innerHeight/2;zap(x,y,true);setTimeout(()=>zap(x+rand(-60,60),y+rand(-80,80),true),180);burst(x,y);};
+})();
+</script>
+</body>
 </html>
