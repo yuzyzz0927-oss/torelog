@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261021-electric-1">
+  <meta name="torelog-build" content="20261021-electric-2">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -935,82 +935,105 @@ updatePrevious();renderExtras();
 <script>
 (()=>{const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});function tick(){const parts=Object.fromEntries(fmt.formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,Number(p.value)]));const h=document.getElementById('clockHour'),m=document.getElementById('clockMinute'),sec=document.getElementById('clockSecond'),digital=document.getElementById('liveDigitalTime');if(!h||!m||!sec||!digital)return;h.style.transform='rotate('+((parts.hour%12)*30+parts.minute*.5)+'deg)';m.style.transform='rotate('+(parts.minute*6+parts.second*.1)+'deg)';sec.style.transform='rotate('+(parts.second*6)+'deg)';digital.textContent=fmt.format(new Date())}tick();setInterval(tick,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()})})();
 </script><script>
-/* v0.5: electric "zap" feedback on every button. Big burst + screen flash on save. */
+/* v0.5: lightning effects — part buttons (in the part's colour) and the save button (six-leg strike). */
 (()=>{
   const NS='http://www.w3.org/2000/svg';
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
   const layer=document.createElementNS(NS,'svg');
   layer.setAttribute('aria-hidden','true');
   layer.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60;overflow:visible';
+  layer.innerHTML='<defs><filter id="zapGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter></defs>';
   document.body.appendChild(layer);
   const flash=document.createElement('div');
   flash.setAttribute('aria-hidden','true');
-  flash.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:59;opacity:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),#f1ffa8 0,#d9ff43 22%,#d9ff4300 70%)';
+  flash.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:59;opacity:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),#fff 0,var(--c,#d9ff43) 18%,#0000 72%)';
   document.body.appendChild(flash);
   const rand=(a,b)=>a+Math.random()*(b-a);
-  function boltPoints(x,y,angle,len,segs){
-    const pts=[[x,y]];const cos=Math.cos(angle),sin=Math.sin(angle);
-    for(let i=1;i<=segs;i++){const d=len*i/segs,off=i===segs?rand(-.08,.08)*len:rand(-.22,.22)*len;pts.push([x+cos*d-sin*off,y+sin*d+cos*off]);}
+  const LIME='#d9ff43';
+  // Midpoint displacement: a natural jagged bolt between two points.
+  function jag(p0,p1,rough){
+    let pts=[p0,p1],disp=Math.hypot(p1[0]-p0[0],p1[1]-p0[1])*rough;
+    for(let k=0;k<5;k++){const out=[pts[0]];for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,o=rand(-disp,disp);out.push([(a[0]+b[0])/2-dy/l*o,(a[1]+b[1])/2+dx/l*o],b);}pts=out;disp*=.55;}
     return pts;
   }
-  function drawBolt(pts,width,life){
-    const d=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-    const g=document.createElementNS(NS,'g');
-    const glow=document.createElementNS(NS,'polyline');
-    glow.setAttribute('points',d);glow.setAttribute('fill','none');glow.setAttribute('stroke','#d9ff43');glow.setAttribute('stroke-width',String(width*3));glow.setAttribute('stroke-linejoin','round');glow.setAttribute('stroke-linecap','round');glow.setAttribute('opacity','0.35');
-    const core=document.createElementNS(NS,'polyline');
-    core.setAttribute('points',d);core.setAttribute('fill','none');core.setAttribute('stroke','#f7ffd6');core.setAttribute('stroke-width',String(width));core.setAttribute('stroke-linejoin','round');core.setAttribute('stroke-linecap','round');
-    g.append(glow,core);layer.appendChild(g);
-    const anim=g.animate([{opacity:1},{opacity:1,offset:.25},{opacity:.15,offset:.45},{opacity:.9,offset:.6},{opacity:0}],{duration:life,easing:'ease-out'});
-    anim.onfinish=()=>g.remove();
+  function line(g,pts,color,width,opacity,glow){
+    const el=document.createElementNS(NS,'polyline');
+    el.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+    el.setAttribute('fill','none');el.setAttribute('stroke',color);el.setAttribute('stroke-width',String(width));
+    el.setAttribute('stroke-linejoin','round');el.setAttribute('stroke-linecap','round');el.setAttribute('opacity',String(opacity));
+    el.setAttribute('pathLength','1');el.setAttribute('stroke-dasharray','1');el.setAttribute('stroke-dashoffset','0');
+    if(glow)el.setAttribute('filter','url(#zapGlow)');
+    g.appendChild(el);return el;
   }
-  function zap(x,y,big){
-    const count=big?12:6,min=big?90:22,max=big?220:54,width=big?3:1.8,life=big?520:300;
-    for(let i=0;i<count;i++){
-      const angle=(i/count)*Math.PI*2+rand(-.35,.35),len=rand(min,max);
-      const pts=boltPoints(x,y,angle,len,big?7:4);drawBolt(pts,width,life+rand(-60,60));
-      if(big&&Math.random()<.6){const k=Math.floor(rand(2,pts.length-1)),p=pts[k];drawBolt(boltPoints(p[0],p[1],angle+rand(-.9,.9),len*rand(.25,.45),3),width*.7,life*.8);}
+  // One bolt with glow, coloured body and white-hot core, plus side branches.
+  function bolt(p0,p1,o){
+    const {color=LIME,width=3,rough=.18,branches=2,draw=0,parent=layer}=o||{};
+    const g=document.createElementNS(NS,'g');parent.appendChild(g);
+    const pts=jag(p0,p1,rough);
+    const parts=[line(g,pts,color,width*4.5,.55,true),line(g,pts,color,width*1.7,1),line(g,pts,'#ffffff',width*.6,1)];
+    for(let i=0;i<branches;i++){
+      const s=pts[Math.floor(rand(pts.length*.25,pts.length*.8))],dx=p1[0]-p0[0],dy=p1[1]-p0[1],ang=Math.atan2(dy,dx)+rand(-1,1),len=Math.hypot(dx,dy)*rand(.2,.42);
+      const bp=jag(s,[s[0]+Math.cos(ang)*len,s[1]+Math.sin(ang)*len],.25);
+      parts.push(line(g,bp,color,width*2.2,.4,true),line(g,bp,color,width*.8,.95),line(g,bp,'#ffffff',width*.3,.9));
     }
+    if(draw)parts.forEach(el=>el.animate([{strokeDashoffset:1},{strokeDashoffset:0}],{duration:draw,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'}));
+    return g;
   }
-  function charge(el,big){
-    el.animate([{filter:'brightness(1.7) saturate(1.3)',boxShadow:'0 0 0 2px #d9ff43, 0 0 '+(big?36:18)+'px #d9ff43'},{filter:'brightness(1)',boxShadow:'0 0 0 0 #d9ff4300'}],{duration:big?600:380,easing:'ease-out'});
+  function fade(g,life,delay=0){const a=g.animate([{opacity:1},{opacity:.35,offset:.18},{opacity:1,offset:.3},{opacity:.6,offset:.55},{opacity:0}],{duration:life,delay,easing:'ease-out',fill:'both'});a.onfinish=()=>g.remove();}
+  function ring(x,y,color,r,life){
+    const c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('fill','none');c.setAttribute('stroke',color);c.setAttribute('stroke-width','3');
+    c.style.transformOrigin=x+'px '+y+'px';layer.appendChild(c);
+    const a=c.animate([{transform:'scale(.1)',opacity:1,strokeWidth:6},{transform:'scale(1)',opacity:0,strokeWidth:1}],{duration:life,easing:'cubic-bezier(.1,.7,.3,1)'});a.onfinish=()=>c.remove();
   }
-  function burst(x,y){
-    flash.style.setProperty('--x',x+'px');flash.style.setProperty('--y',y+'px');
-    flash.animate([{opacity:.55},{opacity:.1,offset:.3},{opacity:.35,offset:.45},{opacity:0}],{duration:520,easing:'ease-out'});
-    const page=document.querySelector('.page');
-    if(page)page.animate([{transform:'translate(0,0)'},{transform:'translate(-4px,2px)'},{transform:'translate(4px,-2px)'},{transform:'translate(-3px,-1px)'},{transform:'translate(2px,1px)'},{transform:'translate(0,0)'}],{duration:320,easing:'linear'});
+  function doFlash(x,y,color,peak,life){flash.style.setProperty('--x',x+'px');flash.style.setProperty('--y',y+'px');flash.style.setProperty('--c',color);flash.animate([{opacity:peak},{opacity:peak*.2,offset:.35},{opacity:peak*.6,offset:.5},{opacity:0}],{duration:life,easing:'ease-out'});}
+  function shake(px,ms){const page=document.querySelector('.page');if(!page)return;const k=[];for(let i=0;i<7;i++)k.push({transform:`translate(${i===6?0:rand(-px,px)}px,${i===6?0:rand(-px,px)}px)`});page.animate(k,{duration:ms,easing:'linear'});}
+
+  // Part buttons: bolts in the part's colour shoot up and out from the button.
+  const PART_VARS={'胸':'--part-chest','背中':'--part-back','足':'--part-leg','肩':'--part-shoulder','お腹':'--part-abdomen','腕':'--part-arm'};
+  function partColor(el){const v=PART_VARS[el.dataset.part];if(v)return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||LIME;return el.style.borderColor||LIME;}
+  function partZap(el){
+    const r=el.getBoundingClientRect(),color=partColor(el),cx=r.left+r.width/2,cy=r.top+r.height/2;
+    for(let i=0;i<4;i++){
+      const sx=r.left+r.width*(.15+.7*i/3),ang=-Math.PI/2+rand(-.75,.75),len=rand(50,105);
+      const g=bolt([sx,r.top+2],[sx+Math.cos(ang)*len,r.top+Math.sin(ang)*len],{color,width:1.6,branches:1,draw:90});fade(g,420+rand(0,120),60);
+    }
+    for(const side of [-1,1]){const g=bolt([side<0?r.left:r.right,cy],[(side<0?r.left:r.right)+side*rand(30,55),cy+rand(-25,25)],{color,width:1.3,branches:0,draw:70});fade(g,340,50);}
+    ring(cx,cy,color,Math.max(r.width,r.height)*1.3,480);
+    el.animate([{boxShadow:`0 0 0 3px ${color}, 0 0 26px ${color}`,filter:'brightness(1.5)'},{boxShadow:`0 0 0 0 ${color}00`,filter:'brightness(1)'}],{duration:520,easing:'ease-out'});
+    if(navigator.vibrate)navigator.vibrate(12);
   }
+
+  // Save: one bolt zig-zags six times down the whole screen and explodes at the bottom.
+  function sixStrike(el){
+    // The page re-renders right after saving, so the strike spans the whole screen rather than chasing the button.
+    const W=innerWidth,H=innerHeight,top=H*.06,h=H*.84,pts=[];
+    for(let i=0;i<=6;i++){const y=top+h*i/6;pts.push(i===6?[W*rand(.42,.58),y]:[i%2===0?W*rand(.03,.12):W*rand(.88,.97),y+rand(-12,12)]);}
+    const [bx,by]=pts[6];
+    const legs=[],step=85;
+    for(let i=0;i<6;i++)setTimeout(()=>{
+      const g=bolt(pts[i],pts[i+1],{color:LIME,width:i===5?4.2:3.2,rough:.13,branches:i===5?3:2,draw:70});legs.push(g);
+      const [x,y]=pts[i+1];ring(x,y,'#ffffff',38,260);doFlash(x,y,LIME,.28,180);
+      if(navigator.vibrate)navigator.vibrate(14);
+    },i*step);
+    setTimeout(()=>{
+      legs.forEach(g=>g.animate([{opacity:1,filter:'brightness(2.2)'},{opacity:1,filter:'brightness(1)',offset:.15},{opacity:0}],{duration:620,easing:'ease-out',fill:'both'}).onfinish=()=>g.remove());
+      ring(bx,by,LIME,Math.max(W,innerHeight)*.75,700);ring(bx,by,'#ffffff',Math.max(W,innerHeight)*.45,520);
+      for(let i=0;i<10;i++){const a=i/10*Math.PI*2+rand(-.2,.2),l=rand(60,150);fade(bolt([bx,by],[bx+Math.cos(a)*l,by+Math.sin(a)*l],{color:LIME,width:1.8,branches:1,draw:80}),460);}
+      doFlash(bx,by,LIME,.7,600);shake(6,360);
+      el.animate([{boxShadow:`0 0 0 4px #fff, 0 0 48px ${LIME}`,filter:'brightness(1.6)'},{boxShadow:'0 0 0 0 #0000',filter:'brightness(1)'}],{duration:700,easing:'ease-out'});
+      if(navigator.vibrate)navigator.vibrate([30,40,60]);
+    },6*step+40);
+  }
+
   document.addEventListener('click',e=>{
     if(reduce.matches)return;
-    const el=e.target.closest('button,.calendar-change');
-    if(!el||el.disabled)return;
-    const r=el.getBoundingClientRect();
-    const x=e.clientX||r.left+r.width/2,y=e.clientY||r.top+r.height/2;
-    const big=el.matches('.save-exercise');
-    charge(el,big);zap(x,y,big);
-    if(big)sixStrike();
-    if(navigator.vibrate)navigator.vibrate(big?[18,40,28]:10);
+    const part=e.target.closest('#partButtons .part-button,#calendarPartButtons .part-button,#customCalendarParts .part-button');
+    if(part){if(part.getAttribute('aria-pressed')!=='true')partZap(part);return;}
+    const save=e.target.closest('.save-exercise');
+    if(save)sixStrike(save);
   },true);
-  // Save: six lightning dashes zig-zagging across the screen.
-  function dash(fromLeft,y){
-    const w=innerWidth,x0=fromLeft?-20:w+20,x1=fromLeft?w+20:-20,y1=y+rand(-.18,.18)*innerHeight;
-    const len=Math.hypot(x1-x0,y1-y),angle=Math.atan2(y1-y,x1-x0),pts=[[x0,y]];
-    for(let i=1;i<=14;i++){const d=len*i/14,off=i===14?0:rand(-14,14);pts.push([x0+Math.cos(angle)*d-Math.sin(angle)*off,y+Math.sin(angle)*d+Math.cos(angle)*off]);}
-    drawBolt(pts,4.5,420);
-    const mid=pts[Math.floor(rand(4,10))];zap(mid[0],mid[1],false);
-  }
-  function sixStrike(){
-    for(let i=0;i<6;i++)setTimeout(()=>{
-      const y=innerHeight*(0.18+0.64*((i*0.37+rand(0,.15))%1));
-      dash(i%2===0,y);
-      flash.style.setProperty('--x',(i%2?20:80)+'%');flash.style.setProperty('--y',y+'px');
-      flash.animate([{opacity:.4},{opacity:0}],{duration:160,easing:'ease-out'});
-      if(i===5)setTimeout(()=>burst(innerWidth/2,innerHeight/2),90);
-    },i*95);
-  }
-  // Personal best: a bigger storm from the centre of the screen.
-  window.torelogStorm=()=>{if(reduce.matches)return;const x=innerWidth/2,y=innerHeight/2;zap(x,y,true);setTimeout(()=>zap(x+rand(-60,60),y+rand(-80,80),true),180);burst(x,y);};
+  // Personal best: an extra burst in the middle of the screen.
+  window.torelogStorm=()=>{if(reduce.matches)return;const x=innerWidth/2,y=innerHeight/2;for(let i=0;i<14;i++){const a=i/14*Math.PI*2,l=rand(120,240);fade(bolt([x,y],[x+Math.cos(a)*l,y+Math.sin(a)*l],{width:2.4,branches:2,draw:110}),700);}ring(x,y,LIME,Math.max(innerWidth,innerHeight)*.7,800);doFlash(x,y,LIME,.6,700);shake(5,320);};
 })();
 </script>
 </body>
