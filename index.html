@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261021-electric-4">
+  <meta name="torelog-build" content="20261021-hype-1">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -398,11 +399,32 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 @keyframes voltSurge{0%{opacity:1;stroke-width:3.5}25%{opacity:.3}45%{opacity:1}70%{opacity:.5}100%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.volt-arc,.volt-clock.surge .volt-arc{animation:none}.volt-sec{transition:none}}
 @media(max-width:374px){.date-line .date-heading{grid-template-columns:minmax(0,1fr)!important}.volt-clock{justify-self:center;width:min(72vw,230px)}}
+.brandbar.hype{align-items:flex-start;padding:4px 0 22px;margin-bottom:24px}
+.hype-copy{min-width:0;display:flex;flex-direction:column;gap:6px}
+.hype-kicker{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;font-weight:800;letter-spacing:.22em;color:#d9ff43}
+.hype-slash{color:#5c6358;padding:0 4px}
+.hype-title{margin:0;display:flex;flex-direction:column;font-family:"Dela Gothic One","Hiragino Kaku Gothic StdN","Hiragino Sans",sans-serif;font-weight:400;line-height:1.05;letter-spacing:-.02em;color:#f5f5f3}
+.hype-line{font-size:clamp(24px,7.6vw,44px)}
+.hype-strong{font-size:clamp(58px,19vw,104px);color:#d9ff43;transform:skewX(-7deg);transform-origin:left bottom;margin-top:2px;text-shadow:0 0 18px #d9ff4355,4px 4px 0 #2b3410;animation:hypeSlam .55s cubic-bezier(.2,1.4,.4,1) both .1s}
+.hype-bolt{width:min(100%,300px);height:14px;display:block;filter:drop-shadow(0 0 4px #d9ff43)}
+.hype-en{font-family:Impact,"Arial Narrow","Arial Black",sans-serif;font-size:clamp(15px,4.4vw,20px);letter-spacing:.08em;color:#c9cdc9}
+.hype-en b{color:#fff;font-weight:400}
+@keyframes hypeSlam{0%{opacity:0;transform:skewX(-7deg) scale(1.35) translateX(-10px)}60%{opacity:1}100%{opacity:1;transform:skewX(-7deg) scale(1)}}
+@media(prefers-reduced-motion:reduce){.hype-strong{animation:none}}
+@media(max-width:380px){.hype-kicker{font-size:10px;letter-spacing:.14em}.brandbar.hype .version{font-size:9px;padding:5px}}
 </style>
 </head>
 <body>
 <main class="page">
-  <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">Y<span class="logo-slash">/</span></div><div class="brand-copy"><div class="brand-kicker">BUILT FOR PROGRESS · EST. 2026</div><h1>YUZURU<span class="brand-accent">.</span> LOG</h1><div class="subtitle">ゆずる式トレログ <span class="subtitle-separator">/</span> OWN YOUR PROGRESS.</div></div></div><span class="version">V.03</span></header>
+  <header class="brandbar hype">
+    <div class="hype-copy">
+      <div class="hype-kicker">LET'S GET TO WORK <span class="hype-slash">/</span> TORELOG</div>
+      <h1 class="hype-title"><span class="hype-line">さぁー！やろーか！</span><span class="hype-strong">譲るな！</span></h1>
+      <svg class="hype-bolt" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,7 40,7 52,2 64,12 76,3 88,11 100,7 300,7" fill="none" stroke="#d9ff43" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <div class="hype-en">DON'T GIVE IN. <b>NOT ONE REP.</b></div>
+    </div>
+    <span class="version">V.03</span>
+  </header>
   <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button"><span class="tab-icon" aria-hidden="true">＋</span>記録する</button><button class="tab" data-tab="history" type="button"><span class="tab-icon" aria-hidden="true">▦</span>履歴</button><button class="tab" data-tab="analysis" type="button"><span class="tab-icon" aria-hidden="true">↗</span>分析</button></nav>
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
