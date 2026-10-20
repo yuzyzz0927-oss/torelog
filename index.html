@@ -5,184 +5,272 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261020-analysis-history-refresh-1">
+  <meta name="torelog-build" content="20261021-usability-fixes-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
-    :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
-    *{box-sizing:border-box} html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--fg);background:radial-gradient(ellipse at 10% 0%,#442364 0,transparent 35%),radial-gradient(ellipse at 95% 12%,#124259 0,transparent 31%),var(--bg);line-height:1.5}
-    button,input,textarea{font:inherit} button{cursor:pointer;touch-action:manipulation} button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:3px} button:disabled{opacity:.45;cursor:not-allowed}
-    .page{max-width:980px;padding:22px 18px 76px;margin:auto}.brandbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{height:52px;width:52px;flex:none;display:grid;place-items:center;font-size:26px;color:#1c1338;border-radius:17px;background:linear-gradient(135deg,var(--cyan),var(--purple) 46%,var(--pink));box-shadow:0 7px 25px #bf6ef755}.eyebrow{font-weight:900;font-size:11px;letter-spacing:.16em;color:var(--cyan)}h1{margin:0;font-size:27px;line-height:1.1;letter-spacing:-.04em}.subtitle{font-size:12px;color:var(--muted);margin-top:5px}.version{padding:8px 11px;border:1px solid #ab75de;background:#3a285e;color:#f6d4ff;border-radius:30px;font-size:11px;font-weight:900;white-space:nowrap}
-    .hero{border-radius:23px;padding:24px 25px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(115deg,#53338c,#24366c 53%,#145963);border:1px solid #7f69b2;box-shadow:var(--shadow);margin-bottom:14px}.hero h2{font-size:27px;letter-spacing:-.03em;line-height:1.3;margin:6px 0}.hero p{font-size:13px;color:#e4ddfa;margin:0}.hero .emoji{font-size:46px;transform:rotate(-8deg)}
-    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:17px}.stat{border-radius:17px;padding:14px 15px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden}.stat:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--purple)}.stat:nth-child(1):before{background:var(--pink)}.stat:nth-child(2):before{background:var(--cyan)}.stat:nth-child(3):before{background:var(--lime)}.stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:26px;line-height:1.45;font-weight:900;font-variant-numeric:tabular-nums}.stat small{color:var(--muted);font-size:11px}
-    .tabs{display:flex;background:#1c193d;border:1px solid #413761;border-radius:15px;padding:5px;gap:5px;margin-bottom:18px}.tab{flex:1;border:0;background:transparent;color:var(--muted);border-radius:11px;padding:12px 8px;font-weight:800}.tab.active{background:linear-gradient(110deg,var(--cyan),#a9e8f8);color:#101531}.panel{display:none}.panel.active{display:block}.card{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);margin-bottom:15px}h3{font-size:20px;letter-spacing:-.03em;margin:0 0 4px}.hint{color:var(--muted);font-size:13px;margin:0 0 18px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;min-width:0}.field.wide{grid-column:span 2}.field label,.set-field label{font-size:13px;color:#eee3fb;font-weight:800}.field input,.field textarea,.set-field input,.filter input{color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:11px;padding:13px;width:100%;min-width:0;font-size:16px}    /* iPhone Safari: keep the date picker inside the same column width as exercise name. */
-    #date{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;font-size:18px;-webkit-appearance:none;appearance:none}
-    #date::-webkit-date-and-time-value{min-height:1.4em;text-align:left;font-size:inherit}
-    .date-picker{position:relative;width:100%;height:52px;border:1px solid #554874;border-radius:11px;background:#13112b;overflow:hidden;min-width:0}.date-picker #dateDisplay{display:flex;align-items:center;padding:0 13px;height:100%;font-size:18px;color:var(--fg);pointer-events:none;white-space:nowrap}.date-picker #date{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:1}.date-picker:focus-within{outline:3px solid var(--cyan);outline-offset:3px}
-    .field select{color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:11px;padding:13px;width:100%;max-width:100%;min-width:0;font-size:16px;min-height:51px}#customExercise[hidden]{display:none}
-    .field input::placeholder,.field textarea::placeholder,.set-field input::placeholder{color:#8b83b1}.field textarea{resize:vertical;min-height:70px}.field small{font-size:11px;color:var(--muted)}
-    .sets-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:13px 0 10px}.sets-title{font-size:18px;font-weight:900}.sets-count{font-size:12px;font-weight:800;color:var(--orange)}.set-list{display:flex;flex-direction:column;gap:10px}.set-row{border:1px solid #594477;border-radius:15px;padding:14px;background:linear-gradient(112deg,#292147,#24203f);position:relative}.set-row:nth-child(4n+2){border-color:#3a6889;background:linear-gradient(112deg,#202f50,#242141)}.set-row:nth-child(4n+3){border-color:#755079;background:linear-gradient(112deg,#322044,#242040)}.set-row:nth-child(4n+4){border-color:#527250;background:linear-gradient(112deg,#203c36,#242141)}.set-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}.set-number{display:inline-flex;align-items:center;gap:7px;font-weight:900;color:var(--orange)}.set-number .dot{width:8px;height:8px;background:var(--pink);border-radius:50%}.remove-set{background:transparent;border:1px solid #82627b;color:#ffb6d9;border-radius:9px;padding:6px 10px;min-height:35px;font-weight:700;font-size:12px}.set-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.set-field{display:flex;flex-direction:column;gap:5px;min-width:0}.set-foot{margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}.set-foot .rm{color:var(--cyan);font-weight:900}
-    .add-set{width:100%;min-height:52px;border-radius:13px;border:2px dashed #8270b8;background:#32264b;color:#fbe1ff;font-weight:900;font-size:15px;margin:12px 0 15px}.add-set:hover{background:#43305d}.add-set .plus{font-size:21px;color:var(--lime);vertical-align:-1px;margin-right:5px}
-    .preview{display:none}.preview-item{background:#14122d;border:1px solid #554778;border-radius:14px;padding:13px 9px;text-align:center}.preview-item:nth-child(1){border-top:3px solid var(--lime)}.preview-item:nth-child(2){border-top:3px solid var(--pink)}.preview-item:nth-child(3){border-top:3px solid var(--cyan)}.preview-item .label{color:var(--muted);font-size:11px}.preview-item strong{font-size:22px;font-weight:900;display:block;margin:3px 0;font-variant-numeric:tabular-nums}.preview-item small{font-size:11px;color:var(--muted)}.rm-hint{color:var(--muted);font-size:11px;margin:-8px 0 14px}.primary,.secondary,.ghost,.danger{border-radius:12px;border:1px solid transparent;min-height:48px;padding:11px 15px;font-weight:900}.primary{width:100%;background:linear-gradient(110deg,#fd70bd,#ffba66);color:#2f1335;box-shadow:0 5px 20px #fa5b9950}.secondary{background:linear-gradient(115deg,#65e7f5,#a5a1ff);color:#18203c}.ghost{background:#31294f;color:#f0eaff;border-color:#635780}.btnrow{display:flex;flex-wrap:wrap;gap:9px}.tiny{min-height:34px;padding:6px 10px;font-size:12px}.notice{font-size:12px;color:var(--lime);margin:3px 0 15px}.notice:empty{display:none}
-    .topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.topline h3{margin:0}.tag{font-size:11px;font-weight:800;border-radius:10px;padding:5px 9px;background:#48315f;color:#ffb7e2}.list{display:flex;flex-direction:column;gap:11px}.entry{padding:15px;border:1px solid #50446e;background:var(--panel2);border-radius:15px}.entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.entry .exercise{font-weight:900;font-size:16px;overflow-wrap:anywhere}.entry .meta{color:var(--muted);font-size:12px;margin-top:2px;overflow-wrap:anywhere}.entry-sets{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}.set-chip{font-size:12px;padding:5px 8px;color:#e9defa;background:#3c315f;border-radius:8px}.entry-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:11px}.amount{font-weight:900;color:var(--lime);font-size:14px}.rmvalue{color:var(--cyan);font-size:13px;font-weight:800}.delete{border:1px solid #815577;border-radius:8px;background:transparent;color:#ffb5d7;font-weight:700;font-size:12px;padding:7px 10px}.empty{color:var(--muted);text-align:center;border:1px dashed #665980;border-radius:12px;padding:26px 11px;font-size:13px}.filter{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:15px}.filter input{width:auto;max-width:100%}.filter label{font-size:13px}.chart{display:flex;align-items:end;gap:9px;min-height:200px;padding-top:18px;border-bottom:1px solid #625777}.barcol{flex:1;min-width:0;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}.bar{min-height:4px;width:min(78%,42px);border-radius:8px 8px 0 0;background:linear-gradient(180deg,#fa78c5,#935eee)}.barcol:nth-child(2n) .bar{background:linear-gradient(180deg,#61e8fa,#4d7ee6)}.barval{color:var(--muted);font-size:10px;white-space:nowrap}.barlabel{color:var(--muted);font-size:11px}.analysisline{margin-top:15px;font-size:14px;color:#ece7fc}.analysisline strong{color:var(--lime)}.footer{font-size:12px;color:#aca5c9;text-align:center;max-width:620px;margin:28px auto 0}.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;max-width:90vw;z-index:12;background:#d7ffbb;color:#223123;font-size:13px;font-weight:900;border-radius:12px;box-shadow:0 10px 30px #0009;padding:12px 16px;display:none}.toast.show{display:block}.separator{height:1px;background:#554875;margin:14px 0}
-    @media(max-width:600px){.page{padding:16px 12px 60px}.logo{width:45px;height:45px;font-size:23px}.brand{gap:9px}h1{font-size:24px}.hero{padding:18px}.hero h2{font-size:23px}.hero .emoji{font-size:35px}.stats{gap:6px}.stat{padding:12px 9px}.stat .label{font-size:11px}.stat strong{font-size:22px}.card{padding:16px}.set-row{padding:12px}.preview{gap:6px}.preview-item{padding:12px 4px}.preview-item strong{font-size:19px}.tabs{gap:2px}.tab{font-size:13px;padding:12px 5px}}
-    @media(max-width:355px){.version{font-size:10px;padding:7px}h1{font-size:21px}.hero .emoji{display:none}.stat strong{font-size:19px}.preview-item strong{font-size:17px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  
-    /* Neon cosmic color-study background (image-inspired, not the original bitmap) */
-    body{background:radial-gradient(ellipse at 12% 8%,#ff2bbd9c 0%,transparent 30%),radial-gradient(ellipse at 87% 15%,#0ce7ffd0 0%,transparent 33%),radial-gradient(ellipse at 40% 32%,#fcef1f95 0%,transparent 25%),radial-gradient(ellipse at 84% 54%,#7d24ffa8 0%,transparent 35%),radial-gradient(ellipse at 15% 77%,#ff7121a0 0%,transparent 32%),radial-gradient(ellipse at 70% 92%,#29ff9e70 0%,transparent 30%),#080718;background-attachment:fixed}
-    .card,.stat{background:#1d1b3cf0}.tabs{background:#1c193df2}.hero{background:linear-gradient(115deg,#53338ce8,#24366ce8 53%,#145963e8)}
-    /* iPhone compact set rows: shorter cards while keeping readable numeric controls. */
-    .sets-head{margin:7px 0 5px}
-    .set-list{gap:5px}
-    .set-row{padding:6px 9px;border-radius:11px}
-    .set-top{margin-bottom:3px;min-height:25px}
-    .set-number{font-size:13px}
-    .remove-set{min-height:25px;padding:2px 7px;font-size:11px}
-    .set-inputs{gap:7px}
-    .set-field label{font-size:11px}
-    .set-field input{display:block;margin-top:2px;min-height:34px;padding:5px 8px;font-size:16px;border-radius:8px}
-    .set-foot{margin-top:3px;gap:3px;font-size:10px}
-    /* Inline compact weight/reps inputs: readable labels and three-digit sized fields. */
-    .set-inputs{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
-    .set-field label{display:flex;align-items:center;gap:6px;color:#fff;font-size:18px;font-weight:800;white-space:nowrap;min-width:0}
-    .set-field input{display:inline-block;flex:0 1 76px;width:76px;max-width:100%;min-width:0;margin:0;padding:6px 5px;min-height:38px;font-size:16px;text-align:center}
-    .set-weight{font-variant-numeric:tabular-nums}
-    @media(max-width:380px){.set-field label{font-size:16px;gap:4px}.set-field input{width:61px;flex-basis:61px;padding:5px 3px}}
-    .duration-field{display:flex;align-items:center;gap:9px;margin:0 0 16px;color:#fff;font-size:16px;font-weight:800;flex-wrap:wrap}
-    .duration-field input{width:85px;max-width:100%;padding:9px 10px;color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:10px;font-size:16px;text-align:center}
-    .duration-field span{font-size:14px;color:var(--muted)}
-  .exercise-suggestions{margin-top:6px;border:1px solid #6a5b98;border-radius:12px;background:#201b40;max-height:210px;overflow-y:auto;box-shadow:0 8px 20px #0005}
+:root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--fg);background:radial-gradient(ellipse at 10% 0%,#442364 0,transparent 35%),radial-gradient(ellipse at 95% 12%,#124259 0,transparent 31%),var(--bg);line-height:1.5}
+button,input,textarea{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.page{max-width:980px;padding:22px 18px 76px;margin:auto}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{height:52px;width:52px;flex:none;display:grid;place-items:center;font-size:26px;color:#1c1338;border-radius:17px;background:linear-gradient(135deg,var(--cyan),var(--purple) 46%,var(--pink));box-shadow:0 7px 25px #bf6ef755}
+h1{margin:0;font-size:27px;line-height:1.1;letter-spacing:-.04em}
+.subtitle{font-size:12px;color:var(--muted);margin-top:5px}
+.version{padding:8px 11px;border:1px solid #ab75de;background:#3a285e;color:#f6d4ff;border-radius:30px;font-size:11px;font-weight:900;white-space:nowrap}
+.tabs{display:flex;background:#1c193d;border:1px solid #413761;border-radius:15px;padding:5px;gap:5px;margin-bottom:18px}
+.tab{flex:1;border:0;background:transparent;color:var(--muted);border-radius:11px;padding:12px 8px;font-weight:800}
+.tab.active{background:linear-gradient(110deg,var(--cyan),#a9e8f8);color:#101531}
+.panel{display:none}
+.panel.active{display:block}
+.card{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);margin-bottom:15px}
+h3{font-size:20px;letter-spacing:-.03em;margin:0 0 4px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;min-width:0}
+.field.wide{grid-column:span 2}
+.field label,.set-field label{font-size:13px;color:#eee3fb;font-weight:800}
+.field input,.field textarea,.set-field input,.filter input{color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:11px;padding:13px;width:100%;min-width:0;font-size:16px}
+#date{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;font-size:18px;-webkit-appearance:none;appearance:none}
+#date::-webkit-date-and-time-value{min-height:1.4em;text-align:left;font-size:inherit}
+.date-picker{position:relative;width:100%;height:52px;border:1px solid #554874;border-radius:11px;background:#13112b;overflow:hidden;min-width:0}
+.date-picker #dateDisplay{display:flex;align-items:center;padding:0 13px;height:100%;font-size:18px;color:var(--fg);pointer-events:none;white-space:nowrap}
+.date-picker #date{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:1}
+.date-picker:focus-within{outline:3px solid var(--cyan);outline-offset:3px}
+.field select{color:var(--fg);background:#13112b;border:1px solid #554874;border-radius:11px;padding:13px;width:100%;max-width:100%;min-width:0;font-size:16px;min-height:51px}
+.field input::placeholder,.field textarea::placeholder,.set-field input::placeholder{color:#8b83b1}
+.field textarea{resize:vertical;min-height:70px}
+.field small{font-size:11px;color:var(--muted)}
+.sets-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:13px 0 10px}
+.sets-title{font-size:18px;font-weight:900}
+.sets-count{font-size:12px;font-weight:800;color:var(--orange)}
+.set-list{display:flex;flex-direction:column;gap:10px}
+.set-row{border:1px solid #594477;border-radius:15px;padding:14px;background:linear-gradient(112deg,#292147,#24203f);position:relative}
+.set-row:nth-child(4n+2){border-color:#3a6889;background:linear-gradient(112deg,#202f50,#242141)}
+.set-row:nth-child(4n+3){border-color:#755079;background:linear-gradient(112deg,#322044,#242040)}
+.set-row:nth-child(4n+4){border-color:#527250;background:linear-gradient(112deg,#203c36,#242141)}
+.set-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}
+.set-number{display:inline-flex;align-items:center;gap:7px;font-weight:900;color:var(--orange)}
+.set-number .dot{width:8px;height:8px;background:var(--pink);border-radius:50%}
+.remove-set{background:transparent;border:1px solid #82627b;color:#ffb6d9;border-radius:9px;padding:6px 10px;min-height:35px;font-weight:700;font-size:12px}
+.set-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.set-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.set-foot{margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}
+.set-foot .rm{color:var(--cyan);font-weight:900}
+.add-set{width:100%;min-height:52px;border-radius:13px;border:2px dashed #8270b8;background:#32264b;color:#fbe1ff;font-weight:900;font-size:15px;margin:12px 0 15px}
+.add-set:hover{background:#43305d}
+.add-set .plus{font-size:21px;color:var(--lime);vertical-align:-1px;margin-right:5px}
+.primary,.secondary,.ghost{border-radius:12px;border:1px solid transparent;min-height:48px;padding:11px 15px;font-weight:900}
+.primary{width:100%;background:linear-gradient(110deg,#fd70bd,#ffba66);color:#2f1335;box-shadow:0 5px 20px #fa5b9950}
+.secondary{background:linear-gradient(115deg,#65e7f5,#a5a1ff);color:#18203c}
+.ghost{background:#31294f;color:#f0eaff;border-color:#635780}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px}
+.tiny{min-height:34px;padding:6px 10px;font-size:12px}
+.notice{font-size:12px;color:var(--lime);margin:3px 0 15px}
+.notice:empty{display:none}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.topline h3{margin:0}
+.tag{font-size:11px;font-weight:800;border-radius:10px;padding:5px 9px;background:#48315f;color:#ffb7e2}
+.list{display:flex;flex-direction:column;gap:11px}
+.entry{padding:15px;border:1px solid #50446e;background:var(--panel2);border-radius:15px}
+.entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.entry .exercise{font-weight:900;font-size:16px;overflow-wrap:anywhere}
+.entry .meta{color:var(--muted);font-size:12px;margin-top:2px;overflow-wrap:anywhere}
+.entry-sets{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.set-chip{font-size:12px;padding:5px 8px;color:#e9defa;background:#3c315f;border-radius:8px}
+.entry-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:11px}
+.amount{font-weight:900;color:var(--lime);font-size:14px}
+.rmvalue{color:var(--cyan);font-size:13px;font-weight:800}
+.delete{border:1px solid #815577;border-radius:8px;background:transparent;color:#ffb5d7;font-weight:700;font-size:12px;padding:7px 10px}
+.empty{color:var(--muted);text-align:center;border:1px dashed #665980;border-radius:12px;padding:26px 11px;font-size:13px}
+.filter{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:15px}
+.filter input{width:auto;max-width:100%}
+.filter label{font-size:13px}
+.footer{font-size:12px;color:#aca5c9;text-align:center;max-width:620px;margin:28px auto 0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;max-width:90vw;z-index:12;background:#d7ffbb;color:#223123;font-size:13px;font-weight:900;border-radius:12px;box-shadow:0 10px 30px #0009;padding:12px 16px;display:none}
+.toast.show{display:block}
+@media(max-width:600px){
+  .page{padding:16px 12px 60px}
+  .logo{width:45px;height:45px;font-size:23px}
+  .brand{gap:9px}
+  h1{font-size:24px}
+  .card{padding:16px}
+  .set-row{padding:12px}
+  .tabs{gap:2px}
+  .tab{font-size:13px;padding:12px 5px}
+}
+@media(max-width:355px){
+  .version{font-size:10px;padding:7px}
+  h1{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
+body{background:radial-gradient(ellipse at 12% 8%,#ff2bbd9c 0%,transparent 30%),radial-gradient(ellipse at 87% 15%,#0ce7ffd0 0%,transparent 33%),radial-gradient(ellipse at 40% 32%,#fcef1f95 0%,transparent 25%),radial-gradient(ellipse at 84% 54%,#7d24ffa8 0%,transparent 35%),radial-gradient(ellipse at 15% 77%,#ff7121a0 0%,transparent 32%),radial-gradient(ellipse at 70% 92%,#29ff9e70 0%,transparent 30%),#080718;background-attachment:fixed}
+.card{background:#1d1b3cf0}
+.tabs{background:#1c193df2}
+.exercise-suggestions{margin-top:6px;border:1px solid #6a5b98;border-radius:12px;background:#201b40;max-height:210px;overflow-y:auto;box-shadow:0 8px 20px #0005}
 .exercise-suggestions[hidden]{display:none}
 .exercise-suggestion{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #41375f;background:transparent;color:#fff;padding:12px 14px;font-size:16px;font-weight:700}
 .exercise-suggestion:last-child{border-bottom:0}
 .exercise-suggestion:active,.exercise-suggestion:focus-visible{background:#45346d}
-
-    /* Compact today's workout summary, with volume and 1RM aligned on one row. */
-    #todayList .entry{padding:11px 12px}
-    #todayList .entry-sets{margin-top:7px;gap:5px}
-    #todayList .set-chip{padding:4px 7px}
-    #todayList .entry-bottom{display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:12px;margin-top:8px}
-    #todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:12px;white-space:nowrap}
-    @media(max-width:380px){#todayList .entry-bottom{gap:8px}#todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:11px}}
-
-.extra-controls{border:1px solid #655481;border-radius:13px;padding:12px;margin-bottom:12px;background:#211d43}
-.extra-controls .row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0}
-.extra-controls button{min-height:35px}
-.extra-controls select,.extra-controls input{background:#13112b;color:#fff;border:1px solid #655481;border-radius:8px;padding:9px;font-size:16px;max-width:100%}
-.extra-controls strong{font-size:21px;color:var(--lime)}
+#todayList .entry{padding:11px 12px}
+#todayList .entry-sets{margin-top:7px;gap:5px}
+#todayList .set-chip{padding:4px 7px}
+#todayList .entry-bottom{display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:12px;margin-top:8px}
+#todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:12px;white-space:nowrap}
+@media(max-width:380px){
+  #todayList .entry-bottom{gap:8px}
+  #todayList .entry-bottom .amount,#todayList .entry-bottom .rmvalue{font-size:11px}
+}
 .donebox{width:21px;height:21px;accent-color:#b3fc73}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
 .cal-grid span,.cal-grid button{border:1px solid #594773;border-radius:8px;text-align:center;padding:8px 0;background:#282141;color:white}
 .cal-grid button.trained{background:#185a51;border-color:#a2efbe;font-weight:900}
 .cal-grid button.current{outline:2px solid #ff69bb}
-.progress-bars{display:flex;align-items:flex-end;height:140px;gap:5px;padding-top:10px;overflow:auto}
-.progress-bars div{min-width:23px;background:linear-gradient(#ff69bb,#7d65f6);border-radius:6px 6px 0 0}
-.part-heading{color:#eee3fb;font-size:13px;font-weight:800;margin-bottom:6px}.part-buttons{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.part-button{min-width:0;border:1px solid #655481;border-radius:10px;background:#251e46;color:#eee7ff;min-height:48px;padding:5px 0;font-size:17px;font-weight:900}.part-button[aria-pressed="true"]{border-color:#fff;color:#fff;box-shadow:0 0 0 2px #ffffff48}
+.part-heading{color:#eee3fb;font-size:13px;font-weight:800;margin-bottom:6px}
+.part-buttons{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.part-button{min-width:0;border:1px solid #655481;border-radius:10px;background:#251e46;color:#eee7ff;min-height:48px;padding:5px 0;font-size:17px;font-weight:900}
+.part-button[aria-pressed="true"]{border-color:#fff;color:#fff;box-shadow:0 0 0 2px #ffffff48}
 .part-button[data-part="胸"][aria-pressed="true"]{background:var(--part-chest)}
 .part-button[data-part="背中"][aria-pressed="true"]{background:var(--part-back)}
 .part-button[data-part="足"][aria-pressed="true"]{background:var(--part-leg);color:#1f1934}
 .part-button[data-part="肩"][aria-pressed="true"]{background:var(--part-shoulder)}
-.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}.part-button[data-part="腕"][aria-pressed="true"]{background:var(--part-arm);color:#211409}
+.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}
+.part-button[data-part="腕"][aria-pressed="true"]{background:var(--part-arm);color:#211409}
 .cal-grid .part-day{font-weight:900;text-shadow:none;color:#fff}
 .cal-grid .part-day .day-number{background:none;border-radius:0;padding:0;display:inline-block;color:#fff;text-shadow:none}
 .cal-key{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;font-size:12px;color:#ddd}
-.cal-key i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;background:var(--c)}.part-button:active{transform:scale(.96)}.date-line{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:center;gap:8px;width:100%}
+.cal-key i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;background:var(--c)}
+.part-button:active{transform:scale(.96)}
+.date-line{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:center;gap:8px;width:100%}
 .date-line .date-picker{height:44px;min-width:0}
 .date-line .date-picker #dateDisplay{font-size:clamp(12px,3.4vw,16px);padding:0 7px;overflow:hidden;text-overflow:clip}
-.date-suffix{white-space:nowrap;font-size:clamp(12px,3.5vw,16px);font-weight:800;color:var(--fg)}
-@media(max-width:355px){.date-line{gap:5px}.date-line .date-picker #dateDisplay{font-size:12px;padding:0 5px}.date-suffix{font-size:12px}}
-
+@media(max-width:355px){
+  .date-line{gap:5px}
+  .date-line .date-picker #dateDisplay{font-size:12px;padding:0 5px}
+}
 .date-line{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
 .date-line .date-picker{height:58px;overflow:visible}
 .date-line .date-picker #dateDisplay{font-size:clamp(23px,6.3vw,37px);font-weight:1000;letter-spacing:-.05em;padding:0 4px;white-space:nowrap;overflow:visible}
-.date-suffix{font-size:clamp(12px,3.8vw,19px);font-weight:500;letter-spacing:-.07em}
-.date-suffix .training-word{font-size:clamp(19px,5.5vw,31px);font-weight:1000;letter-spacing:-.07em}
-.date-line{display:block;width:100%}.date-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.date-heading .date-picker{flex:1 1 175px;max-width:320px}.date-heading .date-suffix{white-space:nowrap;line-height:1.2}
+.date-line{display:block;width:100%}
+.date-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.date-heading .date-picker{flex:1 1 175px;max-width:320px}
 .date-heading .date-picker #dateDisplay{font-size:clamp(20px,5.4vw,29px);padding:0 12px}
-.entry-part-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.entry-part-tag{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:7px;background:var(--badge-color);color:#11141a;font-size:12px;font-weight:900}
+.entry-part-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.entry-part-tag{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:7px;background:var(--badge-color);color:#11141a;font-size:12px;font-weight:900}
 .part-button[data-part="胸"][aria-pressed="true"]{background:var(--part-chest)}
 .part-button[data-part="背中"][aria-pressed="true"]{background:var(--part-back);color:#101329}
 .part-button[data-part="足"][aria-pressed="true"]{background:var(--part-leg);color:#182013}
 .part-button[data-part="肩"][aria-pressed="true"]{background:var(--part-shoulder);color:#182013}
-.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}.part-button[data-part="腕"][aria-pressed="true"]{background:var(--part-arm);color:#211409}
+.part-button[data-part="お腹"][aria-pressed="true"]{background:var(--part-abdomen)}
+.part-button[data-part="腕"][aria-pressed="true"]{background:var(--part-arm);color:#211409}
 .cal-help{color:#d5caef;font-size:12px;margin:12px 0 8px}
-.custom-calendar-parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:10px}.custom-calendar-parts .part-button{width:100%;padding:8px;min-height:50px;height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.4;font-size:13px}.custom-part-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px dashed #919b80;border-radius:8px}.custom-part-form input[type=text]{min-width:155px;flex:1;padding:10px;border-radius:6px;background:#18201b;color:white;border:1px solid #9ba696;font-size:16px}.custom-part-form label{display:flex;align-items:center;gap:5px}.custom-part-form button{padding:10px;border-radius:6px;background:#d9ff43;color:#111;border:0;font-weight:bold}.calendar-parts .part-button{min-height:55px;border-width:2px}.calendar-reset-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px}.calendar-reset-row button{border:2px solid #bbb;border-radius:7px;padding:11px 15px;background:#303335;color:#fff;font-weight:800;cursor:pointer}.calendar-reset-row button[aria-pressed="true"]{background:#fff;color:#161616;border-color:#caff37;box-shadow:0 0 0 2px #caff37}.calendar-reset-row span{font-size:12px;color:#dce0d6;line-height:1.5;flex:1 1 175px}
+.custom-calendar-parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:10px}
+.custom-calendar-parts .part-button{width:100%;padding:8px;min-height:50px;height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.4;font-size:13px}
+.custom-part-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px dashed #919b80;border-radius:8px}
+.custom-part-form input[type=text]{min-width:155px;flex:1;padding:10px;border-radius:6px;background:#18201b;color:white;border:1px solid #9ba696;font-size:16px}
+.custom-part-form label{display:flex;align-items:center;gap:5px}
+.custom-part-form button{padding:10px;border-radius:6px;background:#d9ff43;color:#111;border:0;font-weight:bold}
+.calendar-parts .part-button{min-height:55px;border-width:2px}
+.calendar-reset-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px}
+.calendar-reset-row button{border:2px solid #bbb;border-radius:7px;padding:11px 15px;background:#303335;color:#fff;font-weight:800;cursor:pointer}
+.calendar-reset-row button[aria-pressed="true"]{background:#fff;color:#161616;border-color:#caff37;box-shadow:0 0 0 2px #caff37}
+.calendar-reset-row span{font-size:12px;color:#dce0d6;line-height:1.5;flex:1 1 175px}
 .calendar-parts .part-button[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 18px currentColor}
 .cal-grid button{min-height:41px}
-.pr-card{padding:17px;border:1px solid #9866ff;border-radius:18px;background:linear-gradient(125deg,#3c225c,#1b2650 68%,#16374b);box-shadow:inset 0 1px #ffffff26,0 9px 22px #0004;overflow:hidden}
-.pr-head{display:flex;align-items:center;gap:9px;margin-bottom:14px}
-.pr-medal{font-size:24px;filter:drop-shadow(0 0 8px #ffe500)}
-.pr-name{font-weight:1000;font-size:21px;color:#fff;overflow-wrap:anywhere}
-.pr-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.pr-metric{padding:12px 8px;border:1px solid #ff14939a;border-radius:13px;background:#21162d;text-align:center;min-width:0}
-.pr-metric small{display:block;color:#ff9ed5;font-size:12px;font-weight:900}
-.pr-metric strong{display:block;color:#fff;font-size:clamp(22px,5vw,34px);font-weight:1000;white-space:nowrap}
-.pr-metric strong em{font-style:normal;font-size:12px}
-.pr-rm{border-color:#eeff0099;background:#242c19}
-.pr-rm small{color:#d6ff7c}
-@media(max-width:600px){.logo{width:60px;height:60px;font-size:42px;margin-right:-9px}.brand-text{padding:8px 9px 8px 12px}.brand-text h1{font-size:clamp(17px,5.2vw,25px)}.version{font-size:9px;padding:6px}.date-line .date-picker #dateDisplay{font-size:clamp(21px,6.0vw,29px)}}
-
-/* YUZURU performance editorial redesign — only presentation changes */
-:root{--part-chest:#ff1493;--part-back:#39cfff;--part-leg:#eeff00;--part-shoulder:#a5ff27;--part-abdomen:#b700ff;--part-arm:#ff8a30;--bg:#090a0b;--panel:#151719;--panel2:#1d2023;--line:#34383c;--fg:#f5f5f3;--muted:#9b9ea1;--cyan:#a5ff27;--pink:#ff1493;--orange:#e8eeea;--lime:#caff37;--purple:#c3c7cb;--shadow:none;color-scheme:dark}
+@media(max-width:600px){
+  .logo{width:60px;height:60px;font-size:42px;margin-right:-9px}
+  .version{font-size:9px;padding:6px}
+  .date-line .date-picker #dateDisplay{font-size:clamp(21px,6.0vw,29px)}
+}
+:root{--part-chest:#ff1493;--part-back:#39cfff;--part-leg:#eeff00;--part-shoulder:#2ee6a6;--part-abdomen:#b700ff;--part-arm:#ff8a30;--bg:#090a0b;--panel:#151719;--panel2:#1d2023;--line:#34383c;--fg:#f5f5f3;--muted:#9b9ea1;--cyan:#a5ff27;--pink:#ff1493;--orange:#e8eeea;--lime:#caff37;--purple:#c3c7cb;--shadow:none;color-scheme:dark}
 body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;letter-spacing:-.012em}
 .page{max-width:940px;padding-top:22px}
 .brandbar{margin-bottom:29px;padding:7px 0 23px;border-bottom:1px solid #484b4d;align-items:flex-start}
-.brand{gap:13px}.brand-copy{min-width:0}.brand-kicker{font-size:10px;font-weight:850;letter-spacing:.19em;color:#caff37;margin-bottom:3px}
+.brand{gap:13px}
+.brand-copy{min-width:0}
+.brand-kicker{font-size:10px;font-weight:850;letter-spacing:.19em;color:#caff37;margin-bottom:3px}
 .logo{flex:none;width:52px;height:55px;margin:0;border:2px solid #f5f5f3;border-radius:3px;background:transparent;box-shadow:none;color:white;transform:none;display:flex;align-items:center;justify-content:center;font-family:Impact,"Arial Black",sans-serif;font-style:italic;font-size:43px;letter-spacing:-.1em}
 .logo-slash{font-size:31px;color:#caff37;transform:translate(-2px,7px) skew(-12deg)}
 .brand h1{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(29px,7.8vw,58px);font-weight:900;line-height:.98;white-space:nowrap;letter-spacing:-.045em;color:#fff}
-.brand-accent{color:#caff37}.subtitle{color:#b9bab9;font-size:11px;letter-spacing:.04em;margin-top:7px;font-weight:700}.subtitle-separator{color:#caff37;padding:0 5px}.version{border:1px solid #565b5b;border-radius:2px;background:transparent;color:#d1d3d2;font-family:monospace;font-size:11px;letter-spacing:.05em}
-.card,.stat,.tabs{background:#161819!important;box-shadow:none;border-color:#34383a;border-radius:5px}
-.card{padding:22px}.card h3{font-size:22px;font-weight:900;letter-spacing:-.035em;text-transform:uppercase}
-.hero{background:#202522!important;border:1px solid #353d36;border-radius:4px;box-shadow:none}
-.hero h2{font-size:clamp(25px,6.3vw,37px);font-weight:950;line-height:1.15}.hero .eyebrow{color:#caff37!important}.hero .emoji{filter:grayscale(1)}
-.stat{border-radius:3px}.stat:before{height:2px}.stat:nth-child(1):before,.stat:nth-child(2):before,.stat:nth-child(3):before{background:#caff37}
-.stat strong{font-family:Impact,"Arial Black",sans-serif;font-size:29px}
-.tabs{gap:0;padding:4px}.tab{border-radius:2px;letter-spacing:.03em}.tab.active{background:#d9ff43;color:#111!important}
-.field input,.field textarea,.field select,.set-field input,.filter input,.duration-field input,.extra-controls input,.extra-controls select{background:#0e1011;color:#f5f5f3;border:1px solid #505558;border-radius:3px}
+.brand-accent{color:#caff37}
+.subtitle{color:#b9bab9;font-size:11px;letter-spacing:.04em;margin-top:7px;font-weight:700}
+.subtitle-separator{color:#caff37;padding:0 5px}
+.version{border:1px solid #565b5b;border-radius:2px;background:transparent;color:#d1d3d2;font-family:monospace;font-size:11px;letter-spacing:.05em}
+.card,.tabs{background:#161819!important;box-shadow:none;border-color:#34383a;border-radius:5px}
+.card{padding:22px}
+.card h3{font-size:22px;font-weight:900;letter-spacing:-.035em;text-transform:uppercase}
+.tabs{gap:0;padding:4px}
+.tab{border-radius:2px;letter-spacing:.03em}
+.tab.active{background:#d9ff43;color:#111!important}
+.field input,.field textarea,.field select,.set-field input,.filter input{background:#0e1011;color:#f5f5f3;border:1px solid #505558;border-radius:3px}
 .date-line{display:block;container-type:inline-size;padding:10px 0 17px;border-bottom:1px solid #3c4142}
 .date-heading{--date-size:clamp(14px,5.5cqi,32px);--heading-scale:1;display:inline-flex;align-items:baseline;gap:calc(4px * var(--heading-scale));white-space:nowrap}
-.date-line .date-picker{flex:none;width:max-content;background:#222b21;border:2px solid #caff37;border-radius:9px;height:auto;overflow:visible;max-width:none;padding:2px 9px 17px;cursor:pointer}.date-line .date-picker::after{content:"📅 日付を変更 ▾";position:absolute;bottom:1px;left:10px;font-size:11px;font-weight:700;color:#d8f1ad;pointer-events:none;white-space:nowrap}
+.date-line .date-picker{flex:none;width:max-content;background:#222b21;border:2px solid #caff37;border-radius:9px;height:auto;overflow:visible;max-width:none;padding:2px 9px 17px;cursor:pointer}
+.date-line .date-picker::after{content:"📅 日付を変更 ▾";position:absolute;bottom:1px;left:10px;font-size:11px;font-weight:700;color:#d8f1ad;pointer-events:none;white-space:nowrap}
 .date-line .date-picker #dateDisplay{font-family:Impact,"Arial Black",-apple-system,sans-serif;font-size:calc(var(--date-size) * var(--heading-scale))!important;font-weight:950;letter-spacing:-.055em;padding:0;max-width:none;overflow:visible;white-space:nowrap;color:#fff;line-height:1.5}
-.date-number{color:#caff37;font-size:1.5em}.date-weekday{font-size:.82em;color:#fff;letter-spacing:0}
-.date-suffix{flex:none;font-size:calc(22px * var(--heading-scale));letter-spacing:.14em;font-weight:700;color:#caff37;text-transform:uppercase;white-space:nowrap}
-.date-suffix .training-word{font-size:calc(var(--date-size) * 1.18 * var(--heading-scale));font-weight:1000;letter-spacing:0;color:white;margin-left:calc(3px * var(--heading-scale))}
-.training-chest{color:var(--part-chest)}.training-back{color:var(--part-back)}.training-leg{color:var(--part-leg)}.training-shoulder{color:var(--part-shoulder)}.training-abdomen{color:var(--part-abdomen)}.training-arm{color:var(--part-arm)}
 .part-heading,.field label{letter-spacing:.035em}
 .part-button{border-radius:3px;background:#252729;border:1px solid #4a4f52;font-weight:950}
 .part-button[aria-pressed="true"]{box-shadow:none;border-color:white}
 .calendar-parts .part-button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #fff}
 .set-row,.set-row:nth-child(4n+2),.set-row:nth-child(4n+3),.set-row:nth-child(4n+4){background:#1e2123;border-color:#414649;border-radius:3px}
-.set-number,.sets-count{color:#d9ff43}.set-number .dot{background:#d9ff43}
-.add-set{background:#212522;border:1px dashed #849b63;border-radius:3px;color:#e9f3dc}.add-set .plus{color:#caff37}
-.preview-item,.entry,.pr-card,.pr-metric,.cal-grid span,.cal-grid button{border-radius:3px}
-.preview-item{background:#0d1011;border-color:#3f4446}.preview-item:nth-child(1),.preview-item:nth-child(2),.preview-item:nth-child(3){border-top:2px solid #caff37}
+.set-number,.sets-count{color:#d9ff43}
+.set-number .dot{background:#d9ff43}
+.add-set{background:#212522;border:1px dashed #849b63;border-radius:3px;color:#e9f3dc}
+.add-set .plus{color:#caff37}
+.entry,.cal-grid span,.cal-grid button{border-radius:3px}
 .primary{background:#d9ff43;color:#101411;border-radius:3px;box-shadow:none;text-transform:uppercase;letter-spacing:.035em}
-.secondary{background:#e9ebe9;color:#171a1b;border-radius:3px}.ghost{background:#27292b;border-color:#484d50;border-radius:3px}
-.entry{background:#1e2123;border-color:#41474a}.entry .exercise{font-size:18px}.amount,.rmvalue{color:#d9ff43}
-.set-chip{border-radius:2px;background:#34383a}.tag{background:#d9ff43;color:#151715;border-radius:2px}
-.pr-card{background:#1e2222;box-shadow:none;border-color:#4a5050}.pr-metric{background:#101314;border-color:#4c5252}.pr-metric small,.pr-rm small{color:#d9ff43}
-.cal-grid{gap:5px}.cal-grid span,.cal-grid button{border-color:#363c3e;background:#232628;color:#fff}.cal-grid button{font-size:16px;font-weight:850}
+.secondary{background:#e9ebe9;color:#171a1b;border-radius:3px}
+.ghost{background:#27292b;border-color:#484d50;border-radius:3px}
+.entry{background:#1e2123;border-color:#41474a}
+.entry .exercise{font-size:18px}
+.amount,.rmvalue{color:#d9ff43}
+.set-chip{border-radius:2px;background:#34383a}
+.tag{background:#d9ff43;color:#151715;border-radius:2px}
+.cal-grid{gap:5px}
+.cal-grid span,.cal-grid button{border-color:#363c3e;background:#232628;color:#fff}
+.cal-grid button{font-size:16px;font-weight:850}
 .cal-grid .part-day,.cal-grid .part-day .day-number{color:#000!important;text-shadow:none!important}
 .cal-grid .part-day .day-number{display:inline;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;outline:0!important}
-.cal-grid button.current{outline:2px solid #d9ff43;outline-offset:1px}
-.cal-help,.hint,.rm-hint{color:#b9bcb9}.footer{color:#898c8e}
-@media(max-width:600px){.brandbar{gap:5px}.brand{gap:9px}.logo{width:42px;height:47px;font-size:35px}.brand-kicker{font-size:8px}.brand h1{font-size:clamp(25px,7vw,37px)}.brand .subtitle{font-size:9px}.version{padding:5px;font-size:9px}.card{padding:16px}}
-
-.memo-quick{margin:2px 0 8px!important}.memo-quick textarea{min-height:66px!important}.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}.preview{margin-top:20px!important}
-.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:0;padding-top:0}.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}.volume-number{flex:none}.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}#todayList .entry-bottom{justify-content:flex-end}
-.volume-summary-note{font-size:11px;color:#b9bcb9}.volume-comparison{margin-top:10px;font-size:12px;line-height:1.45;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}.volume-comparison .compare-thing{display:block;color:#faffb0;font-size:12px}.volume-comparison .compare-joke{display:block;color:#cbd4c4;font-size:11px;margin-top:3px;font-weight:650}.volume-summary-item{display:flex;flex-direction:column}.volume-summary-item .volume-comparison{margin-top:auto;padding-top:12px;border-top:1px dashed #515d4c;min-height:65px}
-/* Text-based weight input keeps Japanese IME input intact, with independent 2.5kg arrows. */
-.weight-field{display:flex;align-items:center;gap:6px;min-width:0}
-.weight-control{position:relative;display:inline-flex;flex:0 1 76px;width:76px;min-width:0}
-.weight-control .set-weight{width:100%;flex:1;padding-right:18px}
-.weight-arrows{position:absolute;right:1px;top:1px;bottom:1px;width:17px;display:flex;flex-direction:column}
-.weight-arrows button{flex:1;min-height:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font-size:11px;line-height:1}
-@media(max-width:380px){.weight-field{gap:4px}.weight-control{width:61px;flex-basis:61px}.weight-control .set-weight{width:100%;padding-right:16px}}
-.calendar-reset-row{display:flex!important;grid-column:1/-1;width:100%;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:13px 0 4px;padding:12px;background:#202622;border:1px solid #596657;border-radius:10px}.calendar-reset-row button{flex:none;min-height:44px}.calendar-reset-row span{flex:1 1 170px}.custom-calendar-parts{width:100%}
-
-/* Calendar controls: readable stacked layout, with reset last. */
+.cal-grid button.current{outline:3px solid #fff;outline-offset:1px}
+.cal-help,.hint{color:#b9bcb9}
+.footer{color:#898c8e}
+@media(max-width:600px){
+  .brandbar{gap:5px}
+  .brand{gap:9px}
+  .logo{width:42px;height:47px;font-size:35px}
+  .brand-kicker{font-size:8px}
+  .brand h1{font-size:clamp(25px,7vw,37px)}
+  .brand .subtitle{font-size:9px}
+  .version{padding:5px;font-size:9px}
+  .card{padding:16px}
+}
+.memo-quick{margin:2px 0 8px!important}
+.memo-quick textarea{min-height:66px!important}
+.save-exercise{background:#d9ff43!important;color:#101411!important;border:2px solid #f1ffa8!important;border-radius:4px!important;min-height:66px!important;font-size:19px!important;font-weight:950!important;box-shadow:0 5px 0 #7c9f16!important;letter-spacing:.01em!important}
+.save-exercise:active{transform:translateY(3px);box-shadow:0 2px 0 #7c9f16!important}
+.volume-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:0;padding-top:0}
+.volume-summary-item{min-width:0;background:#222724;border:1px solid #4e5a4d;border-radius:4px;padding:15px 10px}
+.volume-summary-label{font-size:clamp(9px,2.6vw,12px);font-weight:850;color:#caff37;letter-spacing:.015em}
+.volume-summary-item strong{display:flex;align-items:baseline;gap:4px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(32px,9vw,52px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.volume-number{flex:none}
+.volume-summary-item strong small{flex:none;font-size:13px;color:#b7bcb8}
+#todayList .entry-bottom{justify-content:flex-end}
+.volume-comparison{margin-top:10px;font-size:12px;line-height:1.45;font-weight:800;color:#d9ff43;overflow-wrap:anywhere}
+.volume-comparison .compare-thing{display:block;color:#faffb0;font-size:12px}
+.volume-comparison .compare-joke{display:block;color:#cbd4c4;font-size:11px;margin-top:3px;font-weight:650}
+.volume-summary-item{display:flex;flex-direction:column}
+.volume-summary-item .volume-comparison{margin-top:auto;padding-top:12px;border-top:1px dashed #515d4c;min-height:65px}
+.calendar-reset-row{display:flex!important;grid-column:1/-1;width:100%;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:13px 0 4px;padding:12px;background:#202622;border:1px solid #596657;border-radius:10px}
+.calendar-reset-row button{flex:none;min-height:44px}
+.calendar-reset-row span{flex:1 1 170px}
+.custom-calendar-parts{width:100%}
 #customCalendarParts{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:12px}
 #customPartForm.custom-part-form{display:flex;flex-direction:column;align-items:stretch;gap:11px;padding:16px;margin-top:16px;border:1px solid #69786a;border-radius:12px;background:#1b2520}
 .custom-form-title{font-size:16px;font-weight:900;color:#f2f9ef}
@@ -195,9 +283,9 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .calendar-reset-row{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;width:100%;padding:12px;margin-top:18px;border:1px solid #6b736f;border-radius:10px;background:#202522}
 .calendar-reset-row button{min-height:44px;flex:none}
 .calendar-reset-row span{flex:1 1 165px;line-height:1.5}
-@media(max-width:360px){.custom-form-fields{grid-template-columns:minmax(0,1fr) 90px;gap:8px}}
-
-/* Date / clocks: compact 3-column header */
+@media(max-width:360px){
+  .custom-form-fields{grid-template-columns:minmax(0,1fr) 90px;gap:8px}
+}
 .date-line,.date-heading{width:100%;display:block}
 .date-line .date-heading{display:grid!important;grid-template-columns:minmax(0,1.4fr) minmax(74px,.9fr) minmax(82px,1.05fr);align-items:center;gap:9px}
 .date-line .date-picker{width:100%!important;max-width:none!important;height:auto!important;min-width:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:flex!important;flex-direction:column;align-items:stretch;overflow:visible}
@@ -213,15 +301,18 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .analog-face{position:relative;width:100%;aspect-ratio:1;max-width:115px;border:3px solid #d9ff43;border-radius:50%;background:radial-gradient(circle,#253129,#111c15);box-shadow:0 0 14px #d9ff4333}
 .analog-face:before{content:'12';position:absolute;top:3px;left:50%;transform:translateX(-50%);font-size:10px;color:white}
 .analog-face .clock-hour,.analog-face .clock-minute,.analog-face .clock-second{position:absolute;left:50%;bottom:50%;transform-origin:bottom center;border-radius:8px}
-.clock-hour{height:26%;width:4px;margin-left:-2px;background:white}.clock-minute{height:36%;width:3px;margin-left:-1.5px;background:#e0e8e0}.clock-second{height:41%;width:2px;margin-left:-1px;background:#d9ff43}
+.clock-hour{height:26%;width:4px;margin-left:-2px;background:white}
+.clock-minute{height:36%;width:3px;margin-left:-1.5px;background:#e0e8e0}
+.clock-second{height:41%;width:2px;margin-left:-1px;background:#d9ff43}
 .clock-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#d9ff43}
 .digital-box{display:flex;flex-direction:column;min-width:0;align-items:center;justify-content:center;gap:8px;text-align:center;border-radius:10px;background:#1d2921;padding:15px 2px;min-height:105px}
 .digital-label{font-size:12px;color:#b6c7b5;letter-spacing:.15em}
 #liveDigitalTime{font-family:ui-monospace,Menlo,monospace;font-size:clamp(12px,3.7vw,24px);letter-spacing:-.07em;font-weight:900;color:#d9ff43;white-space:nowrap;font-variant-numeric:tabular-nums}
 .live-label{font-size:11px;color:#aaff76;letter-spacing:.12em}
-@media(max-width:360px){.date-line .date-heading{grid-template-columns:minmax(0,1.4fr) minmax(67px,.8fr) minmax(75px,1fr);gap:5px}.analog-box{padding:4px}}
-
-/* Four large volume totals below the workout calendar. */
+@media(max-width:360px){
+  .date-line .date-heading{grid-template-columns:minmax(0,1.4fr) minmax(67px,.8fr) minmax(75px,1fr);gap:5px}
+  .analog-box{padding:4px}
+}
 .volume-summary-card{margin-top:18px;padding:22px}
 .volume-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .volume-summary-item{padding:24px 22px;min-height:195px;border-radius:14px;gap:12px}
@@ -239,11 +330,65 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   .volume-summary-item strong{font-size:clamp(55px,13vw,76px)}
   .volume-summary-item strong small{font-size:20px}
 }
-.growth-charts{display:grid;gap:15px;margin:14px 0}.growth-card{position:relative;border:1px solid #504468;border-radius:16px;padding:16px 12px 8px;background:#18152f;min-width:0}.growth-card svg{width:100%;height:auto;display:block}.growth-title{font-size:16px;font-weight:800;padding-right:40px}.growth-rank{position:absolute;right:12px;top:12px;color:var(--lime);font-weight:800}.growth-select{width:100%;min-height:44px;padding:10px;border-radius:10px;color:white;background:#13112b;border:1px solid #655481}.history-month{align-items:center;justify-content:space-between;margin:12px 0}.history-selected{outline:3px solid var(--cyan)!important;outline-offset:-3px}.history-total{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:18px 10px;margin-top:14px;border-top:1px solid var(--line);font-size:16px}.history-total strong{font-size:24px;color:var(--lime)}body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] #record-extras{display:none!important}</style>
+.growth-charts{display:grid;gap:15px;margin:14px 0}
+.growth-card{position:relative;border:1px solid #41474a;border-radius:4px;padding:16px 12px 8px;background:#1e2123;min-width:0}
+.growth-card svg{width:100%;height:auto;display:block}
+.growth-title{font-size:16px;font-weight:800;padding-right:40px}
+.growth-rank{position:absolute;right:12px;top:12px;color:var(--lime);font-weight:800}
+.growth-select{width:100%;min-height:48px;padding:10px;border-radius:3px;color:#f5f5f3;background:#0e1011;border:1px solid #505558;font-size:16px}
+.history-month{align-items:center;justify-content:space-between;margin:12px 0}
+.history-selected{outline:3px solid var(--cyan)!important;outline-offset:-3px}
+.history-total{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:18px 10px;margin-top:14px;border-top:1px solid var(--line);font-size:16px}
+.history-total strong{font-size:24px;color:var(--lime)}
+body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] #record-extras{display:none!important}
+.page{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;padding:6px max(10px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));border:0;border-top:1px solid #3a3f41;border-radius:0!important;background:#111314f2!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);gap:6px}
+.tabs .tab{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px;min-height:54px;font-size:13px;border-radius:8px!important;max-width:220px;margin:0 auto}
+.tab-icon{font-size:18px;line-height:1.1}
+.toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+.sets-head{margin:10px 0 8px}
+.set-list{gap:8px}
+.set-row{padding:10px 12px;border-radius:4px}
+.set-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;min-height:36px}
+.set-number{font-size:14px;margin-right:auto}
+.done-toggle{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 10px;border:1px solid #4a5052;border-radius:18px;font-size:13px;font-weight:800;color:#e9ece9;cursor:pointer}
+.done-toggle:has(.donebox:checked){background:#2c3a1d;border-color:#caff37;color:#d9ff43}
+.donebox{width:20px;height:20px;margin:0;accent-color:#b3fc73}
+.remove-set{min-height:36px;padding:4px 10px;font-size:12px}
+.set-inputs{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:10px;align-items:end}
+.set-field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.set-field label{font-size:12px;font-weight:800;color:#c9cdc9;letter-spacing:.03em}
+.weight-control{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px}
+.step-btn{min-height:48px;padding:0;border:1px solid #505558;border-radius:4px;background:#26292b;color:#d9ff43;font-size:22px;font-weight:900;line-height:1}
+.step-btn:active{background:#3a4031}
+.set-row .set-field input{width:100%;min-width:0;min-height:48px;margin:0;padding:6px 4px;font-size:20px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.set-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:12px}
+@media(max-width:360px){
+  .weight-control{grid-template-columns:38px minmax(0,1fr) 38px}
+  .set-row .set-field input{font-size:18px}
+}
+.entry-top>div:first-child{min-width:0;flex:1}
+.entry-actions{display:flex;gap:6px;flex:none}
+.entry-actions button{white-space:nowrap;min-height:40px;padding:6px 12px}
+.date-line .date-heading{grid-template-columns:minmax(0,1fr) 62px 84px!important;gap:8px!important}
+.analog-box{padding:4px;border-radius:8px}
+.analog-face{border-width:2px;max-width:54px}
+.analog-face:before{font-size:7px;top:1px}
+.digital-box{min-height:62px;padding:6px 2px;gap:3px;border-radius:8px}
+.digital-label,.live-label{font-size:9px}
+#liveDigitalTime{font-size:15px}
+.cal-key{gap:6px 12px;margin-top:10px;font-size:12px;color:#c9cdc9}
+.cal-key i{width:12px;height:12px}
+.key-today{color:#fff;font-weight:800}
+.history-selected{outline:3px solid #d9ff43!important}
+.set-row .set-field input::placeholder{color:#4d5356}
+#historyDayTitle{margin-top:20px}
+</style>
 </head>
 <body>
 <main class="page">
   <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">Y<span class="logo-slash">/</span></div><div class="brand-copy"><div class="brand-kicker">BUILT FOR PROGRESS · EST. 2026</div><h1>YUZURU<span class="brand-accent">.</span> LOG</h1><div class="subtitle">ゆずる式トレログ <span class="subtitle-separator">/</span> OWN YOUR PROGRESS.</div></div></div><span class="version">V.03</span></header>
+  <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button"><span class="tab-icon" aria-hidden="true">＋</span>記録する</button><button class="tab" data-tab="history" type="button"><span class="tab-icon" aria-hidden="true">▦</span>履歴</button><button class="tab" data-tab="analysis" type="button"><span class="tab-icon" aria-hidden="true">↗</span>分析</button></nav>
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
       <form id="workoutForm">
@@ -262,9 +407,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     </div>
     <div class="card"><div class="topline"><h3 id="selectedDateRecordHeading">今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
   </section>
-    <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button">＋ 記録する</button><button class="tab" data-tab="history" type="button">履歴</button><button class="tab" data-tab="analysis" type="button">分析</button></nav>
   <section id="history" class="panel" aria-label="履歴">
-    <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="閲覧専用トレーニングカレンダー"></div><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div></div>
+    <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="日付を選んで記録を見る"></div><div id="historyKey" class="cal-key" aria-label="色の説明"></div><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div></div>
     <div class="card"><h3>バックアップ</h3><p class="hint">記録はこのブラウザに保存されます。機種変更・データ削除などに備えてバックアップを取ってね。公開更新だけでは通常データは消えないけれど、保存を保証するものではありません。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
   </section>
   <section id="analysis" class="panel" aria-label="分析">
@@ -274,12 +418,12 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   </section>
 
   <div id="record-extras">
-  <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
+  <div class="card"><h3>📅 部位カレンダー</h3><p class="hint" style="margin:4px 0 12px">記録を保存すると自動で色がつくよ。手動で塗ることもできるよ。</p><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><div id="calKey" class="cal-key" aria-label="色の説明"></div><p class="cal-help">手動で塗るとき：下の部位を選んでから日付をタップ🎨（選んだ色に置きかわるよ）。色を消すときは「リセット」を選んで日付をタップ。</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
   <div class="card volume-summary-card">
       <div class="volume-summary">
-        <div class="volume-summary-item"><div class="volume-summary-label">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong><div id="todayVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
-        <div class="volume-summary-item"><div class="volume-summary-label">THIS MONTH / 今月の総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong><div id="monthVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
-        <div class="volume-summary-item"><div class="volume-summary-label">THIS YEAR / 今年の総重量</div><strong id="yearVolumeTotal">0 <small>kg</small></strong><div id="yearVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label" id="todayVolumeLabel">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong><div id="todayVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label" id="monthVolumeLabel">THIS MONTH / 今月の総重量</div><strong id="monthVolumeTotal">0 <small>kg</small></strong><div id="monthVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
+        <div class="volume-summary-item"><div class="volume-summary-label" id="yearVolumeLabel">THIS YEAR / 今年の総重量</div><strong id="yearVolumeTotal">0 <small>kg</small></strong><div id="yearVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
         <div class="volume-summary-item"><div class="volume-summary-label">LIFETIME / これまでの総重量</div><strong id="lifetimeVolumeTotal">0 <small>kg</small></strong><div id="lifetimeVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
       </div>
     </div>
@@ -406,7 +550,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function addSetRow(weight='',reps=''){
     if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
     const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
-    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label style="font-size:12px">完了 <input class="donebox" type="checkbox"></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field"><div class="weight-field"><label for="weight-${setId}">重量 (kg)</label><span class="weight-control"><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="例：60" required><span class="weight-arrows"><button type="button" data-weight-step="1" aria-label="重量を2.5kg増やす">▴</button><button type="button" data-weight-step="-1" aria-label="重量を2.5kg減らす">▾</button></span></span></div></div><div class="set-field"><label>回数<input class="set-reps" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="例：10" required></label></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label class="done-toggle"><input class="donebox" type="checkbox"><span>完了</span></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field set-field-weight"><label for="weight-${setId}">重量 (kg)</label><div class="weight-control"><button type="button" class="step-btn" data-weight-step="-1" aria-label="重量を2.5kg減らす">−</button><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="60" required><button type="button" class="step-btn" data-weight-step="1" aria-label="重量を2.5kg増やす">＋</button></div></div><div class="set-field set-field-reps"><label for="reps-${setId}">回数</label><input id="reps-${setId}" class="set-reps" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="10" required></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
     setList.appendChild(row);
     row.querySelector('.set-weight').value=weight;syncWeight(row.querySelector('.set-weight'));
     row.querySelector('.set-reps').value=reps;syncReps(row.querySelector('.set-reps'));
@@ -472,10 +616,10 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);a.push(d.toISOString().slice(0,10));}return a;}
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
     let seenSession='';
-    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||'#a88bff')+'">'+escape(p)+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
+    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||'#a88bff')+'">'+escape(p)+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><div class="entry-actions"><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
-  // 採用済み57種類の重量比較。現実の重量は代表的な概算、架空のものは作品内の設定等に基づく目安。
-  const comparisonThings=[["ピカチュウ",6,"匹","⚡","充電器を探してる場合じゃない。トレーナーがバグってる。"],["ボウリングの球",7,"個","🎳","レーンに流したら床が先にストライク。"],["スイカ",8,"玉","🍉","夏祭りのスイカ割り、腕力だけで閉幕。"],["米袋",10,"袋","🍚","炊飯器が労働基準監督署へ駆け込んだ。"],["中型犬",15,"匹","🐕","散歩というより犬の引っ越し。"],["灯油ポリタンク",18,"本","🛢️","冬支度の規模が石油会社。"],["自転車",20,"台","🚲","駐輪場の管理人から指名手配。"],["電子レンジ",20,"台","🍱","温める前に持ち上げてどうする。"],["ビール樽",25,"樽","🍺","居酒屋の地下倉庫で伝説になれる。"],["小学生",30,"人分","🎒","運動会の組体操、発注先が間違ってる。"],["大型犬",40,"匹","🐕","ドッグランが重量挙げ会場に変わった。"],["洗濯機",45,"台","🫧","脱水より先に筋肉が遠心分離。"],["大人1人",65,"人分","🧍","満員電車の乗客をまとめて筋トレに換算。"],["冷蔵庫",94,"台","🧊","引っ越し業者から役員待遇でスカウト。"],["ドラえもん",129.3,"体","🔔","四次元ポケットから湿布を出してくれ。"],["貴乃花",150,"人分","🏆","土俵がなくても勝手に千秋楽。"],["ボブ・サップ",159,"人分","💪","筋肉が筋肉を持ち上げる無限ループ。"],["ゴリラ",180,"頭","🦍","親戚を何頭持ち上げるつもりだ。"],["曙",233,"人分","🏆","重量級すぎて行司が逃げた。"],["グランドピアノ",320,"台","🎹","ショパンも「持つんかい」って言う。"],["自動販売機",400,"台","🥤","飲み物じゃなく自販機ごとお持ち帰り。"],["シロクマ",500,"頭","🐻‍❄️","北極から「それ筋トレ？」と苦情。"],["競走馬",500,"頭","🐎","有馬記念が人力牽引レースに変更。"],["軽自動車",850,"台","🚙","駐車場でベンチプレスは禁止です。"],["キリン",1200,"頭","🦒","首が長くてもこの記録は二度見する。"],["カバ",1500,"頭","🦛","動物園の飼育員も二度見した。"],["アルファード",2060,"台","🚐","家族旅行、車を担いで出発。"],["サイ",2300,"頭","🦏","角の問題じゃない。全体が重い。"],["アフリカゾウ",5000,"頭","🐘","鼻で笑われる前にこっちがゾウを超えた。"],["ティラノサウルス",7000,"頭","🦖","ジュラ紀のジムなら入会初日に出禁。"],["スクールバス",9000,"台","🚌","遠足の集合場所が筋トレ会場に。"],["モアイ像",12500,"体","🗿","イースター島が「返して」と言っている。"],["大型トラック",20000,"台","🚚","物流会社が土下座で入社を頼む。"],["路面電車",30000,"両","🚃","線路より腕のほうが頑丈説。"],["初代ガンダム",43400,"機","🤖","アムロも「それは持てない」って言う。"],["新幹線1両",45000,"両","🚅","次の停車駅はプロテイン売り場。"],["戦艦大和",72800000,"隻","🚢","筋トレが海軍の極秘作戦になった。"],["クジラ",100000,"頭","🐋","海より先にダンベルが干上がる。"],["ガメラ",120000,"体","🐢","回転しながら飛ばれたらジムが終わる。"],["ジャンボジェット機",180000,"機","✈️","離陸しなくても腕だけが飛行中。"],["自由の女神",204000,"体","🗽","たいまつよりダンベル持たせたい。"],["エアバスA380",575000,"機","🛫","空港職員が全員ヘッドハンティング。"],["小型ロケット",1000000,"基","🚀","発射台がジムの床になった。"],["巨大観覧車",1500000,"基","🎡","回すんじゃない、持ち上げてる。"],["スペースシャトル",2000000,"機","🛰️","NASAから「筋トレの定義を教えて」。"],["潜水艦",3000000,"隻","🌊","潜る前に重量記録が浮上。"],["東京タワー",4000000,"基","🗼","東京の夜景が一瞬揺れた。"],["大型船",10000000,"隻","🛳️","船長も「積載量おかしくない？」。"],["エッフェル塔",10100000,"基","🇫🇷","パリから筋肉に感謝状。"],["初代ゴジラ",20000000,"体","🦖","怪獣映画じゃなくて筋トレの記録です。"],["東京スカイツリー",36000000,"基","🏙️","地上634mから拍手が聞こえる。"],["国会議事堂",109000000,"棟","🏛️","本日の議題「なぜ持ち上がった？」。"],["ピラミッド",6000000000,"基","🔺","ファラオも建設業者も困惑している。"],["富士山",1000000000000000,"座","🗻","登山するな。山ごと持つな。"],["月",7.35e+22,"個","🌙","ウサギが餅つきを中断した。"],["地球",5.97e+24,"個","🌏","ジムの住所が「惑星」になった。"],["太陽",1.99e+30,"個","☀️","もう日焼けでは済まない。宇宙規模。"]];
+  // 57種類の重量比較。重量は代表的な概算。キャラクター・実在人物・商品名は使わない（販売時の権利リスク回避）。
+  const comparisonThings=[["ネコ（大きめ）",6,"匹","🐈","猫の手も借りたい…どころか猫ごと持ち上げた。"],["ボウリングの球",7,"個","🎳","レーンに流したら床が先にストライク。"],["スイカ",8,"玉","🍉","夏祭りのスイカ割り、腕力だけで閉幕。"],["米袋",10,"袋","🍚","炊飯器が労働基準監督署へ駆け込んだ。"],["中型犬",15,"匹","🐕","散歩というより犬の引っ越し。"],["灯油ポリタンク",18,"本","🛢️","冬支度の規模が石油会社。"],["自転車",20,"台","🚲","駐輪場の管理人から指名手配。"],["電子レンジ",20,"台","🍱","温める前に持ち上げてどうする。"],["ビール樽",25,"樽","🍺","居酒屋の地下倉庫で伝説になれる。"],["小学生",30,"人分","🎒","運動会の組体操、発注先が間違ってる。"],["大型犬",40,"匹","🐕","ドッグランが重量挙げ会場に変わった。"],["洗濯機",45,"台","🫧","脱水より先に筋肉が遠心分離。"],["大人1人",65,"人分","🧍","満員電車の乗客をまとめて筋トレに換算。"],["冷蔵庫",94,"台","🧊","引っ越し業者から役員待遇でスカウト。"],["パンダ",120,"頭","🐼","笹より先にパンダを持ち上げてどうする。"],["お相撲さん",150,"人分","🏆","土俵がなくても勝手に千秋楽。"],["ヘビー級格闘家",120,"人分","💪","筋肉が筋肉を持ち上げる無限ループ。"],["ゴリラ",180,"頭","🦍","親戚を何頭持ち上げるつもりだ。"],["トラ",220,"頭","🐅","虎の威を借るどころか、虎を担いでる。"],["グランドピアノ",320,"台","🎹","ショパンも「持つんかい」って言う。"],["自動販売機",400,"台","🥤","飲み物じゃなく自販機ごとお持ち帰り。"],["シロクマ",500,"頭","🐻‍❄️","北極から「それ筋トレ？」と苦情。"],["競走馬",500,"頭","🐎","有馬記念が人力牽引レースに変更。"],["軽自動車",850,"台","🚙","駐車場でベンチプレスは禁止です。"],["キリン",1200,"頭","🦒","首が長くてもこの記録は二度見する。"],["カバ",1500,"頭","🦛","動物園の飼育員も二度見した。"],["ミニバン",2000,"台","🚐","家族旅行、車を担いで出発。"],["サイ",2300,"頭","🦏","角の問題じゃない。全体が重い。"],["アフリカゾウ",5000,"頭","🐘","鼻で笑われる前にこっちがゾウを超えた。"],["ティラノサウルス",7000,"頭","🦖","ジュラ紀のジムなら入会初日に出禁。"],["スクールバス",9000,"台","🚌","遠足の集合場所が筋トレ会場に。"],["モアイ像",12500,"体","🗿","イースター島が「返して」と言っている。"],["大型トラック",20000,"台","🚚","物流会社が土下座で入社を頼む。"],["路面電車",30000,"両","🚃","線路より腕のほうが頑丈説。"],["大型ショベルカー",40000,"台","🏗️","掘る前に持ち上げてどうする。"],["新幹線1両",45000,"両","🚅","次の停車駅はプロテイン売り場。"],["戦艦大和",72800000,"隻","🚢","筋トレが海軍の極秘作戦になった。"],["クジラ",100000,"頭","🐋","海より先にダンベルが干上がる。"],["蒸気機関車",120000,"両","🚂","汽笛より先に雄叫びが鳴った。"],["ジャンボジェット機",180000,"機","✈️","離陸しなくても腕だけが飛行中。"],["自由の女神",204000,"体","🗽","たいまつよりダンベル持たせたい。"],["エアバスA380",575000,"機","🛫","空港職員が全員ヘッドハンティング。"],["小型ロケット",1000000,"基","🚀","発射台がジムの床になった。"],["巨大観覧車",1500000,"基","🎡","回すんじゃない、持ち上げてる。"],["スペースシャトル",2000000,"機","🛰️","NASAから「筋トレの定義を教えて」。"],["潜水艦",3000000,"隻","🌊","潜る前に重量記録が浮上。"],["東京タワー",4000000,"基","🗼","東京の夜景が一瞬揺れた。"],["大型船",10000000,"隻","🛳️","船長も「積載量おかしくない？」。"],["エッフェル塔",10100000,"基","🇫🇷","パリから筋肉に感謝状。"],["高層ビル",20000000,"棟","🏢","エレベーターより先に腕が最上階へ。"],["東京スカイツリー",36000000,"基","🏙️","地上634mから拍手が聞こえる。"],["国会議事堂",109000000,"棟","🏛️","本日の議題「なぜ持ち上がった？」。"],["ピラミッド",6000000000,"基","🔺","ファラオも建設業者も困惑している。"],["富士山",1000000000000000,"座","🗻","登山するな。山ごと持つな。"],["月",7.35e+22,"個","🌙","ウサギが餅つきを中断した。"],["地球",5.97e+24,"個","🌏","ジムの住所が「惑星」になった。"],["太陽",1.99e+30,"個","☀️","もう日焼けでは済まない。宇宙規模。"]];
   function weightComparison(kg,period){
     if(!(kg>0))return '<span class="compare-joke">💤 まだ静かな筋肉。ここから伝説が始まる。</span>';
     // 近い重さの物体を優先しつつ、期間ごとに異なる候補を選ぶ。
@@ -507,6 +651,12 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   }
   const volumeResizeObserver=new ResizeObserver(fitVolumeTotals);
   document.querySelectorAll('.volume-summary-item').forEach(item=>volumeResizeObserver.observe(item));
+  function updateVolumeLabels(date){
+    const [y,m,d]=date.split('-').map(Number),[ty,tm]=today.split('-').map(Number);
+    $('todayVolumeLabel').textContent=date===today?'TODAY / 今日の総重量':`DAY / ${m}月${d}日の総重量`;
+    $('monthVolumeLabel').textContent=y===ty&&m===tm?'THIS MONTH / 今月の総重量':`MONTH / ${y}年${m}月の総重量`;
+    $('yearVolumeLabel').textContent=y===ty?'THIS YEAR / 今年の総重量':`YEAR / ${y}年の総重量`;
+  }
   function volumeTotals(records,date){
     const totals={today:0,month:0,year:0,lifetime:0};
     for(const record of records){
@@ -517,14 +667,19 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     }
     return totals;
   }
-  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);drawHistory();
+  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}updateVolumeLabels(selectedDate);fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);drawHistory();
 updatePrevious();renderExtras();
   }
-  function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const date=$('date').value;const recent=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`同じ日の記録：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
+  const sameName=(a,b)=>a.trim().toLocaleLowerCase('ja')===b.trim().toLocaleLowerCase('ja');
+  // Latest record of the exercise on or before the selected date (the "last time" a lifter wants to beat).
+  function previousRecord(name,date){return sorted(entries.filter(x=>x.date<=date&&sameName(x.exercise,name)))[0]||null;}
+  function updatePrevious(){const name=getExerciseName().trim();const date=$('date').value;const recent=name&&!$('editingId').value?previousRecord(name,date):null;if(!recent){$('previous').textContent='';return;}const [,m,d]=recent.date.split('-').map(Number);const when=recent.date===date?'今日の記録':`前回（${m}/${d}）`;$('previous').textContent=`${when}：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`;}
   function refreshExerciseSuggestions(){
     const selected=getSelectedParts();
     const frequency=new Map();
-    entries.filter(x=>selected.length&&selected.some(p=>cleanParts(x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).includes(p))).forEach(x=>{
+    const partMatch=x=>selected.some(p=>cleanParts(x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).includes(p));
+    const pool=selected.length&&entries.some(partMatch)?entries.filter(partMatch):entries;
+    pool.forEach(x=>{
       const name=x.exercise.trim(),key=name.toLocaleLowerCase('ja');if(!name)return;
       const item=frequency.get(key)||{name,dates:new Set(),last:0};
       item.dates.add(x.date);item.last=Math.max(item.last,Number(x.createdAt)||0);frequency.set(key,item);
@@ -558,13 +713,12 @@ updatePrevious();renderExtras();
     if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
     // Keep the day's muscle-group history for the calendar, but clear the form selection after saving.
     const partsAtSave=getSelectedParts();
-    if(partsAtSave.length)saveDayParts(date,[...(dayParts[date]||[]),...partsAtSave]);
-    resetSelectedParts();
+    if(partsAtSave.length)saveDayParts(date,[...partsForDay(date),...partsAtSave]);
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
-  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
+  $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';$('memo').value='';setList.replaceChildren();addSetRow();restoreDayParts();updatePrevious();hideExerciseSuggestions();notify('編集をキャンセルしたよ');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));document.body.dataset.activeTab=b.dataset.tab;}));
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));document.body.dataset.activeTab=b.dataset.tab;window.scrollTo({top:0,behavior:'instant'});}));
   $('historyPrev').addEventListener('click',()=>{historyMonthOffset--;drawHistory();});$('historyNext').addEventListener('click',()=>{historyMonthOffset++;drawHistory();});
   function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
   $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
@@ -590,10 +744,9 @@ updatePrevious();renderExtras();
   $('date').addEventListener('input',restoreDayParts);
   function getSelectedParts(){return [...document.querySelectorAll('#partButtons .part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
   function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('#partButtons .part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
-  function resetSelectedParts(){setSelectedParts([])}
-  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;const old=getSelectedParts();b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));const date=$('date').value;if(!saveDayParts(date,getSelectedParts())){setSelectedParts(old);return;}refreshExerciseSuggestions();drawCalendar();notify('部位を選択したよ');});
+  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));refreshExerciseSuggestions();});
   let activeSession=null,startedAt=0,monthOffset=0,historyMonthOffset=0,historySelectedDate=japanDate();
-  function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase(),date=$('date').value;const p=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];setList.replaceChildren();if(p){p.setsData.forEach(v=>addSetRow(v.weight,v.reps));setSelectedParts(p.bodyParts||p.bodyPart||[])}else{addSetRow()}updatePrevious()}
+  function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim(),date=$('date').value;updatePrevious();if(!name)return;const typed=Array.from(setList.children).some(r=>r.querySelector('.set-weight').value!==''||r.querySelector('.set-reps').value!=='');if(typed)return;const p=previousRecord(name,date);if(!p)return;setList.replaceChildren();p.setsData.forEach(v=>addSetRow(v.weight,v.reps));const parts=p.bodyParts?.length?p.bodyParts:(p.bodyPart?[p.bodyPart]:[]);if(parts.length)setSelectedParts(parts);notify(p.date===date?'今日の記録を入れたよ':'前回の重量・回数を入れたよ');}
   setList.addEventListener('input',e=>{if(e.target.matches('.set-weight,.set-reps')&&!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now()}});
 
   function progressSeries(name){
@@ -607,13 +760,15 @@ updatePrevious();renderExtras();
     const points=progressSeries(name);
     if(!points.length){const no=document.createElement('p');no.className='hint';no.textContent='推定1RMのデータがありません';box.appendChild(no);return box;}
     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 360 190');svg.setAttribute('role','img');svg.setAttribute('aria-label',name+'の推定1RM折れ線グラフ');
-    const minimum=Math.min(...points.map(p=>p.rm)),maximum=Math.max(...points.map(p=>p.rm)),lo=Math.max(0,minimum-(maximum-minimum||maximum*.15)*.3),hi=maximum+Math.max(1,(maximum-lo)*.18);
+    const minimum=Math.min(...points.map(p=>p.rm)),maximum=Math.max(...points.map(p=>p.rm));
+    const rawStep=Math.max(maximum-minimum,maximum*.1,1)/3,mag=10**Math.floor(Math.log10(rawStep)),step=[1,2,2.5,5,10].map(f=>f*mag).find(v=>v>=rawStep);
+    const lo=Math.max(0,Math.floor(minimum/step)*step-(minimum%step===0?step:0)),hi=Math.max(lo+step*3,Math.ceil(maximum/step)*step+(maximum%step===0?step:0));
     const x=i=>48+294*(points.length===1?.5:i/(points.length-1)),y=v=>148-(v-lo)/(hi-lo)*120;
     const add=(tag,attributes,value)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attributes).forEach(([key,val])=>node.setAttribute(key,val));if(value!==undefined)node.textContent=value;svg.appendChild(node);return node;};
-    for(let k=0;k<4;k++){const value=lo+(hi-lo)*k/3,yy=y(value);add('line',{x1:48,x2:342,y1:yy,y2:yy,stroke:'#51446d','stroke-dasharray':'4 5'});add('text',{x:2,y:yy+4,fill:'#c8c0df','font-size':11},fmt(value));}
-    add('polyline',{points:points.map((p,i)=>x(i)+','+y(p.rm)).join(' '),fill:'none',stroke:'#45e5fa','stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round'});
-    points.forEach((p,i)=>{const dot=add('circle',{cx:x(i),cy:y(p.rm),r:4.2,fill:'#ff69bb'}),t=document.createElementNS('http://www.w3.org/2000/svg','title');t.textContent=p.date+' '+fmt(p.rm)+'kg';dot.appendChild(t);});
-    [...new Set([0,Math.floor((points.length-1)/2),points.length-1])].forEach(i=>add('text',{x:x(i),y:177,fill:'#d7d0ee','font-size':11,'text-anchor':'middle'},points[i].date.slice(5).replace('-','/')));
+    for(let value=lo;value<=hi+step/2;value+=step){const yy=y(value);add('line',{x1:48,x2:342,y1:yy,y2:yy,stroke:'#3a3f41','stroke-dasharray':'4 5'});add('text',{x:2,y:yy+4,fill:'#9b9ea1','font-size':11},fmt(value));}
+    add('polyline',{points:points.map((p,i)=>x(i)+','+y(p.rm)).join(' '),fill:'none',stroke:'#d9ff43','stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round'});
+    points.forEach((p,i)=>{const dot=add('circle',{cx:x(i),cy:y(p.rm),r:4.5,fill:'#111314',stroke:'#d9ff43','stroke-width':2}),t=document.createElementNS('http://www.w3.org/2000/svg','title');t.textContent=p.date+' '+fmt(p.rm)+'kg';dot.appendChild(t);});
+    [...new Set([0,Math.floor((points.length-1)/2),points.length-1])].forEach(i=>add('text',{x:x(i),y:177,fill:'#9b9ea1','font-size':11,'text-anchor':'middle'},points[i].date.slice(5).replace('-','/')));
     box.appendChild(svg);
     const details=document.createElement('p');details.className='hint';details.textContent='初回 '+fmt(points[0].rm)+'kg → 最新 '+fmt(points[points.length-1].rm)+'kg / 最高 '+fmt(maximum)+'kg';box.appendChild(details);
     return box;
@@ -646,6 +801,7 @@ updatePrevious();renderExtras();
       btn.textContent=day;btn.setAttribute('aria-label',key+'の記録を表示');btn.setAttribute('aria-pressed',String(key===historySelectedDate));
       btn.addEventListener('click',()=>{historySelectedDate=key;drawHistory();});grid.appendChild(btn);
     }
+    drawCalendarKey('historyKey');
     const list=entries.filter(e=>e.date===historySelectedDate);
     $('historyDayTitle').textContent=historySelectedDate.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$1年$2月$3日')+'の記録';
     renderList('historyList',list);
@@ -668,13 +824,12 @@ updatePrevious();renderExtras();
     if(customParts.some(p=>p.name===name)){notify('その名前はすでに追加されているよ');return;}
     const item={id:'custom:'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name,color};
     customParts.push(item);if(!saveCustomParts()){customParts.pop();return;}
-    $('customPartName').value='';drawCustomButtons();notify(name+'を追加したよ');
+    $('customPartName').value='';drawCustomButtons();drawCalendar();drawHistory();notify(name+'を追加したよ');
   });
   const calendarSelectedParts=new Set();
    let calendarResetMode=false;
-   $('calendarResetMode').addEventListener('click',()=>{calendarResetMode=!calendarResetMode;$('calendarResetMode').setAttribute('aria-pressed',String(calendarResetMode));if(calendarResetMode){calendarSelectedParts.clear();document.querySelectorAll('#calendarPartButtons [data-part]').forEach(b=>b.setAttribute('aria-pressed','false'));}calendarTapState.key='';calendarTapState.count=0;notify(calendarResetMode?'リセットモード：色を消したい日付を押してね':'リセットモードを終了したよ');});
-  const calendarTapState={key:'',count:0,last:0,selection:''};
-  $('calendarPartButtons').addEventListener('click',handleCalendarPartClick);
+   $('calendarResetMode').addEventListener('click',()=>{calendarResetMode=!calendarResetMode;$('calendarResetMode').setAttribute('aria-pressed',String(calendarResetMode));if(calendarResetMode){calendarSelectedParts.clear();document.querySelectorAll('#calendarPartButtons [data-part]').forEach(b=>b.setAttribute('aria-pressed','false'));}notify(calendarResetMode?'リセットモード：色を消したい日付を押してね':'リセットモードを終了したよ');});
+    $('calendarPartButtons').addEventListener('click',handleCalendarPartClick);
   $('customCalendarParts').addEventListener('click',handleCalendarPartClick);
   function handleCalendarPartClick(e){
     const b=e.target.closest('[data-part]');if(!b)return;
@@ -682,9 +837,15 @@ updatePrevious();renderExtras();
     if(calendarResetMode){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');}
     if(calendarSelectedParts.has(p))calendarSelectedParts.delete(p);else calendarSelectedParts.add(p);
     b.setAttribute('aria-pressed',String(calendarSelectedParts.has(p)));
-    drawCustomButtons();calendarTapState.key='';calendarTapState.count=0;
+    drawCustomButtons();
+  }
+  function drawCalendarKey(id){
+    const box=$(id);if(!box)return;box.replaceChildren();
+    [...partOrder.map(p=>({name:p,color:partColors[p]})),...customParts.map(p=>({name:p.name,color:p.color}))].forEach(({name,color})=>{const item=document.createElement('span');const dot=document.createElement('i');dot.style.setProperty('--c',color);item.append(dot,name);box.appendChild(item);});
+    const today_=document.createElement('span');today_.className='key-today';today_.textContent='□ 今日';box.appendChild(today_);
   }
   function drawCalendar(){
+    drawCalendarKey('calKey');
     const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+monthOffset);
     const y=d.getFullYear(),m=d.getMonth(),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay();
     $('calTitle').textContent=y+'年'+(m+1)+'月';
@@ -706,19 +867,10 @@ updatePrevious();renderExtras();
         el.setAttribute('aria-label',key+'：'+parts.map(x=>customParts.find(p=>p.id===x)?.name||x).join('、'));
       }else{el.textContent=day;}
       el.addEventListener('click',()=>{
-        if(calendarResetMode){if(saveDayParts(key,[])){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');calendarTapState.key='';calendarTapState.count=0;drawCalendar();if($('date').value===key)restoreDayParts();notify('この日のカレンダーの色をリセットしたよ（記録は残るよ）');}return;}
+        if(calendarResetMode){if(saveDayParts(key,[])){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');drawCalendar();drawHistory();if($('date').value===key)restoreDayParts();notify('この日の色を消したよ（記録は残るよ）');}return;}
          if(!calendarSelectedParts.size){notify('先にカレンダー下の部位を選んでね');return;}
         const chosen=[...partOrder,...customParts.map(x=>x.id)].filter(p=>calendarSelectedParts.has(p));
-        const signature=chosen.join('|'),now=Date.now();
-        const repeated=calendarTapState.key===key&&calendarTapState.selection===signature&&now-calendarTapState.last<=1800;
-        calendarTapState.count=repeated?calendarTapState.count+1:1;
-        calendarTapState.key=key;calendarTapState.selection=signature;calendarTapState.last=now;
-        const clearing=calendarTapState.count>=3;
-        if(saveDayParts(key,clearing?[]:chosen)){
-          if(clearing){calendarTapState.count=0;calendarTapState.key='';}
-          drawCalendar();if($('date').value===key)restoreDayParts();
-          notify(clearing?'この日の色を全部消したよ':chosen.length+'色で更新したよ');
-        }
+        if(saveDayParts(key,chosen)){drawCalendar();drawHistory();if($('date').value===key)restoreDayParts();notify(chosen.length+'色で塗ったよ');}
       });
       box.appendChild(el);
     }
@@ -747,7 +899,7 @@ updatePrevious();renderExtras();
   let lastCheck = 0, checking = false, editing = false;
   const banner = document.createElement('div');
   banner.setAttribute('role','status');
-  banner.style.cssText = 'display:none;position:fixed;z-index:9999;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));padding:14px;border:2px solid #caff37;border-radius:12px;background:#171b17;color:white;box-shadow:0 4px 24px #0009;font-size:14px';
+  banner.style.cssText = 'display:none;position:fixed;z-index:9999;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));padding:14px;border:2px solid #caff37;border-radius:12px;background:#171b17;color:white;box-shadow:0 4px 24px #0009;font-size:14px';
   banner.innerHTML = '<span>新しいトレログが公開されたよ。入力途中の内容を保存してから更新してね。</span> <button type="button" style="margin-left:8px;padding:8px;background:#caff37;color:#111;border:0;border-radius:7px;font-weight:bold">更新する</button>';
   document.body.appendChild(banner);
   let pendingUrl = '';
