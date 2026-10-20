@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261020-daily-exercise-reset-1">
+  <meta name="torelog-build" content="20261020-reset-part-after-save-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
     :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -536,10 +536,10 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
     if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>notify('🎉 自己ベスト更新！おめでとう！'),1000);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
-    // A workout is saved separately; the selected muscle groups remain on the current date.
+    // Keep the day's muscle-group history for the calendar, but clear the form selection after saving.
     const partsAtSave=getSelectedParts();
     if(partsAtSave.length)saveDayParts(date,[...(dayParts[date]||[]),...partsAtSave]);
-    setSelectedParts(partsForDay($('date').value));
+    resetSelectedParts();
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
   $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
