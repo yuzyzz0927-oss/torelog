@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261020-large-volume-below-calendar-1">
+  <meta name="torelog-build" content="20261020-analysis-history-refresh-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
     :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -239,7 +239,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   .volume-summary-item strong{font-size:clamp(55px,13vw,76px)}
   .volume-summary-item strong small{font-size:20px}
 }
-</style>
+.growth-charts{display:grid;gap:15px;margin:14px 0}.growth-card{position:relative;border:1px solid #504468;border-radius:16px;padding:16px 12px 8px;background:#18152f;min-width:0}.growth-card svg{width:100%;height:auto;display:block}.growth-title{font-size:16px;font-weight:800;padding-right:40px}.growth-rank{position:absolute;right:12px;top:12px;color:var(--lime);font-weight:800}.growth-select{width:100%;min-height:44px;padding:10px;border-radius:10px;color:white;background:#13112b;border:1px solid #655481}.history-month{align-items:center;justify-content:space-between;margin:12px 0}.history-selected{outline:3px solid var(--cyan)!important;outline-offset:-3px}.history-total{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:18px 10px;margin-top:14px;border-top:1px solid var(--line);font-size:16px}.history-total strong{font-size:24px;color:var(--lime)}body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] #record-extras{display:none!important}</style>
 </head>
 <body>
 <main class="page">
@@ -264,16 +264,16 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   </section>
     <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button">＋ 記録する</button><button class="tab" data-tab="history" type="button">履歴</button><button class="tab" data-tab="analysis" type="button">分析</button></nav>
   <section id="history" class="panel" aria-label="履歴">
-    <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="filter"><label for="filterDate">日付で絞る</label><input id="filterDate" type="date"><button class="ghost tiny" id="showAll" type="button">すべて表示</button></div><div id="historyList" class="list"></div></div>
+    <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="閲覧専用トレーニングカレンダー"></div><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div></div>
     <div class="card"><h3>バックアップ</h3><p class="hint">記録はこのブラウザに保存されます。機種変更・データ削除などに備えてバックアップを取ってね。公開更新だけでは通常データは消えないけれど、保存を保証するものではありません。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
   </section>
   <section id="analysis" class="panel" aria-label="分析">
     
 
-    <div class="card"><h3>種目別成長グラフ</h3><p class="hint">最高使用重量の推移</p><select id="progressSelect" style="padding:10px;max-width:100%;background:#13112b;color:white;border:1px solid #655481"></select><div id="progressBars" class="progress-bars"></div><p id="progressCaption" class="hint"></p></div>
-    <div class="card"><h3>種目別のベスト記録</h3><p class="hint">最高使用重量と最高推定1RMを表示します。</p><div class="list" id="prList"></div></div>
+    <div class="card"><h3>種目別成長グラフ</h3><p class="hint">実施頻度が高い上位5種目の、日付ごとの最高推定1RM</p><div id="topProgressCharts" class="growth-charts"></div></div><div class="card"><h3>種目を選んで成長を見る</h3><p class="hint">過去に行った種目を選択できます。</p><select id="progressSelect" class="growth-select" aria-label="種目を選ぶ"></select><div id="progressBars" class="growth-charts"></div><p id="progressCaption" class="hint"></p></div>
   </section>
 
+  <div id="record-extras">
   <div class="card"><h3>📅 トレーニングカレンダー</h3><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><p class="cal-help">好きな部位を複数選んで日付をタップ！選んだ色に更新されるよ🎨 色を消すときは「リセット」を選んで日付を押してね！</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
   <div class="card volume-summary-card">
       <div class="volume-summary">
@@ -294,6 +294,7 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   <p style="font-size:.8rem;line-height:1.5;opacity:.8;margin:10px 0 0;">ボタンを押すとメールアプリが開きます。内容を確認して、メールアプリから送信してください。送信先のアドレスは表示されます。</p>
   <p style="font-size:.75rem;opacity:.7;text-align:center;margin:18px 0 0;">今後App Storeにて販売予定です。</p>
 </section>
+</div>
 <script>
 (function(){
   const button=document.getElementById('developer-email-button');
@@ -516,8 +517,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
     }
     return totals;
   }
-  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);renderList('historyList',entries.filter(x=>!$('filterDate').value||x.date===$('filterDate').value));
-    const prs={};entries.forEach(x=>{const row=prs[x.exercise]||(prs[x.exercise]={weight:0,rm:0});x.setsData.forEach(s=>{row.weight=Math.max(row.weight,s.weight);row.rm=Math.max(row.rm,oneRm(s.weight,s.reps)||0);});});const best=Object.entries(prs).sort((a,b)=>b[1].weight-a[1].weight).slice(0,20);$('prList').innerHTML=best.length?best.map(([name,s])=>`<article class="pr-card"><div class="pr-head"><span class="pr-medal">🏆</span><span class="pr-name">${escape(name)}</span></div><div class="pr-metrics"><div class="pr-metric"><small>最高重量</small><strong>${fmt(s.weight)} <em>kg</em></strong></div><div class="pr-metric pr-rm"><small>推定 MAX / 1RM</small><strong>${s.rm?fmt(s.rm):'—'} <em>kg</em></strong></div></div></article>`).join(''):'<div class="empty">トレーニングを記録すると、ここにベストが出るよ！</div>';updatePrevious();renderExtras();
+  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);drawHistory();
+updatePrevious();renderExtras();
   }
   function updatePrevious(){const name=getExerciseName().trim().toLowerCase();const date=$('date').value;const recent=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];$('previous').textContent=name&&recent?`同じ日の記録：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`:'';}
   function refreshExerciseSuggestions(){
@@ -563,8 +564,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
   $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';setList.replaceChildren();addSetRow()});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
-  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
-  $('filterDate').addEventListener('change',redraw);$('showAll').addEventListener('click',()=>{$('filterDate').value='';redraw();});
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));document.body.dataset.activeTab=b.dataset.tab;}));
+  $('historyPrev').addEventListener('click',()=>{historyMonthOffset--;drawHistory();});$('historyNext').addEventListener('click',()=>{historyMonthOffset++;drawHistory();});
   function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
   $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
   $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:3,entries,dayParts},null,2),'application/json');notify('バックアップを保存したよ');});
@@ -591,12 +592,65 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
   function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('#partButtons .part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
   function resetSelectedParts(){setSelectedParts([])}
   $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;const old=getSelectedParts();b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));const date=$('date').value;if(!saveDayParts(date,getSelectedParts())){setSelectedParts(old);return;}refreshExerciseSuggestions();drawCalendar();notify('部位を選択したよ');});
-  let activeSession=null,startedAt=0,monthOffset=0;
+  let activeSession=null,startedAt=0,monthOffset=0,historyMonthOffset=0,historySelectedDate=japanDate();
   function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim().toLowerCase(),date=$('date').value;const p=sorted(entries.filter(x=>x.date===date&&x.exercise.trim().toLowerCase()===name))[0];setList.replaceChildren();if(p){p.setsData.forEach(v=>addSetRow(v.weight,v.reps));setSelectedParts(p.bodyParts||p.bodyPart||[])}else{addSetRow()}updatePrevious()}
   setList.addEventListener('input',e=>{if(e.target.matches('.set-weight,.set-reps')&&!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now()}});
-  function renderExtras(){const select=$('progressSelect'),previous=select.value,names=[...new Set(entries.map(z=>z.exercise))].sort();select.replaceChildren();names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)});if(names.includes(previous))select.value=previous;drawProgress();drawCalendar();}
-  function drawProgress(){const records=sorted(entries.filter(z=>z.exercise===$('progressSelect').value)).reverse().slice(-12),area=$('progressBars');area.replaceChildren();const top=Math.max(1,...records.flatMap(z=>z.setsData.map(v=>v.weight)));records.forEach(z=>{const v=Math.max(...z.setsData.map(v=>v.weight)),bar=document.createElement('div');bar.style.height=Math.max(4,Math.round(v/top*120))+'px';bar.style.flex='1';bar.title=z.date+' '+v+'kg';area.appendChild(bar)});$('progressCaption').textContent=records.length?'最高 '+top+'kg ／ '+records.length+'記録（古い順）':'記録ができるとグラフを表示するよ';}
+
+  function progressSeries(name){
+    const perDay=new Map();
+    entries.filter(e=>e.exercise===name).forEach(e=>{const rm=maxRm(e.setsData);if(rm>0)perDay.set(e.date,Math.max(perDay.get(e.date)||0,rm));});
+    return [...perDay].sort((a,b)=>a[0].localeCompare(b[0])).map(([date,rm])=>({date,rm}));
+  }
+  function growthCard(name,count){
+    const box=document.createElement('article');box.className='growth-card';
+    const title=document.createElement('div');title.className='growth-title';title.textContent=name+' · '+count+'回';box.appendChild(title);
+    const points=progressSeries(name);
+    if(!points.length){const no=document.createElement('p');no.className='hint';no.textContent='推定1RMのデータがありません';box.appendChild(no);return box;}
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 360 190');svg.setAttribute('role','img');svg.setAttribute('aria-label',name+'の推定1RM折れ線グラフ');
+    const minimum=Math.min(...points.map(p=>p.rm)),maximum=Math.max(...points.map(p=>p.rm)),lo=Math.max(0,minimum-(maximum-minimum||maximum*.15)*.3),hi=maximum+Math.max(1,(maximum-lo)*.18);
+    const x=i=>48+294*(points.length===1?.5:i/(points.length-1)),y=v=>148-(v-lo)/(hi-lo)*120;
+    const add=(tag,attributes,value)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attributes).forEach(([key,val])=>node.setAttribute(key,val));if(value!==undefined)node.textContent=value;svg.appendChild(node);return node;};
+    for(let k=0;k<4;k++){const value=lo+(hi-lo)*k/3,yy=y(value);add('line',{x1:48,x2:342,y1:yy,y2:yy,stroke:'#51446d','stroke-dasharray':'4 5'});add('text',{x:2,y:yy+4,fill:'#c8c0df','font-size':11},fmt(value));}
+    add('polyline',{points:points.map((p,i)=>x(i)+','+y(p.rm)).join(' '),fill:'none',stroke:'#45e5fa','stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round'});
+    points.forEach((p,i)=>{const dot=add('circle',{cx:x(i),cy:y(p.rm),r:4.2,fill:'#ff69bb'}),t=document.createElementNS('http://www.w3.org/2000/svg','title');t.textContent=p.date+' '+fmt(p.rm)+'kg';dot.appendChild(t);});
+    [...new Set([0,Math.floor((points.length-1)/2),points.length-1])].forEach(i=>add('text',{x:x(i),y:177,fill:'#d7d0ee','font-size':11,'text-anchor':'middle'},points[i].date.slice(5).replace('-','/')));
+    box.appendChild(svg);
+    const details=document.createElement('p');details.className='hint';details.textContent='初回 '+fmt(points[0].rm)+'kg → 最新 '+fmt(points[points.length-1].rm)+'kg / 最高 '+fmt(maximum)+'kg';box.appendChild(details);
+    return box;
+  }
+  function renderExtras(){
+    const select=$('progressSelect'),prev=select.value,counts=new Map();
+    entries.forEach(e=>counts.set(e.exercise,(counts.get(e.exercise)||0)+1));
+    const names=[...counts.keys()].sort((a,b)=>counts.get(b)-counts.get(a)||a.localeCompare(b,'ja'));
+    select.replaceChildren();names.forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;select.appendChild(o);});
+    if(counts.has(prev))select.value=prev;
+    const top=$('topProgressCharts');top.replaceChildren();
+    names.slice(0,5).forEach((name,i)=>{const card=growthCard(name,counts.get(name));const tag=document.createElement('span');tag.className='growth-rank';tag.textContent=(i+1)+'位';card.prepend(tag);top.appendChild(card);});
+    if(!names.length){const p=document.createElement('p');p.className='hint';p.textContent='記録が増えると上位5種目が表示されるよ';top.appendChild(p);}
+    drawProgress();drawCalendar();
+  }
+  function drawProgress(){const area=$('progressBars');area.replaceChildren();const name=$('progressSelect').value;if(!name){$('progressCaption').textContent='まだ種目の記録がないよ';return;}area.appendChild(growthCard(name,entries.filter(e=>e.exercise===name).length));$('progressCaption').textContent='各日で最高の推定1RMを折れ線で表示';}
   $('progressSelect').addEventListener('change',drawProgress);
+  function drawHistory(){
+    const now=new Date();now.setDate(1);now.setMonth(now.getMonth()+historyMonthOffset);
+    const y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+    $('historyMonth').textContent=y+'年'+(m+1)+'月';
+    const grid=$('historyCalendar');grid.replaceChildren();
+    ['日','月','火','水','木','金','土'].forEach(label=>{const e=document.createElement('span');e.textContent=label;grid.appendChild(e);});
+    for(let i=0;i<first;i++)grid.appendChild(document.createElement('span'));
+    for(let day=1;day<=days;day++){
+      const key=iso(new Date(y,m,day)),btn=document.createElement('button');btn.type='button';
+      const parts=partsForDay(key),colors=parts.map((p,i)=>(partColors[p]||customParts.find(item=>item.id===p)?.color||'#777')+' '+(i*100/parts.length)+'% '+((i+1)*100/parts.length)+'%');
+      btn.className=(parts.length?'trained part-day ':'')+(key===today?'current ':'')+(key===historySelectedDate?'history-selected':'');
+      if(colors.length)btn.style.background='linear-gradient(90deg,'+colors.join(',')+')';
+      btn.textContent=day;btn.setAttribute('aria-label',key+'の記録を表示');btn.setAttribute('aria-pressed',String(key===historySelectedDate));
+      btn.addEventListener('click',()=>{historySelectedDate=key;drawHistory();});grid.appendChild(btn);
+    }
+    const list=entries.filter(e=>e.date===historySelectedDate);
+    $('historyDayTitle').textContent=historySelectedDate.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$1年$2月$3日')+'の記録';
+    renderList('historyList',list);
+    $('historyTotal').textContent=fmt(list.reduce((sum,e)=>sum+volume(e.setsData),0))+' kg';
+  }
   const partStyles=getComputedStyle(document.documentElement);
   const partColors=Object.fromEntries(Object.entries({'胸':'--part-chest','背中':'--part-back','足':'--part-leg','肩':'--part-shoulder','お腹':'--part-abdomen','腕':'--part-arm'}).map(([part,variable])=>[part,partStyles.getPropertyValue(variable).trim()]));
   const partOrder=['胸','背中','足','肩','お腹','腕'];
