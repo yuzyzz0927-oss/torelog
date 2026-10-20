@@ -1011,14 +1011,15 @@ updatePrevious();renderExtras();
     const [bx,by]=pts[6];
     const legs=[],step=85;
     for(let i=0;i<6;i++)setTimeout(()=>{
-      const g=bolt(pts[i],pts[i+1],{color:LIME,width:i===5?4.2:3.2,rough:.13,branches:i===5?3:2,draw:70});legs.push(g);
+      const g=bolt(pts[i],pts[i+1],{color:LIME,width:i===5?1.9:1.5,rough:.14,branches:i===5?5:4,draw:70});legs.push(g);
+      legs.push(bolt(pts[i],pts[i+1],{color:LIME,width:.8,rough:.2,branches:1,draw:90}));
       const [x,y]=pts[i+1];ring(x,y,'#ffffff',38,260);doFlash(x,y,LIME,.28,180);
       if(navigator.vibrate)navigator.vibrate(14);
     },i*step);
     setTimeout(()=>{
       legs.forEach(g=>g.animate([{opacity:1,filter:'brightness(2.2)'},{opacity:1,filter:'brightness(1)',offset:.15},{opacity:0}],{duration:620,easing:'ease-out',fill:'both'}).onfinish=()=>g.remove());
       ring(bx,by,LIME,Math.max(W,innerHeight)*.75,700);ring(bx,by,'#ffffff',Math.max(W,innerHeight)*.45,520);
-      for(let i=0;i<10;i++){const a=i/10*Math.PI*2+rand(-.2,.2),l=rand(60,150);fade(bolt([bx,by],[bx+Math.cos(a)*l,by+Math.sin(a)*l],{color:LIME,width:1.8,branches:1,draw:80}),460);}
+      for(let i=0;i<16;i++){const a=i/16*Math.PI*2+rand(-.2,.2),l=rand(70,180);fade(bolt([bx,by],[bx+Math.cos(a)*l,by+Math.sin(a)*l],{color:LIME,width:1.1,branches:2,draw:80}),520);}
       doFlash(bx,by,LIME,.7,600);shake(6,360);
       el.animate([{boxShadow:`0 0 0 4px #fff, 0 0 48px ${LIME}`,filter:'brightness(1.6)'},{boxShadow:'0 0 0 0 #0000',filter:'brightness(1)'}],{duration:700,easing:'ease-out'});
       if(navigator.vibrate)navigator.vibrate([30,40,60]);
