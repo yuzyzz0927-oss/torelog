@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
   <meta name="torelog-build" content="20261021-electric-1">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -993,12 +992,7 @@ updatePrevious();renderExtras();
     if(big)sixStrike();
     if(navigator.vibrate)navigator.vibrate(big?[18,40,28]:10);
   },true);
-  // Save: six lightning dashes zig-zagging across the screen, with an original technique name.
-  const caption=document.createElement('div');
-  caption.setAttribute('aria-hidden','true');
-  caption.style.cssText='position:fixed;left:0;right:0;top:38%;z-index:61;pointer-events:none;text-align:center;opacity:0;padding:14px 0 18px;background:linear-gradient(90deg,#0000,#000c 18%,#000c 82%,#0000);font-family:"Yuji Syuku","Hiragino Mincho ProN","Yu Mincho",serif;color:#fff;text-shadow:0 0 6px #d9ff43,0 0 18px #d9ff43,0 2px 0 #000';
-  caption.innerHTML='<div style="font-size:clamp(15px,4.4vw,22px);letter-spacing:.3em">雷筋・壱ノ型</div><div style="font-size:clamp(40px,13vw,76px);line-height:1.15;letter-spacing:.06em">剛力一閃</div><div style="font-size:clamp(22px,7vw,40px);letter-spacing:.4em;color:#d9ff43">六連</div>';
-  document.body.appendChild(caption);
+  // Save: six lightning dashes zig-zagging across the screen.
   function dash(fromLeft,y){
     const w=innerWidth,x0=fromLeft?-20:w+20,x1=fromLeft?w+20:-20,y1=y+rand(-.18,.18)*innerHeight;
     const len=Math.hypot(x1-x0,y1-y),angle=Math.atan2(y1-y,x1-x0),pts=[[x0,y]];
@@ -1007,7 +1001,6 @@ updatePrevious();renderExtras();
     const mid=pts[Math.floor(rand(4,10))];zap(mid[0],mid[1],false);
   }
   function sixStrike(){
-    caption.animate([{opacity:0,transform:'scale(1.25)'},{opacity:1,transform:'scale(1)',offset:.12},{opacity:1,offset:.8},{opacity:0}],{duration:1500,easing:'ease-out'});
     for(let i=0;i<6;i++)setTimeout(()=>{
       const y=innerHeight*(0.18+0.64*((i*0.37+rand(0,.15))%1));
       dash(i%2===0,y);
