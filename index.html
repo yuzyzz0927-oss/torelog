@@ -459,6 +459,24 @@ body.rest-on .toast{bottom:calc(178px + env(safe-area-inset-bottom))}
 .feedback-send{width:100%;margin-top:12px}
 .feedback-note{font-size:12px;line-height:1.5;color:#a9b0a6;margin:10px 0 0}
 .volume-title{margin:2px 2px 12px}
+.muscle-card .body-figs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px}
+.body-fig{margin:0;text-align:center;background:#111314;border:1px solid #2f3436;border-radius:8px;padding:10px 6px 6px}
+.body-fig svg{width:100%;max-width:170px;height:auto;display:block;margin:0 auto;overflow:visible}
+.body-fig figcaption{font-size:11px;color:#a9b0a6;font-weight:800;margin-top:4px}
+.m-base{fill:#2a2f31;stroke:#3d4446;stroke-width:.8}
+.m{fill:#2a2f31;stroke:#3d4446;stroke-width:.8;transition:fill .4s}
+.m.m-on{fill:var(--c);fill-opacity:var(--a);stroke:var(--c);stroke-opacity:.9}
+.m.m-hot{filter:drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 7px var(--c));animation:mPulse 1.6s ease-in-out infinite}
+@keyframes mPulse{50%{fill-opacity:.7}}
+@media (prefers-reduced-motion:reduce){.m.m-hot{animation:none}}
+.recovery-list{display:grid;gap:8px}
+.recovery-row{display:grid;grid-template-columns:4.2em 1fr 3em;align-items:center;gap:8px}
+.recovery-name{display:flex;align-items:center;gap:6px;font-weight:900;font-size:14px;color:#eef3e6}
+.recovery-name i{width:9px;height:9px;border-radius:2px;flex:none}
+.recovery-track{height:10px;background:#24282a;border-radius:3px;overflow:hidden}
+.recovery-track b{display:block;height:100%;opacity:.85}
+.recovery-row strong{text-align:right;font-size:13px;color:#fff;font-variant-numeric:tabular-nums}
+.recovery-row.recovered strong{color:#caff37}
 </style>
 </head>
 <body>
@@ -499,7 +517,7 @@ body.rest-on .toast{bottom:calc(178px + env(safe-area-inset-bottom))}
     <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="日付を選んで記録を見る"></div><div id="historyKey" class="cal-key" aria-label="色の説明"></div><details class="paint-tools"><summary>🎨 カレンダーに手動で色を塗る</summary><p class="cal-help">部位を選んでから日付をタップすると、その色で塗れるよ。選んでいない時は、日付をタップするとその日の記録が見られるよ。色を消すときは「リセット」を選んで日付をタップ。</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></details><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div></div>
     <div class="card"><h3>バックアップ</h3><p class="hint">記録はこのブラウザに保存されます。機種変更・データ削除などに備えてバックアップを取ってね。公開更新だけでは通常データは消えないけれど、保存を保証するものではありません。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
   </section>
-  <section id="analysis" class="panel" aria-label="分析"><div class="card"><h3>🏆 自己ベスト</h3><p class="hint">種目ごとの最高重量と推定1RM。この1週間で更新したものには⚡がつくよ。</p><div id="prList" class="pr-list"></div></div><div class="card"><h3>📊 部位バランス</h3><div class="btnrow history-month"><button type="button" id="balancePrev" class="ghost tiny">◀ 前月</button><strong id="balanceMonth"></strong><button type="button" id="balanceNext" class="ghost tiny">翌月 ▶</button></div><p class="hint">その月に各部位をやった日数。しばらくやっていない部位は「○日ぶり」で教えてくれるよ。</p><div id="balanceList" class="balance-list"></div></div>
+  <section id="analysis" class="panel" aria-label="分析"><div class="card muscle-card"><h3>⚡ 筋肉マップ</h3><p class="hint">最近鍛えた部位ほど強く光るよ。だいたい6日で回復して、光が消えていく。</p><div class="body-figs"><figure class="body-fig"><svg viewBox="0 0 120 236" role="img" aria-label="体の前側"><circle class="m-base" cx="60" cy="18" r="13"/><rect class="m-base" x="53" y="30" width="14" height="10" rx="4"/><path class="m" data-m="肩" d="M30 46 Q38 38 50 42 L46 58 Q34 60 28 56 Z"/><path class="m" data-m="肩" d="M90 46 Q82 38 70 42 L74 58 Q86 60 92 56 Z"/><path class="m" data-m="胸" d="M50 42 Q59 40 59 44 L59 66 Q50 70 44 64 L46 52 Z"/><path class="m" data-m="胸" d="M70 42 Q61 40 61 44 L61 66 Q70 70 76 64 L74 52 Z"/><path class="m" data-m="腕" d="M27 58 L44 62 L40 90 Q32 94 25 88 Z"/><path class="m" data-m="腕" d="M93 58 L76 62 L80 90 Q88 94 95 88 Z"/><path class="m" data-m="腕" d="M25 92 L39 94 L34 124 L24 122 Z"/><path class="m" data-m="腕" d="M95 92 L81 94 L86 124 L96 122 Z"/><path class="m" data-m="お腹" d="M46 68 Q60 74 74 68 L72 112 Q60 118 48 112 Z"/><path class="m" data-m="足" d="M47 116 Q56 122 59 120 L57 176 Q48 180 42 172 Z"/><path class="m" data-m="足" d="M73 116 Q64 122 61 120 L63 176 Q72 180 78 172 Z"/><path class="m" data-m="足" d="M43 182 L56 182 L54 228 L46 228 Z"/><path class="m" data-m="足" d="M77 182 L64 182 L66 228 L74 228 Z"/></svg><figcaption>前</figcaption></figure><figure class="body-fig"><svg viewBox="0 0 120 236" role="img" aria-label="体の後ろ側"><circle class="m-base" cx="60" cy="18" r="13"/><rect class="m-base" x="53" y="30" width="14" height="10" rx="4"/><path class="m" data-m="肩" d="M30 46 Q38 38 50 42 L46 58 Q34 60 28 56 Z"/><path class="m" data-m="肩" d="M90 46 Q82 38 70 42 L74 58 Q86 60 92 56 Z"/><path class="m" data-m="背中" d="M50 40 Q60 34 70 40 L74 54 L60 60 L46 54 Z"/><path class="m" data-m="背中" d="M46 57 L59 62 L59 104 Q50 104 46 96 L44 72 Z"/><path class="m" data-m="背中" d="M74 57 L61 62 L61 104 Q70 104 74 96 L76 72 Z"/><path class="m" data-m="腕" d="M27 58 L44 62 L40 90 Q32 94 25 88 Z"/><path class="m" data-m="腕" d="M93 58 L76 62 L80 90 Q88 94 95 88 Z"/><path class="m" data-m="腕" d="M25 92 L39 94 L34 124 L24 122 Z"/><path class="m" data-m="腕" d="M95 92 L81 94 L86 124 L96 122 Z"/><path class="m-base" d="M47 106 L73 106 L74 114 L46 114 Z"/><path class="m" data-m="足" d="M46 116 L59 116 L59 140 Q50 144 44 138 Z"/><path class="m" data-m="足" d="M74 116 L61 116 L61 140 Q70 144 76 138 Z"/><path class="m" data-m="足" d="M44 142 Q52 146 59 144 L57 178 L45 176 Z"/><path class="m" data-m="足" d="M76 142 Q68 146 61 144 L63 178 L75 176 Z"/><path class="m" data-m="足" d="M45 182 Q50 178 56 182 L54 228 L47 228 Z"/><path class="m" data-m="足" d="M75 182 Q70 178 64 182 L66 228 L73 228 Z"/></svg><figcaption>後ろ</figcaption></figure></div><div id="recoveryList" class="recovery-list"></div></div><div class="card"><h3>🏆 自己ベスト</h3><p class="hint">種目ごとの最高重量と推定1RM。この1週間で更新したものには⚡がつくよ。</p><div id="prList" class="pr-list"></div></div><div class="card"><h3>📊 部位バランス</h3><div class="btnrow history-month"><button type="button" id="balancePrev" class="ghost tiny">◀ 前月</button><strong id="balanceMonth"></strong><button type="button" id="balanceNext" class="ghost tiny">翌月 ▶</button></div><p class="hint">その月に各部位をやった日数。しばらくやっていない部位は「○日ぶり」で教えてくれるよ。</p><div id="balanceList" class="balance-list"></div></div>
     
 
     <div class="card"><h3>種目別成長グラフ</h3><p class="hint">実施頻度が高い上位5種目の、日付ごとの最高推定1RM</p><div id="topProgressCharts" class="growth-charts"></div></div><div class="card"><h3>種目を選んで成長を見る</h3><p class="hint">過去に行った種目を選択できます。</p><select id="progressSelect" class="growth-select" aria-label="種目を選ぶ"></select><div id="progressBars" class="growth-charts"></div><p id="progressCaption" class="hint"></p></div>
@@ -872,7 +890,26 @@ updatePrevious();renderExtras();
   }
   let balanceOffset=0;
   function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function drawMuscleMap(){
+    const now=new Date(today+'T00:00:00'),last=new Map();
+    [...new Set([...entries.map(x=>x.date),...Object.keys(dayParts)])].filter(x=>x<=today).sort().forEach(date=>partsForDay(date).forEach(p=>last.set(p,date)));
+    const list=$('recoveryList');list.replaceChildren();
+    partOrder.forEach(p=>{
+      const ld=last.get(p),ago=ld?Math.round((now-new Date(ld+'T00:00:00'))/864e5):null;
+      const rec=ago==null?100:Math.min(100,Math.round(ago/6*100)),fat=1-rec/100;
+      document.querySelectorAll('.body-fig .m[data-m="'+p+'"]').forEach(m=>{
+        m.style.setProperty('--c',partColors[p]);m.style.setProperty('--a',(0.12+0.88*fat).toFixed(2));
+        m.classList.toggle('m-hot',fat>=0.66);m.classList.toggle('m-on',fat>0);
+      });
+      const row=el('div','recovery-row'+(rec>=100?' recovered':''));
+      const dot=el('i');dot.style.background=partColors[p];
+      const name=el('span','recovery-name');name.append(dot,p);
+      const track=el('div','recovery-track'),fill=el('b');fill.style.width=rec+'%';fill.style.background=partColors[p];track.appendChild(fill);
+      row.append(name,track,el('strong',null,rec>=100?'回復':rec+'%'));list.appendChild(row);
+    });
+  }
   function drawAnalysisExtras(){
+    drawMuscleMap();
     // 自己ベスト
     const pr=$('prList');pr.replaceChildren();
     const byName=new Map();
