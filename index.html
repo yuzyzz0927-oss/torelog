@@ -851,8 +851,35 @@ updatePrevious();renderExtras();
   function cleanParts(v){return Array.isArray(v)?[...new Set(v.filter(validCalendarPart))]:[]}
   let dayParts={};
   try{const saved=JSON.parse(localStorage.getItem(PARTS_KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [date,parts] of Object.entries(saved)){if(/^\d{4}-\d{2}-\d{2}$/.test(date))dayParts[date]=cleanParts(parts)}}}catch(e){}
-  function partsFromEntries(date){const out=new Set();entries.filter(x=>x.date===date).forEach(x=>(x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).forEach(p=>{const v=p==='背'?'背中':p==='腹'?'お腹':p;if(VALID_PARTS.includes(v))out.add(v)}));return [...out]}
-  function partsForDay(date){return Object.prototype.hasOwnProperty.call(dayParts,date)?cleanParts(dayParts[date]):partsFromEntries(date)}
+  // Guess a part from the exercise name for old records saved without a part.
+  const EXERCISE_PART_HINTS=[
+    ['胸',/ベンチ|チェスト|ペック|フライ|ディップ|腕立て|プッシュアップ|インクライン|デクライン|クロスオーバー|ケーブルクロス|ダンベルプレス|胸|bench|chest|pec|fly/i],
+    ['背中',/デッド|ラット|ロウ|ローイング|懸垂|チンニング|プルアップ|プルダウン|背|シュラッグ|deadlift|lat|row|pull ?up|chin/i],
+    ['足',/スクワット|レッグ|ランジ|カーフ|ヒップ|ブルガリアン|足|脚|squat|leg|lunge|calf|hip/i],
+    ['肩',/ショルダー|サイドレイズ|フロントレイズ|リアレイズ|リアデルト|アップライト|ミリタリー|オーバーヘッド|肩|shoulder|lateral raise|overhead|military/i],
+    ['お腹',/クランチ|腹筋|プランク|シットアップ|レッグレイズ|アブ|腹|crunch|plank|sit ?up|\bab/i],
+    ['腕',/カール|アーム|トライセプス|バイセプス|フレンチ|キックバック|プレスダウン|ハンマー|腕|curl|tricep|bicep|arm/i]
+  ];
+  function entryParts(x){return (x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).map(p=>p==='背'?'背中':p==='腹'?'お腹':p).filter(p=>VALID_PARTS.includes(p))}
+  function guessParts(x){
+    const name=String(x.exercise||'').trim();if(!name)return [];
+    // 1) The same exercise recorded with a part on another day.
+    const same=sorted(entries.filter(e=>e!==x&&sameName(e.exercise,name)&&entryParts(e).length))[0];
+    if(same)return entryParts(same);
+    // 2) Common exercise names.
+    if(/レッグレイズ/.test(name))return ['お腹'];
+    if(/ショルダープレス|リアフライ|リアデルト/.test(name))return ['肩'];
+    const hit=EXERCISE_PART_HINTS.find(([,re])=>re.test(name));
+    return hit?[hit[0]]:[];
+  }
+  function partsFromEntries(date){const out=new Set();entries.filter(x=>x.date===date).forEach(x=>{const p=entryParts(x);(p.length?p:guessParts(x)).forEach(v=>out.add(v))});return [...out]}
+  // Colors from the day's records plus any colors painted by hand. A day cleared with "reset" stays blank.
+  function partsForDay(date){
+    const has=Object.prototype.hasOwnProperty.call(dayParts,date);
+    const manual=has?cleanParts(dayParts[date]):[];
+    if(has&&!manual.length)return [];
+    return [...new Set([...partsFromEntries(date),...manual])];
+  }
   function saveDayParts(date,parts){if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;const normalized=cleanParts(parts),old=dayParts;dayParts={...dayParts,[date]:normalized};try{localStorage.setItem(PARTS_KEY,JSON.stringify(dayParts));return true}catch(e){dayParts=old;notify('部位を自動保存できなかったよ');return false}}
   function restoreDayParts(){setSelectedParts(partsForDay($('date').value))}
   $('date').addEventListener('change',restoreDayParts);
