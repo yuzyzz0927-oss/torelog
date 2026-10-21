@@ -705,6 +705,9 @@ updatePrevious();renderExtras();
   const sameName=(a,b)=>a.trim().toLocaleLowerCase('ja')===b.trim().toLocaleLowerCase('ja');
   // Latest record of the exercise on or before the selected date (the "last time" a lifter wants to beat).
   function previousRecord(name,date){return sorted(entries.filter(x=>x.date<=date&&sameName(x.exercise,name)))[0]||null;}
+  // Popular staple exercises shown first when a body part is selected.
+  const PRESET_EXERCISES={'胸':['ベンチプレス','ダンベルプレス','ペックフライ'],'背中':['ラットプルダウン','デッドリフト','ベントオーバーロウ'],'足':['スクワット','レッグプレス','ブルガリアンスクワット'],'肩':['ショルダープレス','サイドレイズ','リアレイズ'],'お腹':['クランチ','レッグレイズ','プランク'],'腕':['アームカール','ハンマーカール','トライセプスプッシュダウン']};
+  let showSuggestionsForPart=false;
   function updatePrevious(){const name=getExerciseName().trim();const date=$('date').value;const recent=name&&!$('editingId').value?previousRecord(name,date):null;if(!recent){$('previous').textContent='';return;}const [,m,d]=recent.date.split('-').map(Number);const when=recent.date===date?'今日の記録':`前回（${m}/${d}）`;$('previous').textContent=`${when}：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`;}
   function refreshExerciseSuggestions(){
     const selected=getSelectedParts();
@@ -716,7 +719,9 @@ updatePrevious();renderExtras();
       const item=frequency.get(key)||{name,dates:new Set(),last:0};
       item.dates.add(x.date);item.last=Math.max(item.last,Number(x.createdAt)||0);frequency.set(key,item);
     });
-    const names=[...frequency.values()].sort((a,b)=>b.dates.size-a.dates.size||b.last-a.last).map(x=>x.name);
+    const history=[...frequency.values()].sort((a,b)=>b.dates.size-a.dates.size||b.last-a.last).map(x=>x.name);
+    const presets=selected.flatMap(p=>PRESET_EXERCISES[p]||[]);
+    const names=[...presets,...history].filter((n,i,a)=>a.findIndex(m=>m.toLocaleLowerCase('ja')===n.toLocaleLowerCase('ja'))===i);
     const list=$('exerciseSuggestions');
     const query=$('exercise').value.trim().toLocaleLowerCase('ja');
     list.replaceChildren();
@@ -726,7 +731,7 @@ updatePrevious();renderExtras();
       button.addEventListener('click',()=>{$('exercise').value=name;$('exercise').setCustomValidity('');autoFillPrevious();hideExerciseSuggestions();});
       list.appendChild(button);
     });
-    const visible=document.activeElement===$('exercise')&&list.children.length>0;
+    const visible=(document.activeElement===$('exercise')||showSuggestionsForPart)&&list.children.length>0;showSuggestionsForPart=false;
     list.hidden=!visible;$('exercise').setAttribute('aria-expanded',String(visible));
   }
   function hideExerciseSuggestions(){$('exerciseSuggestions').hidden=true;$('exercise').setAttribute('aria-expanded','false');}
@@ -803,7 +808,7 @@ updatePrevious();renderExtras();
   $('date').addEventListener('input',restoreDayParts);
   function getSelectedParts(){return [...document.querySelectorAll('#partButtons .part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
   function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('#partButtons .part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
-  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));refreshExerciseSuggestions();});
+  $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));showSuggestionsForPart=getSelectedParts().length>0;refreshExerciseSuggestions();});
   let activeSession=null,startedAt=0,monthOffset=0,historyMonthOffset=0,historySelectedDate=japanDate();
   function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim(),date=$('date').value;updatePrevious();if(!name)return;const typed=Array.from(setList.children).some(r=>r.querySelector('.set-weight').value!==''||r.querySelector('.set-reps').value!=='');if(typed)return;const p=previousRecord(name,date);if(!p)return;setList.replaceChildren();p.setsData.forEach(v=>addSetRow(v.weight,v.reps));const parts=p.bodyParts?.length?p.bodyParts:(p.bodyPart?[p.bodyPart]:[]);if(parts.length)setSelectedParts(parts);notify(p.date===date?'今日の記録を入れたよ':'前回の重量・回数を入れたよ');}
   setList.addEventListener('input',e=>{if(e.target.matches('.set-weight,.set-reps')&&!startedAt){startedAt=Date.now();activeSession=activeSession||'session-'+Date.now()}});
