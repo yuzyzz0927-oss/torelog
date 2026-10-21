@@ -49,6 +49,36 @@ h3{font-size:20px;letter-spacing:-.03em;margin:0 0 4px}
 .sets-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:13px 0 10px}
 .sets-title{font-size:18px;font-weight:900}
 .sets-count{font-size:12px;font-weight:800;color:var(--orange)}
+.photo-box{margin-top:16px;padding-top:14px;border-top:1px solid #ffffff22}
+.photo-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.photo-head h4{margin:0;font-size:15px;font-weight:900}
+.photo-add{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;background:#d9ff43;color:#131912;font-size:13px;font-weight:900;cursor:pointer}
+.photo-add input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.photo-thumb{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;border:1px solid #ffffff2e;background:#111;padding:0}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-empty{font-size:12px;color:#c9c3dc;margin:0}
+.photo-viewer{position:fixed;inset:0;z-index:9999;background:#000000e8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+.photo-viewer[hidden]{display:none}
+.photo-viewer img{max-width:100%;max-height:78vh;border-radius:10px;object-fit:contain}
+.photo-viewer .row{display:flex;gap:10px}
+.photo-viewer button{min-height:44px;padding:0 18px;border-radius:10px;font-weight:900}
+.sets-head-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.carry-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#dfe6dc;cursor:pointer;padding:6px 10px;border:1px solid #5b645d;border-radius:999px;background:#1d2220;min-height:36px}
+.carry-toggle input{width:18px;height:18px;margin:0;accent-color:#d9ff43}
+.carry-toggle:has(input:checked){border-color:#d9ff43;color:#d9ff43}
+.part-button.custom-part{border-color:var(--c)!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 4px}
+.part-button.custom-part.wide-name{grid-column:span 2;font-size:15px}
+#partButtons .part-button.custom-part[aria-pressed="true"]{background:var(--c);color:#121212;border-color:#fff!important}
+.add-part-toggle{margin-top:8px;width:100%;min-height:40px;border:1px dashed #6d7a70;border-radius:10px;background:transparent;color:#cfe0cb;font-size:13px;font-weight:800}
+.add-part-toggle[aria-expanded="true"]{border-style:solid;color:#d9ff43;border-color:#d9ff43}
+.add-part-panel{display:grid;grid-template-columns:minmax(0,1fr) 64px auto;gap:8px;align-items:end;margin-top:8px;padding:12px;border:1px solid #5b645d;border-radius:10px;background:#1b2520}
+.add-part-panel[hidden]{display:none}
+.add-part-panel label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800;color:#dde9dc;min-width:0}
+#formPartName{width:100%;min-width:0;min-height:44px;box-sizing:border-box;padding:8px 10px;font-size:16px}
+#formPartColor{width:100%;height:44px;padding:3px;background:#101812;border:1px solid #8d9d8e;border-radius:7px}
+#formPartSave{min-height:44px;padding:0 14px;border-radius:8px;background:#d9ff43;color:#131912;font-weight:900;font-size:14px}
+.add-part-note{grid-column:1/-1;margin:0;font-size:12px;color:#cbd9c7}
 .set-list{display:flex;flex-direction:column;gap:10px}
 .set-row{border:1px solid #594477;border-radius:15px;padding:14px;background:linear-gradient(112deg,#292147,#24203f);position:relative}
 .set-row:nth-child(4n+2){border-color:#3a6889;background:linear-gradient(112deg,#202f50,#242141)}
@@ -427,17 +457,17 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 <g class="volt-hand volt-sec" id="voltSecond" filter="url(#voltGlow)"><polyline points="100,122 100,98 105,88 96,76 104,62 97,48 102,36 100,20" fill="none" stroke="#d9ff43" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></g>
 <circle cx="100" cy="100" r="5.5" fill="#d9ff43"/><circle cx="100" cy="100" r="2" fill="#0b0d0c"/>
 </svg></div></div></div></div></div>
-          <div class="field wide"><span class="part-heading">部位（複数選択OK）</span><div id="partButtons" class="part-buttons" role="group" aria-label="鍛えた部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div></div>
+          <div class="field wide"><span class="part-heading">部位（複数選択OK）</span><div id="partButtons" class="part-buttons" role="group" aria-label="鍛えた部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><button type="button" id="addPartToggle" class="add-part-toggle" aria-expanded="false" aria-controls="addPartPanel">＋ 部位を追加（例：体幹）</button><div id="addPartPanel" class="add-part-panel" hidden><label>名前<input id="formPartName" type="text" maxlength="12" placeholder="例：体幹" autocomplete="off"></label><label>色<input id="formPartColor" type="color" value="#3fc1a5"></label><button type="button" id="formPartSave">追加</button><p class="add-part-note">追加した部位はボタンに並んで、カレンダーにもその色で付くよ。</p></div></div>
           <div class="field wide exercise-field"><label for="exercise" class="part-heading exercise-heading">種目</label><input id="exercise" type="text" maxlength="48" placeholder="＋ 種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
           
         </div>
-        <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
+        <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-head-right"><label class="carry-toggle"><input type="checkbox" id="noCarry">前のセットを引き継がない</label><div class="sets-count" id="setCount">1 セット</div></div></div>
         <div id="setList" class="set-list" aria-live="polite"></div>
         <button type="button" id="addSet" class="add-set"><span class="plus">＋</span>セットを追加</button><div class="field memo-quick"><label for="memo">メモ（任意）</label><textarea id="memo" maxlength="200" placeholder="例：2セット目は重量を落として追い込んだ"></textarea></div><div class="notice" id="previous" role="status"></div><input id="editingId" type="hidden"><button type="submit" id="submitLabel" class="primary save-exercise">この種目を終了し保存する！</button><button type="button" id="cancelEditing" class="ghost tiny" hidden>編集キャンセル</button>
         
       </form>
     </div>
-    <div class="card"><div class="topline"><h3 id="selectedDateRecordHeading">今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div></div>
+    <div class="card"><div class="topline"><h3 id="selectedDateRecordHeading">今日の記録</h3><span class="tag" id="todayTag">0件</span></div><div id="todayList" class="list"></div><div class="photo-box"><div class="photo-head"><h4>📷 からだ写真</h4><label class="photo-add">＋ 写真を追加<input id="photoInput" type="file" accept="image/*" multiple></label></div><div id="photoGrid" class="photo-grid"></div><p id="photoEmpty" class="photo-empty">この日の写真はまだないよ。写真はこの端末の中だけに保存されるよ。</p></div></div><div id="photoViewer" class="photo-viewer" hidden role="dialog" aria-label="写真"><img id="photoViewerImg" alt="からだ写真"><div class="row"><button type="button" id="photoDelete" class="delete">この写真を削除</button><button type="button" id="photoClose" class="ghost">閉じる</button></div></div>
   </section>
   <section id="history" class="panel" aria-label="履歴">
     <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="日付を選んで記録を見る"></div><div id="historyKey" class="cal-key" aria-label="色の説明"></div><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div></div>
@@ -564,6 +594,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   function moveSetCaretToEnd(input){
     if(input.dataset.composing)return;
     const end=input.value.length;
+    if(input.value==='0'){input.setSelectionRange(0,end);return;}
     input.setSelectionRange(end,end);
   }
   function clearSetInput(input){
@@ -591,7 +622,9 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   function renumberSets(){const count=setList.children.length;Array.from(setList.children).forEach((r,i)=>{r.querySelector('.number-label').textContent=`${i+1}セット目`;r.querySelector('.remove-set').disabled=count===1;r.querySelector('.remove-set').setAttribute('aria-label',`${i+1}セット目を削除`);});$('setCount').textContent=`${count} セット`;$('addSet').disabled=count>=MAX_SETS;}
   function setValues(row){const weightInput=row.querySelector('.set-weight');if(weightInput.dataset.composing)return null;const w=weightInput.value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:readWeight(w),reps:readReps(r)};return validSet(obj)?obj:null;}
   function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});}
-  $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();moveSetCaretToEnd(field);});
+  const NO_CARRY_KEY='torelog.noCarry.v1';try{$('noCarry').checked=localStorage.getItem(NO_CARRY_KEY)==='1'}catch(e){}
+  $('noCarry').addEventListener('change',()=>{try{localStorage.setItem(NO_CARRY_KEY,$('noCarry').checked?'1':'0')}catch(e){}notify($('noCarry').checked?'次のセットは0から入力するよ':'次のセットは前のセットを引き継ぐよ');});
+  $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const carry=!$('noCarry').checked;const w=carry&&last?last.querySelector('.set-weight').value:'0';const r=carry&&last?last.querySelector('.set-reps').value:'0';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();moveSetCaretToEnd(field);});
   // On iPhone and desktop, tapping any set numeric field puts the caret after the units digit.
   setList.addEventListener('focusin',e=>{
     if(!e.target.matches('.set-weight,.set-reps'))return;
@@ -648,7 +681,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);a.push(d.toISOString().slice(0,10));}return a;}
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
     let seenSession='';
-    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||'#a88bff')+'">'+escape(p)+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><div class="entry-actions"><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
+    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||customParts.find(c=>c.id===p)?.color||'#a88bff')+'">'+escape(partName(p))+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(partName).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><div class="entry-actions"><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
   // 57種類の重量比較。重量は代表的な概算。キャラクター・実在人物・商品名は使わない（販売時の権利リスク回避）。
   const comparisonThings=[["ネコ（大きめ）",6,"匹","🐈","猫の手も借りたい…どころか猫ごと持ち上げた。"],["ボウリングの球",7,"個","🎳","レーンに流したら床が先にストライク。"],["スイカ",8,"玉","🍉","夏祭りのスイカ割り、腕力だけで閉幕。"],["米袋",10,"袋","🍚","炊飯器が労働基準監督署へ駆け込んだ。"],["中型犬",15,"匹","🐕","散歩というより犬の引っ越し。"],["灯油ポリタンク",18,"本","🛢️","冬支度の規模が石油会社。"],["自転車",20,"台","🚲","駐輪場の管理人から指名手配。"],["電子レンジ",20,"台","🍱","温める前に持ち上げてどうする。"],["ビール樽",25,"樽","🍺","居酒屋の地下倉庫で伝説になれる。"],["小学生",30,"人分","🎒","運動会の組体操、発注先が間違ってる。"],["大型犬",40,"匹","🐕","ドッグランが重量挙げ会場に変わった。"],["洗濯機",45,"台","🫧","脱水より先に筋肉が遠心分離。"],["大人1人",65,"人分","🧍","満員電車の乗客をまとめて筋トレに換算。"],["冷蔵庫",94,"台","🧊","引っ越し業者から役員待遇でスカウト。"],["パンダ",120,"頭","🐼","笹より先にパンダを持ち上げてどうする。"],["お相撲さん",150,"人分","🏆","土俵がなくても勝手に千秋楽。"],["ヘビー級格闘家",120,"人分","💪","筋肉が筋肉を持ち上げる無限ループ。"],["ゴリラ",180,"頭","🦍","親戚を何頭持ち上げるつもりだ。"],["トラ",220,"頭","🐅","虎の威を借るどころか、虎を担いでる。"],["グランドピアノ",320,"台","🎹","ショパンも「持つんかい」って言う。"],["自動販売機",400,"台","🥤","飲み物じゃなく自販機ごとお持ち帰り。"],["シロクマ",500,"頭","🐻‍❄️","北極から「それ筋トレ？」と苦情。"],["競走馬",500,"頭","🐎","有馬記念が人力牽引レースに変更。"],["軽自動車",850,"台","🚙","駐車場でベンチプレスは禁止です。"],["キリン",1200,"頭","🦒","首が長くてもこの記録は二度見する。"],["カバ",1500,"頭","🦛","動物園の飼育員も二度見した。"],["ミニバン",2000,"台","🚐","家族旅行、車を担いで出発。"],["サイ",2300,"頭","🦏","角の問題じゃない。全体が重い。"],["アフリカゾウ",5000,"頭","🐘","鼻で笑われる前にこっちがゾウを超えた。"],["ティラノサウルス",7000,"頭","🦖","ジュラ紀のジムなら入会初日に出禁。"],["スクールバス",9000,"台","🚌","遠足の集合場所が筋トレ会場に。"],["モアイ像",12500,"体","🗿","イースター島が「返して」と言っている。"],["大型トラック",20000,"台","🚚","物流会社が土下座で入社を頼む。"],["路面電車",30000,"両","🚃","線路より腕のほうが頑丈説。"],["大型ショベルカー",40000,"台","🏗️","掘る前に持ち上げてどうする。"],["新幹線1両",45000,"両","🚅","次の停車駅はプロテイン売り場。"],["戦艦大和",72800000,"隻","🚢","筋トレが海軍の極秘作戦になった。"],["クジラ",100000,"頭","🐋","海より先にダンベルが干上がる。"],["蒸気機関車",120000,"両","🚂","汽笛より先に雄叫びが鳴った。"],["ジャンボジェット機",180000,"機","✈️","離陸しなくても腕だけが飛行中。"],["自由の女神",204000,"体","🗽","たいまつよりダンベル持たせたい。"],["エアバスA380",575000,"機","🛫","空港職員が全員ヘッドハンティング。"],["小型ロケット",1000000,"基","🚀","発射台がジムの床になった。"],["巨大観覧車",1500000,"基","🎡","回すんじゃない、持ち上げてる。"],["スペースシャトル",2000000,"機","🛰️","NASAから「筋トレの定義を教えて」。"],["潜水艦",3000000,"隻","🌊","潜る前に重量記録が浮上。"],["東京タワー",4000000,"基","🗼","東京の夜景が一瞬揺れた。"],["大型船",10000000,"隻","🛳️","船長も「積載量おかしくない？」。"],["エッフェル塔",10100000,"基","🇫🇷","パリから筋肉に感謝状。"],["高層ビル",20000000,"棟","🏢","エレベーターより先に腕が最上階へ。"],["東京スカイツリー",36000000,"基","🏙️","地上634mから拍手が聞こえる。"],["国会議事堂",109000000,"棟","🏛️","本日の議題「なぜ持ち上がった？」。"],["ピラミッド",6000000000,"基","🔺","ファラオも建設業者も困惑している。"],["富士山",1000000000000000,"座","🗻","登山するな。山ごと持つな。"],["月",7.35e+22,"個","🌙","ウサギが餅つきを中断した。"],["地球",5.97e+24,"個","🌏","ジムの住所が「惑星」になった。"],["太陽",1.99e+30,"個","☀️","もう日焼けでは済まない。宇宙規模。"]];
@@ -699,7 +732,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
     }
     return totals;
   }
-  function redraw(){today=japanDate();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}updateVolumeLabels(selectedDate);fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);drawHistory();
+  function redraw(){today=japanDate();window.torelogDrawPhotos?.();refreshExerciseSuggestions();const selectedDate=$('date').value||today;const heading=$('selectedDateRecordHeading');if(heading){const [,month,day]=selectedDate.split('-').map(Number);heading.textContent=selectedDate===today?'今日の記録':`${month}月${day}日の記録`;}const t=entries.filter(x=>x.date===selectedDate);const totals=volumeTotals(entries,selectedDate);for(const [period,id] of Object.entries({today:'todayVolumeTotal',month:'monthVolumeTotal',year:'yearVolumeTotal',lifetime:'lifetimeVolumeTotal'})){$(id).innerHTML='<span class="volume-number">'+fmt(totals[period])+'</span> <small>kg</small>';}updateVolumeLabels(selectedDate);fitVolumeTotals();updateVolumeComparison(totals);$('todayTag').textContent=`${t.length}件`;renderList('todayList',t);drawHistory();
 updatePrevious();renderExtras();
   }
   const sameName=(a,b)=>a.trim().toLocaleLowerCase('ja')===b.trim().toLocaleLowerCase('ja');
@@ -743,6 +776,7 @@ updatePrevious();renderExtras();
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
     if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>{notify('⚡ 自己ベスト更新！おめでとう！');window.torelogStorm?.();},700);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
+    document.activeElement?.blur?.();window.scrollTo({top:0,behavior:'smooth'});
     // Keep the day's muscle-group history for the calendar, but clear the form selection after saving.
     const partsAtSave=getSelectedParts();
     if(partsAtSave.length)saveDayParts(date,[...partsForDay(date),...partsAtSave]);
@@ -765,6 +799,21 @@ updatePrevious();renderExtras();
   try{const raw=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]');if(Array.isArray(raw))customParts=raw.filter(x=>x&&typeof x.id==='string'&&x.id.startsWith('custom:')&&typeof x.name==='string'&&/^#[0-9a-fA-F]{6}$/.test(x.color));}catch(e){}
   function validCalendarPart(x){return VALID_PARTS.includes(x)||customParts.some(p=>p.id===x)}
   function saveCustomParts(){try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customParts));return true}catch(e){notify('追加項目を保存できなかったよ');return false}}
+  function partName(p){return customParts.find(c=>c.id===p)?.name||p}
+  function drawFormCustomParts(){
+    const box=$('partButtons'),chosen=new Set(getSelectedParts());
+    box.querySelectorAll('.custom-part').forEach(b=>b.remove());
+    customParts.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='part-button custom-part'+([...p.name].length>2?' wide-name':'');b.dataset.part=p.id;b.textContent=p.name;b.title=p.name;b.style.setProperty('--c',p.color);b.style.borderColor=p.color;b.setAttribute('aria-pressed',String(chosen.has(p.id)));box.appendChild(b);});
+  }
+  function addCustomPart(name,color){
+    name=String(name||'').trim();if(!name)return null;
+    if(['胸','背','背中','足','肩','腹','お腹','腕'].includes(name)){notify('その部位はもうあるよ');return null;}
+    const found=customParts.find(p=>p.name===name);if(found){notify('その名前はすでに追加されているよ');return null;}
+    const item={id:'custom:'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name,color};
+    customParts.push(item);if(!saveCustomParts()){customParts.pop();return null;}
+    drawFormCustomParts();if(typeof drawCustomButtons==='function'){drawCustomButtons();drawCalendar();drawHistory();}
+    notify(name+'を追加したよ');return item;
+  }
   function cleanParts(v){return Array.isArray(v)?[...new Set(v.filter(validCalendarPart))]:[]}
   let dayParts={};
   try{const saved=JSON.parse(localStorage.getItem(PARTS_KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [date,parts] of Object.entries(saved)){if(/^\d{4}-\d{2}-\d{2}$/.test(date))dayParts[date]=cleanParts(parts)}}}catch(e){}
@@ -777,7 +826,7 @@ updatePrevious();renderExtras();
     ['お腹',/クランチ|腹筋|プランク|シットアップ|レッグレイズ|アブ|腹|crunch|plank|sit ?up|\bab/i],
     ['腕',/カール|アーム|トライセプス|バイセプス|フレンチ|キックバック|プレスダウン|ハンマー|腕|curl|tricep|bicep|arm/i]
   ];
-  function entryParts(x){return (x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).map(p=>p==='背'?'背中':p==='腹'?'お腹':p).filter(p=>VALID_PARTS.includes(p))}
+  function entryParts(x){return (x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).map(p=>p==='背'?'背中':p==='腹'?'お腹':p).filter(validCalendarPart)}
   function guessParts(x){
     const name=String(x.exercise||'').trim();if(!name)return [];
     // 1) The same exercise recorded with a part on another day.
@@ -803,6 +852,11 @@ updatePrevious();renderExtras();
   $('date').addEventListener('input',restoreDayParts);
   function getSelectedParts(){return [...document.querySelectorAll('#partButtons .part-button[aria-pressed="true"]')].map(b=>b.dataset.part)}
   function setSelectedParts(v){const p=(Array.isArray(v)?v:[v]).map(x=>x==='背'?'背中':x==='腹'?'お腹':x);document.querySelectorAll('#partButtons .part-button').forEach(b=>b.setAttribute('aria-pressed',String(p.includes(b.dataset.part))))}
+  drawFormCustomParts();
+  $('addPartToggle').addEventListener('click',()=>{const open=$('addPartPanel').hidden;$('addPartPanel').hidden=!open;$('addPartToggle').setAttribute('aria-expanded',String(open));if(open)$('formPartName').focus();});
+  function saveFormPart(){const item=addCustomPart($('formPartName').value,$('formPartColor').value);if(!item)return;$('formPartName').value='';$('addPartPanel').hidden=true;$('addPartToggle').setAttribute('aria-expanded','false');const b=document.querySelector('#partButtons [data-part="'+item.id+'"]');if(b){b.setAttribute('aria-pressed','true');refreshExerciseSuggestions();}}
+  $('formPartSave').addEventListener('click',saveFormPart);
+  $('formPartName').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();saveFormPart();}});
   $('partButtons').addEventListener('click',e=>{const b=e.target.closest('.part-button');if(!b)return;b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));refreshExerciseSuggestions();});
   let activeSession=null,startedAt=0,monthOffset=0,historyMonthOffset=0,historySelectedDate=japanDate();
   function autoFillPrevious(){if($('editingId').value)return;const name=$('exercise').value.trim(),date=$('date').value;updatePrevious();if(!name)return;const typed=Array.from(setList.children).some(r=>r.querySelector('.set-weight').value!==''||r.querySelector('.set-reps').value!=='');if(typed)return;const p=previousRecord(name,date);if(!p)return;setList.replaceChildren();p.setsData.forEach(v=>addSetRow(v.weight,v.reps));const parts=p.bodyParts?.length?p.bodyParts:(p.bodyPart?[p.bodyPart]:[]);if(parts.length)setSelectedParts(parts);notify(p.date===date?'今日の記録を入れたよ':'前回の重量・回数を入れたよ');}
@@ -880,10 +934,7 @@ updatePrevious();renderExtras();
   $('customPartForm').addEventListener('submit',e=>{
     e.preventDefault();const name=$('customPartName').value.trim(),color=$('customPartColor').value;
     if(!name)return;
-    if(customParts.some(p=>p.name===name)){notify('その名前はすでに追加されているよ');return;}
-    const item={id:'custom:'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name,color};
-    customParts.push(item);if(!saveCustomParts()){customParts.pop();return;}
-    $('customPartName').value='';drawCustomButtons();drawCalendar();drawHistory();notify(name+'を追加したよ');
+    if(addCustomPart(name,color))$('customPartName').value='';
   });
   const calendarSelectedParts=new Set();
    let calendarResetMode=false;
@@ -1116,6 +1167,40 @@ updatePrevious();renderExtras();
   },true);
   // Personal best: an extra burst in the middle of the screen.
   window.torelogStorm=()=>{if(reduce.matches)return;const x=innerWidth/2,y=innerHeight/2;for(let i=0;i<14;i++){const a=i/14*Math.PI*2,l=rand(120,240);fade(bolt([x,y],[x+Math.cos(a)*l,y+Math.sin(a)*l],{width:2.4,branches:2,draw:110}),700);}ring(x,y,LIME,Math.max(innerWidth,innerHeight)*.7,800);doFlash(x,y,LIME,.6,700);shake(5,320);};
+})();
+</script>
+
+<script>
+// Body photos: stored per date in IndexedDB on this device only (too large for localStorage).
+(()=>{
+  const $=id=>document.getElementById(id);
+  let dbp=null;
+  function db(){if(dbp)return dbp;dbp=new Promise((res,rej)=>{const r=indexedDB.open('torelog-photos',1);r.onupgradeneeded=()=>{const s=r.result.createObjectStore('photos',{keyPath:'id'});s.createIndex('date','date')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});return dbp}
+  async function tx(mode,fn){const d=await db();return new Promise((res,rej)=>{const t=d.transaction('photos',mode);const out=fn(t.objectStore('photos'));t.oncomplete=()=>res(out&&out.result);t.onerror=()=>rej(t.error)})}
+  const forDate=date=>tx('readonly',s=>s.index('date').getAll(date));
+  function resize(file){return new Promise((res,rej)=>{const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{const max=1280,k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);c.toBlob(b=>b?res(b):rej(new Error('変換失敗')),'image/jpeg',.85)};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('読み込み失敗'))};img.src=url})}
+  const say=m=>{try{notify(m)}catch(e){}};
+  let urls=[],current=null,drawSeq=0;
+  async function draw(){
+    const seq=++drawSeq,date=$('date')?.value;if(!date)return;
+    let list=[];try{list=(await forDate(date)).sort((a,b)=>a.createdAt-b.createdAt)}catch(e){}
+    if(seq!==drawSeq)return;
+    urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+    const grid=$('photoGrid');grid.replaceChildren();
+    list.forEach(p=>{const u=URL.createObjectURL(p.blob);urls.push(u);const b=document.createElement('button');b.type='button';b.className='photo-thumb';b.setAttribute('aria-label','写真を大きく見る');const img=document.createElement('img');img.src=u;img.alt='からだ写真';b.appendChild(img);b.addEventListener('click',()=>{current=p.id;$('photoViewerImg').src=u;$('photoViewer').hidden=false});grid.appendChild(b)});
+    $('photoEmpty').hidden=list.length>0;
+  }
+  window.torelogDrawPhotos=draw;
+  $('photoInput').addEventListener('change',async e=>{
+    const files=[...e.target.files];e.target.value='';const date=$('date').value;if(!files.length||!date)return;
+    let ok=0;for(const f of files){try{const blob=await resize(f);await tx('readwrite',s=>s.put({id:Date.now().toString(36)+Math.random().toString(36).slice(2,8),date,createdAt:Date.now(),blob}));ok++}catch(err){}}
+    say(ok?`写真を${ok}枚保存したよ📷`:'写真を保存できなかったよ');draw();
+  });
+  $('photoClose').addEventListener('click',()=>{$('photoViewer').hidden=true;current=null});
+  $('photoViewer').addEventListener('click',e=>{if(e.target===$('photoViewer')){$('photoViewer').hidden=true;current=null}});
+  $('photoDelete').addEventListener('click',async()=>{if(!current)return;if(!confirm('この写真を削除する？'))return;try{await tx('readwrite',s=>s.delete(current));say('写真を削除したよ')}catch(e){}$('photoViewer').hidden=true;current=null;draw()});
+  $('date')?.addEventListener('change',draw);
+  draw();
 })();
 </script>
 </body>
