@@ -398,6 +398,11 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 @keyframes voltSurge{0%{opacity:1;stroke-width:3.5}25%{opacity:.3}45%{opacity:1}70%{opacity:.5}100%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.volt-arc,.volt-clock.surge .volt-arc{animation:none}.volt-sec{transition:none}}
 @media(max-width:374px){.date-line .date-heading{grid-template-columns:minmax(0,1fr)!important}.volt-clock{justify-self:center;width:min(72vw,230px)}}
+.exercise-field{margin-top:6px}
+.exercise-field .exercise-heading{display:block;font-size:13px;margin-bottom:6px}
+.field.exercise-field input#exercise{min-height:62px;padding:16px 16px;font-size:20px;font-weight:900;color:#fff;background:#14170f;border:2px solid var(--lime);border-radius:10px;box-shadow:0 0 0 1px #caff3722,0 0 16px #caff3730}
+.field.exercise-field input#exercise::placeholder{color:#caff37;opacity:.75;font-weight:800}
+.field.exercise-field input#exercise:focus{outline:none;border-color:#fff;box-shadow:0 0 0 2px var(--lime),0 0 22px #caff3770}
 </style>
 </head>
 <body>
@@ -423,7 +428,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 <circle cx="100" cy="100" r="5.5" fill="#d9ff43"/><circle cx="100" cy="100" r="2" fill="#0b0d0c"/>
 </svg></div></div></div></div></div>
           <div class="field wide"><span class="part-heading">部位（複数選択OK）</span><div id="partButtons" class="part-buttons" role="group" aria-label="鍛えた部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div></div>
-          <div class="field wide"><input id="exercise" type="text" maxlength="48" placeholder="種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
+          <div class="field wide exercise-field"><label for="exercise" class="part-heading exercise-heading">種目</label><input id="exercise" type="text" maxlength="48" placeholder="＋ 種目を入力" aria-label="種目名" autocomplete="off" aria-controls="exerciseSuggestions" aria-expanded="false" required><div id="exerciseSuggestions" class="exercise-suggestions" role="listbox" aria-label="過去の種目候補" hidden></div></div>
           
         </div>
         <div class="sets-head"><div class="sets-title">セット別の記録</div><div class="sets-count" id="setCount">1 セット</div></div>
