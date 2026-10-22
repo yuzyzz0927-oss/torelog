@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261021-electric-4">
+  <meta name="torelog-build" content="20261022-calendar-1">
   <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
@@ -470,7 +470,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   </section>
 
   <div id="record-extras">
-  <div class="card"><h3>📅 部位カレンダー</h3><p class="hint" style="margin:4px 0 12px">記録を保存すると自動で色がつくよ。手動で塗ることもできるよ。</p><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><div id="calKey" class="cal-key" aria-label="色の説明"></div><p class="cal-help">手動で塗るとき：下の部位を選んでから日付をタップ🎨（選んだ色に置きかわるよ）。色を消すときは「リセット」を選んで日付をタップ。</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>その日の色が消えます</strong>（筋トレ記録は残ります）</span></div></div>
+  <div class="card"><h3>📅 部位カレンダー</h3><p class="hint" style="margin:4px 0 12px">記録を保存すると自動で色がつくよ。手動で塗ることもできるよ。</p><div class="btnrow" style="margin-bottom:10px"><button id="calPrev" class="ghost tiny" type="button">◀ 前月</button><span id="calTitle"></span><button id="calNext" class="ghost tiny" type="button">翌月 ▶</button></div><div id="calGrid" class="cal-grid"></div><div id="calKey" class="cal-key" aria-label="色の説明"></div><p class="cal-help">手動で塗るとき：下の部位を選んでから日付をタップ🎨（選んだ色に置きかわるよ）。記録した日は、その日に鍛えた部位の色に自動でなるよ。手で塗った色を消すときは「リセット」を選んで日付をタップ。</p><div id="calendarPartButtons" class="part-buttons calendar-parts" role="group" aria-label="カレンダーに塗る部位"><button type="button" class="part-button" data-part="胸" aria-pressed="false">胸</button><button type="button" class="part-button" data-part="背中" aria-pressed="false">背</button><button type="button" class="part-button" data-part="足" aria-pressed="false">足</button><button type="button" class="part-button" data-part="肩" aria-pressed="false">肩</button><button type="button" class="part-button" data-part="お腹" aria-pressed="false">腹</button><button type="button" class="part-button" data-part="腕" aria-pressed="false">腕</button></div><div id="customCalendarParts" class="custom-calendar-parts"></div><form id="customPartForm" class="custom-part-form"><div class="custom-form-title">＋ カレンダーの項目を追加</div><div class="custom-form-fields"><label class="custom-name-label">名前<input id="customPartName" type="text" maxlength="50" required placeholder="例：スタジオ・ヨガ" aria-label="追加する項目の名前"></label><label class="custom-color-label">色を選ぶ<input id="customPartColor" type="color" value="#95613d" aria-label="追加する項目の色"></label></div><button class="custom-save-button" type="submit">＋ この名前と色を保存</button><p class="custom-form-note">保存すると上にボタンが増えるよ。選んでカレンダーの日付を押してね。</p></form><div class="calendar-reset-row"><button id="calendarResetMode" type="button" aria-pressed="false">↺ リセット</button><span>← リセットを選んで日付を押すと、<strong>手で塗った色が消えます</strong>（記録した部位の色は、記録を消さない限り残ります）</span></div></div>
   <div class="card volume-summary-card">
       <div class="volume-summary">
         <div class="volume-summary-item"><div class="volume-summary-label" id="todayVolumeLabel">TODAY / 今日の総重量</div><strong id="todayVolumeTotal">0 <small>kg</small></strong><div id="todayVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
@@ -769,9 +769,8 @@ updatePrevious();renderExtras();
     if(editId)entries=entries.map(z=>z.id===editId?x:z);else entries.push(x);
     if(!save()){entries=old;return;}
     if(!editId&&bestBefore>0&&Math.max(...setsData.map(z=>z.weight))>bestBefore)setTimeout(()=>{notify('⚡ 自己ベスト更新！おめでとう！');window.torelogStorm?.();},700);$('exercise').value='';hideExerciseSuggestions();updatePrevious();$('memo').value='';setList.innerHTML='';addSetRow();$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;
-    // Keep the day's muscle-group history for the calendar, but clear the form selection after saving.
-    const partsAtSave=getSelectedParts();
-    if(partsAtSave.length)saveDayParts(date,[...partsForDay(date),...partsAtSave]);
+    // The calendar color comes straight from the saved record; fill in any old records that still have no part.
+    scheduleBackfill();
     redraw();notify(editId?'記録を修正したよ！':setsData.length+'セットを保存したよ！');});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const x=entries.find(z=>z.id===b.dataset.edit);if(!x)return;document.querySelector('[data-tab="record"]').click();$('editingId').value=x.id;$('date').value=x.date;updateDateDisplay();$('exercise').value=x.exercise;setSelectedParts(x.bodyParts||x.bodyPart||[]);$('memo').value=x.memo||'';setList.replaceChildren();x.setsData.forEach((z,i)=>{addSetRow(z.weight,z.reps);setList.lastElementChild.querySelector('.donebox').checked=!!x.completed?.[i]});$('submitLabel').textContent='変更を保存する';$('cancelEditing').hidden=false;window.scrollTo(0,0);notify('記録を編集中');});
   $('cancelEditing').addEventListener('click',()=>{$('editingId').value='';$('submitLabel').textContent='この種目を終了し保存する！';$('cancelEditing').hidden=true;$('exercise').value='';$('memo').value='';setList.replaceChildren();addSetRow();restoreDayParts();updatePrevious();hideExerciseSuggestions();notify('編集をキャンセルしたよ');});
@@ -803,7 +802,7 @@ updatePrevious();renderExtras();
     ['お腹',/クランチ|腹筋|プランク|シットアップ|レッグレイズ|アブ|腹|crunch|plank|sit ?up|\bab/i],
     ['腕',/カール|アーム|トライセプス|バイセプス|フレンチ|キックバック|プレスダウン|ハンマー|腕|curl|tricep|bicep|arm/i]
   ];
-  function entryParts(x){return (x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).map(p=>p==='背'?'背中':p==='腹'?'お腹':p).filter(p=>VALID_PARTS.includes(p))}
+  function entryParts(x){return (x.bodyParts?.length?x.bodyParts:(x.bodyPart?[x.bodyPart]:[])).map(p=>p==='背'?'背中':p==='腹'?'お腹':p).filter(validCalendarPart)}
   function guessParts(x){
     const name=String(x.exercise||'').trim();if(!name)return [];
     // 1) The same exercise recorded with a part on another day.
@@ -815,12 +814,20 @@ updatePrevious();renderExtras();
     const hit=EXERCISE_PART_HINTS.find(([,re])=>re.test(name));
     return hit?[hit[0]]:[];
   }
+  // Background tidy-up: give part-less records a part (same exercise recorded with a part, or a known exercise name),
+  // so every day with a record gets a calendar color. Runs after saving and once on open.
+  function backfillEntryParts(){
+    let changed=0;
+    entries=entries.map(x=>{if(entryParts(x).length)return x;const g=guessParts(x);if(!g.length)return x;changed++;return {...x,bodyParts:g,bodyPart:g[0]};});
+    if(changed&&save()){redraw();}
+    return changed;
+  }
+  function scheduleBackfill(){const run=()=>{try{backfillEntryParts()}catch(e){}};if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1500});else setTimeout(run,300);}
   function partsFromEntries(date){const out=new Set();entries.filter(x=>x.date===date).forEach(x=>{const p=entryParts(x);(p.length?p:guessParts(x)).forEach(v=>out.add(v))});return [...out]}
-  // Colors from the day's records plus any colors painted by hand. A day cleared with "reset" stays blank.
+  // Colors always come from the day's saved records (until a record is deleted), plus any colors painted by hand.
+  // "Reset" clears only the hand-painted colors.
   function partsForDay(date){
-    const has=Object.prototype.hasOwnProperty.call(dayParts,date);
-    const manual=has?cleanParts(dayParts[date]):[];
-    if(has&&!manual.length)return [];
+    const manual=Object.prototype.hasOwnProperty.call(dayParts,date)?cleanParts(dayParts[date]):[];
     return [...new Set([...partsFromEntries(date),...manual])];
   }
   function saveDayParts(date,parts){if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;const normalized=cleanParts(parts),old=dayParts;dayParts={...dayParts,[date]:normalized};try{localStorage.setItem(PARTS_KEY,JSON.stringify(dayParts));return true}catch(e){dayParts=old;notify('部位を自動保存できなかったよ');return false}}
@@ -929,6 +936,7 @@ updatePrevious();renderExtras();
       const parts=partsForDay(key),colors=parts.map((p,i)=>(partColors[p]||customParts.find(item=>item.id===p)?.color||'#777')+' '+(i*100/parts.length)+'% '+((i+1)*100/parts.length)+'%');
       btn.className=(parts.length?'trained part-day ':'')+(key===today?'current ':'')+(key===historySelectedDate?'history-selected':'');
       if(colors.length)btn.style.background='linear-gradient(90deg,'+colors.join(',')+')';
+      else if(entries.some(e=>e.date===key)){btn.classList.add('trained','part-day','unknown-part');btn.style.background=UNKNOWN_PART_COLOR;}
       btn.textContent=day;btn.setAttribute('aria-label',key+'の記録を表示');btn.setAttribute('aria-pressed',String(key===historySelectedDate));
       btn.addEventListener('click',()=>{historySelectedDate=key;drawHistory();});grid.appendChild(btn);
     }
@@ -942,6 +950,7 @@ updatePrevious();renderExtras();
   const partStyles=getComputedStyle(document.documentElement);
   const partColors=Object.fromEntries(Object.entries({'胸':'--part-chest','背中':'--part-back','足':'--part-leg','肩':'--part-shoulder','お腹':'--part-abdomen','腕':'--part-arm'}).map(([part,variable])=>[part,partStyles.getPropertyValue(variable).trim()]));
   const partOrder=['胸','背中','足','肩','お腹','腕'];
+  const UNKNOWN_PART_COLOR='#9aa0a6';
   function drawCustomButtons(){
     const box=$('customCalendarParts');box.replaceChildren();
     customParts.forEach(p=>{
@@ -974,6 +983,7 @@ updatePrevious();renderExtras();
   function drawCalendarKey(id){
     const box=$(id);if(!box)return;box.replaceChildren();
     [...partOrder.map(p=>({name:p,color:partColors[p]})),...customParts.map(p=>({name:p.name,color:p.color}))].forEach(({name,color})=>{const item=document.createElement('span');const dot=document.createElement('i');dot.style.setProperty('--c',color);item.append(dot,name);box.appendChild(item);});
+    if(entries.some(e=>!partsFromEntries(e.date).length)){const u=document.createElement('span');const ud=document.createElement('i');ud.style.setProperty('--c',UNKNOWN_PART_COLOR);u.append(ud,'部位未設定');box.appendChild(u);}
     const today_=document.createElement('span');today_.className='key-today';today_.textContent='□ 今日';box.appendChild(today_);
   }
   function drawCalendar(){
@@ -997,9 +1007,9 @@ updatePrevious();renderExtras();
         el.classList.add('part-day');
         const label=document.createElement('span');label.className='day-number';label.textContent=day;el.appendChild(label);
         el.setAttribute('aria-label',key+'：'+parts.map(x=>customParts.find(p=>p.id===x)?.name||x).join('、'));
-      }else{el.textContent=day;}
+      }else if(entries.some(e=>e.date===key)){el.classList.add('trained','part-day','unknown-part');el.style.background=UNKNOWN_PART_COLOR;const label=document.createElement('span');label.className='day-number';label.textContent=day;el.appendChild(label);el.setAttribute('aria-label',key+'：部位未設定');}else{el.textContent=day;}
       el.addEventListener('click',()=>{
-        if(calendarResetMode){if(saveDayParts(key,[])){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');drawCalendar();drawHistory();if($('date').value===key)restoreDayParts();notify('この日の色を消したよ（記録は残るよ）');}return;}
+        if(calendarResetMode){if(saveDayParts(key,[])){calendarResetMode=false;$('calendarResetMode').setAttribute('aria-pressed','false');drawCalendar();drawHistory();if($('date').value===key)restoreDayParts();notify(partsFromEntries(key).length?'手で塗った色を消したよ（記録の部位の色は残るよ）':'この日の色を消したよ');}return;}
          if(!calendarSelectedParts.size){notify('先にカレンダー下の部位を選んでね');return;}
         const chosen=[...partOrder,...customParts.map(x=>x.id)].filter(p=>calendarSelectedParts.has(p));
         if(saveDayParts(key,chosen)){drawCalendar();drawHistory();if($('date').value===key)restoreDayParts();notify(chosen.length+'色で塗ったよ');}
@@ -1019,7 +1029,7 @@ updatePrevious();renderExtras();
   }
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshOnNewDay();scheduleDayRefresh();}});
   scheduleDayRefresh();
-  drawCustomButtons();restoreDayParts();redraw();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
+  drawCustomButtons();restoreDayParts();redraw();scheduleBackfill();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
 })();
 </script>
 
