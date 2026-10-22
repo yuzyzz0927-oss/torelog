@@ -353,6 +353,9 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 .weight-control{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px}
 .step-btn{min-height:48px;padding:0;border:1px solid #505558;border-radius:4px;background:#26292b;color:#d9ff43;font-size:22px;font-weight:900;line-height:1}
 .step-btn:active{background:#3a4031}
+.weight-label-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bw-btn{border:1px solid #caff37;border-radius:4px;background:transparent;color:#d9ff43;font-size:12px;font-weight:900;padding:3px 8px;min-height:28px}
+.bw-btn:active{background:#3a4031}
 .set-row .set-field input{width:100%;min-width:0;min-height:48px;margin:0;padding:6px 4px;font-size:20px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
 .set-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:12px}
 @media(max-width:360px){
@@ -528,6 +531,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   const validEntry=x=>x&&typeof x.id==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&typeof x.exercise==='string'&&x.exercise.trim().length>0&&x.exercise.length<=48&&Array.isArray(x.setsData)&&x.setsData.length>=1&&x.setsData.length<=MAX_SETS&&x.setsData.every(validSet)&&(!x.memo||typeof x.memo==='string')&&(x.durationMinutes==null||(Number.isInteger(x.durationMinutes)&&x.durationMinutes>=1&&x.durationMinutes<=1440));
   const maxRm=sets=>Math.max(0,...sets.map(s=>oneRm(s.weight,s.reps)||0));
   const volume=sets=>sets.reduce((n,s)=>n+s.weight*s.reps,0);
+  const BW='自重';const wtext=w=>w>0?fmt(w)+'kg':BW;
   const oneRm=(w,r)=>{if(!(w>0&&r>=1&&r<=30))return null;return r===1?w:w*(1+r/30);};
   const totalSets=x=>x.setsData.length;
   function normalize(x){
@@ -565,7 +569,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   const setList=$('setList');
   // Normalize only after IME composition has finished; keep the user's caret in place.
   const normalizeWeight=value=>value.replace(/[０-９．＋－]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xfee0));
-  function readWeight(value){const text=normalizeWeight(value).trim();return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(text)?Number(text):NaN;}
+  function readWeight(value){const text=normalizeWeight(value).trim();if(text===BW)return 0;return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(text)?Number(text):NaN;}
   function readReps(value){const text=normalizeWeight(value).trim();return /^[0-9]+$/.test(text)?Number(text):NaN;}
   function syncWeight(input){
     if(input.dataset.composing)return;
@@ -597,21 +601,21 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
     if(input.dataset.composing)return;
     const current=readWeight(input.value);
     if(input.value.trim()!==''&&!Number.isFinite(current))return;
-    input.value=String(Math.max(0,Math.min(1000,Number(((Number.isFinite(current)?current:0)+direction*2.5).toFixed(10)))));
+    const next=Math.max(0,Math.min(1000,Number(((Number.isFinite(current)?current:0)+direction*2.5).toFixed(10))));input.value=next===0?BW:String(next);
     input.dispatchEvent(new Event('input',{bubbles:true}));
   }
   function addSetRow(weight='',reps=''){
     if(setList.children.length>=MAX_SETS){notify(`最大${MAX_SETS}セットまで追加できるよ`);return;}
     const row=document.createElement('div');row.className='set-row';row.dataset.rowId=String(++setId);
-    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label class="done-toggle"><input class="donebox" type="checkbox"><span>完了</span></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field set-field-weight"><label for="weight-${setId}">重量 (kg)</label><div class="weight-control"><button type="button" class="step-btn" data-weight-step="-1" aria-label="重量を2.5kg減らす">−</button><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="60" required><button type="button" class="step-btn" data-weight-step="1" aria-label="重量を2.5kg増やす">＋</button></div></div><div class="set-field set-field-reps"><label for="reps-${setId}">回数</label><input id="reps-${setId}" class="set-reps" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="10" required></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
+    row.innerHTML=`<div class="set-top"><span class="set-number"><span class="dot"></span><span class="number-label">1セット目</span></span><label class="done-toggle"><input class="donebox" type="checkbox"><span>完了</span></label><button type="button" class="remove-set" aria-label="このセットを削除">✕ 削除</button></div><div class="set-inputs"><div class="set-field set-field-weight"><div class="weight-label-row"><label for="weight-${setId}">重量 (kg)</label><button type="button" class="bw-btn" aria-label="自重にする">🙋 自重</button></div><div class="weight-control"><button type="button" class="step-btn" data-weight-step="-1" aria-label="重量を2.5kg減らす">−</button><input id="weight-${setId}" class="set-weight" type="text" inputmode="decimal" role="spinbutton" aria-valuemin="0" aria-valuemax="1000" placeholder="60 / 自重" required><button type="button" class="step-btn" data-weight-step="1" aria-label="重量を2.5kg増やす">＋</button></div></div><div class="set-field set-field-reps"><label for="reps-${setId}">回数</label><input id="reps-${setId}" class="set-reps" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="10" required></div></div><div class="set-foot"><span class="set-volume">総重量：—</span><span class="rm">推定1RM：—</span></div>`;
     setList.appendChild(row);
-    row.querySelector('.set-weight').value=weight;syncWeight(row.querySelector('.set-weight'));
+    row.querySelector('.set-weight').value=(weight===0||weight==='0')?BW:weight;syncWeight(row.querySelector('.set-weight'));
     row.querySelector('.set-reps').value=reps;syncReps(row.querySelector('.set-reps'));
     renumberSets();refreshPreview();
   }
   function renumberSets(){const count=setList.children.length;Array.from(setList.children).forEach((r,i)=>{r.querySelector('.number-label').textContent=`${i+1}セット目`;r.querySelector('.remove-set').disabled=count===1;r.querySelector('.remove-set').setAttribute('aria-label',`${i+1}セット目を削除`);});$('setCount').textContent=`${count} セット`;$('addSet').disabled=count>=MAX_SETS;}
   function setValues(row){const weightInput=row.querySelector('.set-weight');if(weightInput.dataset.composing)return null;const w=weightInput.value,r=row.querySelector('.set-reps').value;if(w===''||r==='')return null;const obj={weight:readWeight(w),reps:readReps(r)};return validSet(obj)?obj:null;}
-  function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});}
+  function refreshPreview(){let sum=0,count=0,rms=[];Array.from(setList.children).forEach(row=>{const s=setValues(row),v=s?s.weight*s.reps:null,rm=s?oneRm(s.weight,s.reps):null;if(s){count++;sum+=v;if(rm!==null)rms.push(rm);}row.querySelector('.set-volume').textContent=v===null?'総重量：—':s.weight===0?'総重量：自重':`総重量：${fmt(v)} kg`;row.querySelector('.rm').textContent=rm===null?'推定1RM：—':`推定1RM：${fmt(rm)} kg`;});}
   $('addSet').addEventListener('click',()=>{const last=setList.lastElementChild;const w=last?last.querySelector('.set-weight').value:'';const r=last?last.querySelector('.set-reps').value:'';addSetRow(w,r);const field=setList.lastElementChild.querySelector('.set-weight');field.focus();moveSetCaretToEnd(field);});
   // On iPhone and desktop, tapping any set numeric field puts the caret after the units digit.
   setList.addEventListener('focusin',e=>{
@@ -650,7 +654,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
     refreshPreview();
   });
   setList.addEventListener('change',e=>{
-    if(e.target.matches('.set-weight')){syncWeight(e.target);refreshPreview();}
+    if(e.target.matches('.set-weight')){if(readWeight(e.target.value)===0&&e.target.value.trim()!=='')e.target.value=BW;syncWeight(e.target);refreshPreview();}
     if(e.target.matches('.set-reps')){syncReps(e.target);refreshPreview();}
   });
   setList.addEventListener('keydown',e=>{
@@ -662,14 +666,14 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
       e.preventDefault();stepWeight(e.target,e.key==='ArrowUp'?1:-1);
     }
   });
-  setList.addEventListener('click',e=>{const button=e.target.closest('[data-weight-step]');if(button)stepWeight(button.closest('.weight-control').querySelector('.set-weight'),Number(button.dataset.weightStep));});
+  setList.addEventListener('click',e=>{const bw=e.target.closest('.bw-btn');if(bw){const input=bw.closest('.set-field-weight').querySelector('.set-weight');input.value=BW;input.dispatchEvent(new Event('input',{bubbles:true}));return;}const button=e.target.closest('[data-weight-step]');if(button)stepWeight(button.closest('.weight-control').querySelector('.set-weight'),Number(button.dataset.weightStep));});
   setList.addEventListener('click',e=>{const btn=e.target.closest('.remove-set');if(!btn||setList.children.length<=1)return;btn.closest('.set-row').remove();renumberSets();refreshPreview();});
   addSetRow();
   const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||Number(b.createdAt||0)-Number(a.createdAt||0));
   function dates7(){const a=[];for(let i=6;i>=0;i--){const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-i);a.push(d.toISOString().slice(0,10));}return a;}
   function renderList(id,list){const box=$(id);box.innerHTML='';if(!list.length){box.innerHTML='<div class="empty">まだ記録はないよ。<br>最初のトレーニングを登録してみよう！</div>';return;}
     let seenSession='';
-    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${fmt(s.weight)}kg × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||'#a88bff')+'">'+escape(p)+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><div class="entry-actions"><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
+    sorted(list).forEach(x=>{if(id==='historyList'&&x.sessionId&&x.sessionId!==seenSession){const group=document.createElement('div');group.className='hint';group.style.margin='6px 0 0';group.textContent='🏋️ 同じトレーニングの記録';box.appendChild(group);seenSession=x.sessionId;}const node=document.createElement('div');node.className='entry';const rm=maxRm(x.setsData);const chips=x.setsData.map((s,i)=>`<span class="set-chip">${x.completed?.[i]?"✅ ":""}${i+1}：${wtext(s.weight)} × ${fmt(s.reps)}回</span>`).join('');node.innerHTML=`<div class="entry-top"><div><div class="exercise">${escape(x.exercise)}</div>${id==='todayList'?(x.bodyParts?.length||x.bodyPart?'<div class="entry-part-tags">'+(x.bodyParts?.length?x.bodyParts:[x.bodyPart]).map(p=>'<span class="entry-part-tag" style="--badge-color:'+(partColors[p]||'#a88bff')+'">'+escape(p)+'</span>').join('')+'</div>':''):''}<div class="meta">${id==='todayList'?'':escape(x.date)+' ・ '+totalSets(x)+'セット'}${id==='todayList'?'':((x.bodyParts?.length||x.bodyPart)?' ・ '+escape((x.bodyParts?.length?x.bodyParts:[x.bodyPart]).join('・')):'')}${x.durationMinutes?' ・ '+x.durationMinutes+'分':''}${x.memo?' ・ '+escape(x.memo):''}</div></div><div class="entry-actions"><button class="ghost tiny" type="button" data-edit="${escape(x.id)}">編集</button><button class="delete" type="button" data-delete="${escape(x.id)}">削除</button></div></div><div class="entry-sets">${chips}</div><div class="entry-bottom">${id==='todayList'?'':`<span class="amount">総重量 ${fmt(volume(x.setsData))} kg</span>`}<span class="rmvalue">推定1RM ${rm?fmt(rm)+' kg':'—'}</span></div>`;box.appendChild(node);});
   }
   // 57種類の重量比較。重量は代表的な概算。キャラクター・実在人物・商品名は使わない（販売時の権利リスク回避）。
   const comparisonThings=[["ネコ（大きめ）",6,"匹","🐈","猫の手も借りたい…どころか猫ごと持ち上げた。"],["ボウリングの球",7,"個","🎳","レーンに流したら床が先にストライク。"],["スイカ",8,"玉","🍉","夏祭りのスイカ割り、腕力だけで閉幕。"],["米袋",10,"袋","🍚","炊飯器が労働基準監督署へ駆け込んだ。"],["中型犬",15,"匹","🐕","散歩というより犬の引っ越し。"],["灯油ポリタンク",18,"本","🛢️","冬支度の規模が石油会社。"],["自転車",20,"台","🚲","駐輪場の管理人から指名手配。"],["電子レンジ",20,"台","🍱","温める前に持ち上げてどうする。"],["ビール樽",25,"樽","🍺","居酒屋の地下倉庫で伝説になれる。"],["小学生",30,"人分","🎒","運動会の組体操、発注先が間違ってる。"],["大型犬",40,"匹","🐕","ドッグランが重量挙げ会場に変わった。"],["洗濯機",45,"台","🫧","脱水より先に筋肉が遠心分離。"],["大人1人",65,"人分","🧍","満員電車の乗客をまとめて筋トレに換算。"],["冷蔵庫",94,"台","🧊","引っ越し業者から役員待遇でスカウト。"],["パンダ",120,"頭","🐼","笹より先にパンダを持ち上げてどうする。"],["お相撲さん",150,"人分","🏆","土俵がなくても勝手に千秋楽。"],["ヘビー級格闘家",120,"人分","💪","筋肉が筋肉を持ち上げる無限ループ。"],["ゴリラ",180,"頭","🦍","親戚を何頭持ち上げるつもりだ。"],["トラ",220,"頭","🐅","虎の威を借るどころか、虎を担いでる。"],["グランドピアノ",320,"台","🎹","ショパンも「持つんかい」って言う。"],["自動販売機",400,"台","🥤","飲み物じゃなく自販機ごとお持ち帰り。"],["シロクマ",500,"頭","🐻‍❄️","北極から「それ筋トレ？」と苦情。"],["競走馬",500,"頭","🐎","有馬記念が人力牽引レースに変更。"],["軽自動車",850,"台","🚙","駐車場でベンチプレスは禁止です。"],["キリン",1200,"頭","🦒","首が長くてもこの記録は二度見する。"],["カバ",1500,"頭","🦛","動物園の飼育員も二度見した。"],["ミニバン",2000,"台","🚐","家族旅行、車を担いで出発。"],["サイ",2300,"頭","🦏","角の問題じゃない。全体が重い。"],["アフリカゾウ",5000,"頭","🐘","鼻で笑われる前にこっちがゾウを超えた。"],["ティラノサウルス",7000,"頭","🦖","ジュラ紀のジムなら入会初日に出禁。"],["スクールバス",9000,"台","🚌","遠足の集合場所が筋トレ会場に。"],["モアイ像",12500,"体","🗿","イースター島が「返して」と言っている。"],["大型トラック",20000,"台","🚚","物流会社が土下座で入社を頼む。"],["路面電車",30000,"両","🚃","線路より腕のほうが頑丈説。"],["大型ショベルカー",40000,"台","🏗️","掘る前に持ち上げてどうする。"],["新幹線1両",45000,"両","🚅","次の停車駅はプロテイン売り場。"],["戦艦大和",72800000,"隻","🚢","筋トレが海軍の極秘作戦になった。"],["クジラ",100000,"頭","🐋","海より先にダンベルが干上がる。"],["蒸気機関車",120000,"両","🚂","汽笛より先に雄叫びが鳴った。"],["ジャンボジェット機",180000,"機","✈️","離陸しなくても腕だけが飛行中。"],["自由の女神",204000,"体","🗽","たいまつよりダンベル持たせたい。"],["エアバスA380",575000,"機","🛫","空港職員が全員ヘッドハンティング。"],["小型ロケット",1000000,"基","🚀","発射台がジムの床になった。"],["巨大観覧車",1500000,"基","🎡","回すんじゃない、持ち上げてる。"],["スペースシャトル",2000000,"機","🛰️","NASAから「筋トレの定義を教えて」。"],["潜水艦",3000000,"隻","🌊","潜る前に重量記録が浮上。"],["東京タワー",4000000,"基","🗼","東京の夜景が一瞬揺れた。"],["大型船",10000000,"隻","🛳️","船長も「積載量おかしくない？」。"],["エッフェル塔",10100000,"基","🇫🇷","パリから筋肉に感謝状。"],["高層ビル",20000000,"棟","🏢","エレベーターより先に腕が最上階へ。"],["東京スカイツリー",36000000,"基","🏙️","地上634mから拍手が聞こえる。"],["国会議事堂",109000000,"棟","🏛️","本日の議題「なぜ持ち上がった？」。"],["ピラミッド",6000000000,"基","🔺","ファラオも建設業者も困惑している。"],["富士山",1000000000000000,"座","🗻","登山するな。山ごと持つな。"],["月",7.35e+22,"個","🌙","ウサギが餅つきを中断した。"],["地球",5.97e+24,"個","🌏","ジムの住所が「惑星」になった。"],["太陽",1.99e+30,"個","☀️","もう日焼けでは済まない。宇宙規模。"]];
@@ -729,7 +733,7 @@ updatePrevious();renderExtras();
   // Popular staple exercises shown first when a body part is selected.
   const PRESET_EXERCISES={'胸':['ベンチプレス','ダンベルプレス','ペックフライ'],'背中':['ラットプルダウン','デッドリフト','ベントオーバーロウ'],'足':['スクワット','レッグプレス','ブルガリアンスクワット'],'肩':['ショルダープレス','サイドレイズ','リアレイズ'],'お腹':['クランチ','レッグレイズ','プランク'],'腕':['アームカール','ハンマーカール','トライセプスプッシュダウン']};
   let showSuggestionsForPart=false;
-  function updatePrevious(){const name=getExerciseName().trim();const date=$('date').value;const recent=name&&!$('editingId').value?previousRecord(name,date):null;if(!recent){$('previous').textContent='';return;}const [,m,d]=recent.date.split('-').map(Number);const when=recent.date===date?'今日の記録':`前回（${m}/${d}）`;$('previous').textContent=`${when}：${recent.setsData.map(s=>`${fmt(s.weight)}kg×${fmt(s.reps)}回`).join(' / ')}`;}
+  function updatePrevious(){const name=getExerciseName().trim();const date=$('date').value;const recent=name&&!$('editingId').value?previousRecord(name,date):null;if(!recent){$('previous').textContent='';return;}const [,m,d]=recent.date.split('-').map(Number);const when=recent.date===date?'今日の記録':`前回（${m}/${d}）`;$('previous').textContent=`${when}：${recent.setsData.map(s=>`${wtext(s.weight)}×${fmt(s.reps)}回`).join(' / ')}`;}
   function refreshExerciseSuggestions(){
     const selected=getSelectedParts();
     const frequency=new Map();
