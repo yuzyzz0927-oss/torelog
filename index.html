@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#161337">
   <meta name="description" content="セットごとの重量と回数、総重量、推定1RMが分かる筋トレ記録アプリ">
-  <meta name="torelog-build" content="20261022-calendar-1">
-  <title>ゆずる式トレログ Ver.0.3 | 筋トレ記録</title>
+  <meta name="torelog-build" content="20261102-v1.0">
+  <title>筋トレログ | 筋トレ記録アプリ</title>
   <style>
 :root{color-scheme:dark;--bg:#11102a;--panel:#1d1b3c;--panel2:#262348;--line:#423b68;--fg:#fcf9ff;--muted:#b8b2d7;--cyan:#45e5fa;--pink:#ff69bb;--orange:#ffbd61;--lime:#b3fc73;--purple:#aa8bff;--shadow:0 15px 38px #07051166}
 *{box-sizing:border-box}
@@ -200,6 +200,8 @@ body{background:#0a0b0c!important;color:#f5f5f3;font-family:Impact,"Arial Narrow
 .logo-slash{font-size:31px;color:#caff37;transform:translate(-2px,7px) skew(-12deg)}
 .brand h1{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(29px,7.8vw,58px);font-weight:900;line-height:.98;white-space:nowrap;letter-spacing:-.045em;color:#fff}
 .brand-accent{color:#caff37}
+.logo.logo-kanji{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;font-style:normal;font-weight:900;font-size:32px;letter-spacing:0;color:#caff37}
+.brand h1{letter-spacing:.01em;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
 .subtitle{color:#b9bab9;font-size:11px;letter-spacing:.04em;margin-top:7px;font-weight:700}
 .subtitle-separator{color:#caff37;padding:0 5px}
 .version{border:1px solid #565b5b;border-radius:2px;background:transparent;color:#d1d3d2;font-family:monospace;font-size:11px;letter-spacing:.05em}
@@ -429,7 +431,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
 </head>
 <body>
 <main class="page">
-  <header class="brandbar"><div class="brand"><div class="logo" aria-hidden="true">Y<span class="logo-slash">/</span></div><div class="brand-copy"><div class="brand-kicker">BUILT FOR PROGRESS · EST. 2026</div><h1>YUZURU<span class="brand-accent">.</span> LOG</h1><div class="subtitle">ゆずる式トレログ <span class="subtitle-separator">/</span> OWN YOUR PROGRESS.</div></div></div><span class="version">V.03</span></header>
+  <header class="brandbar"><div class="brand"><div class="logo logo-kanji" aria-hidden="true">筋</div><div class="brand-copy"><div class="brand-kicker">BUILT FOR PROGRESS · EST. 2026</div><h1>筋トレ<span class="brand-accent">ログ</span></h1><div class="subtitle">筋トレ記録アプリ <span class="subtitle-separator">/</span> OWN YOUR PROGRESS.</div></div></div><span class="version">V1.0</span></header>
   <nav class="tabs" aria-label="画面を選択"><button class="tab active" data-tab="record" aria-current="page" type="button"><span class="tab-icon" aria-hidden="true">＋</span>記録する</button><button class="tab" data-tab="history" type="button"><span class="tab-icon" aria-hidden="true">▦</span>履歴</button><button class="tab" data-tab="analysis" type="button"><span class="tab-icon" aria-hidden="true">↗</span>分析</button></nav>
   <section id="record" class="panel active" aria-label="記録する">
     <div class="card">
@@ -464,7 +466,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   </section>
   <section id="history" class="panel" aria-label="履歴">
     <div class="card"><h3>トレーニング履歴</h3><p class="hint">各セットの記録、総重量、推定1RMを確認できるよ。</p><div class="btnrow history-month"><button type="button" id="historyPrev" class="ghost tiny">◀ 前月</button><strong id="historyMonth"></strong><button type="button" id="historyNext" class="ghost tiny">翌月 ▶</button></div><div id="historyCalendar" class="cal-grid" aria-label="日付を選んで記録を見る"></div><div id="historyKey" class="cal-key" aria-label="色の説明"></div><h3 id="historyDayTitle">選択日の記録</h3><div id="historyList" class="list"></div><div class="history-total">その日の総重量 <strong id="historyTotal">0 kg</strong></div><div class="history-photos"><h3 class="history-photo-title">📸 この日の写真</h3><div id="historyPhotoList" class="day-photo-list" aria-label="この日の写真"></div><p id="historyPhotoEmpty" class="day-photo-empty">この日の写真はまだないよ</p></div></div>
-    <div class="card"><h3>バックアップ</h3><p class="hint">記録はこのブラウザに保存されます。機種変更・データ削除などに備えてバックアップを取ってね。公開更新だけでは通常データは消えないけれど、保存を保証するものではありません。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
+    <div class="card"><h3>バックアップ</h3><p class="hint">記録はこの端末の中に保存されます。機種変更やアプリの削除に備えて、ときどきバックアップを取ってね。</p><div class="btnrow"><button type="button" id="exportCsv" class="secondary">CSV出力</button><button type="button" id="exportJson" class="ghost">バックアップ保存</button><button type="button" id="importJson" class="ghost">バックアップ読込</button><input type="file" accept=".json,application/json" id="importFile" hidden></div></div>
   </section>
   <section id="analysis" class="panel" aria-label="分析">
     
@@ -482,31 +484,10 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
         <div class="volume-summary-item"><div class="volume-summary-label">LIFETIME / これまでの総重量</div><strong id="lifetimeVolumeTotal">0 <small>kg</small></strong><div id="lifetimeVolumeComparison" class="volume-comparison" aria-live="polite"></div></div>
       </div>
     </div>
-  <p class="footer">ゆずる式トレログ Ver.0.3（試作品）｜記録はこのブラウザ内のみで保存され、別の端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
+  <p class="footer">筋トレログ Ver.1.0｜記録はこの端末の中だけに保存され、ほかの端末とは同期しません。大切な記録はバックアップしてください。<br>推定1RMは参考値であり、実際の最大挙上重量を保証するものではありません。</p>
 
-<section id="developer-feedback" aria-labelledby="developer-feedback-title" style="margin:28px 0 12px;padding:20px 16px;border:1px solid #d6dce3;border-radius:16px;background:rgba(255,255,255,.06);">
-  <h2 id="developer-feedback-title" style="margin:0 0 12px;font-size:1.1rem;">💬 開発者へのメッセージ</h2>
-  <p style="line-height:1.7;margin:0 0 12px;">テストプレイにご協力いただき、ありがとうございます！<br>トレログを使った感想や改善してほしい点、ご要望など、どんなことでもお気軽にお寄せください。</p>
-  <label for="developer-message" style="display:block;margin-bottom:6px;">メッセージ</label>
-  <textarea id="developer-message" rows="4" maxlength="3000" placeholder="ご意見・ご感想をご入力ください" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #aeb6c3;border-radius:10px;font:inherit;color:#20242c;background:#fff;resize:vertical;"></textarea>
-  <button type="button" id="developer-email-button" style="display:block;margin-top:12px;max-width:100%;padding:12px 18px;border:0;border-radius:10px;background:#1463a5;color:#fff;font:inherit;font-weight:bold;cursor:pointer;">📩 メールで送信する</button>
-  <p style="font-size:.8rem;line-height:1.5;opacity:.8;margin:10px 0 0;">ボタンを押すとメールアプリが開きます。内容を確認して、メールアプリから送信してください。送信先のアドレスは表示されます。</p>
-  <p style="font-size:.75rem;opacity:.7;text-align:center;margin:18px 0 0;">今後App Storeにて販売予定です。</p>
-</section>
 </div>
 <div id="photoViewer" class="photo-viewer" hidden role="dialog" aria-modal="true" aria-label="写真"><img id="photoViewerImg" alt=""><div class="photo-viewer-bar"><button type="button" id="photoDelete" class="photo-viewer-btn danger">削除</button><button type="button" id="photoClose" class="photo-viewer-btn">閉じる</button></div></div>
-<script>
-(function(){
-  const button=document.getElementById('developer-email-button');
-  button.addEventListener('click',function(){
-    const message=document.getElementById('developer-message').value.trim();
-    if(!message){alert('メッセージを入力してください。');return;}
-    const subject=encodeURIComponent('【トレログ】開発者へのメッセージ');
-    const body=encodeURIComponent(message);
-    window.location.href='mailto:torelog2026@gmail.com?subject='+subject+'&body='+body;
-  });
-})();
-</script>
 
 </main>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -563,7 +544,7 @@ body[data-active-tab="history"] #record-extras,body[data-active-tab="analysis"] 
   $('date').addEventListener('input',()=>{updateDateDisplay();redraw();});
   updateDateDisplay();
   function notify(message){const n=$('toast');n.textContent=message;n.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>n.classList.remove('show'),3200);}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));storageWorks=true;return true;}catch(e){storageWorks=false;notify('保存できません。ブラウザの設定・空き容量を確認してね');return false;}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));storageWorks=true;return true;}catch(e){storageWorks=false;notify('保存できません。端末の空き容量を確認してね');return false;}}
   if(migrated&&entries.length>0)save();
   let setId=0;
   const setList=$('setList');
@@ -781,9 +762,12 @@ updatePrevious();renderExtras();
   document.addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;if(!confirm('このトレーニング記録を削除しますか？'))return;const old=[...entries];entries=entries.filter(x=>x.id!==b.dataset.delete);if(!save()){entries=old;return;}redraw();notify('記録を削除したよ');});
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>{const active=t===b;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));document.body.dataset.activeTab=b.dataset.tab;window.scrollTo({top:0,behavior:'instant'});}));
   $('historyPrev').addEventListener('click',()=>{historyMonthOffset--;drawHistory();});$('historyNext').addEventListener('click',()=>{historyMonthOffset++;drawHistory();});
-  function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
-  $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8');notify('セットごとのCSVを出力したよ');});
-  $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:3,entries,dayParts},null,2),'application/json');notify('バックアップを保存したよ');});
+  // In the iPhone app a plain download link may do nothing, so offer the share sheet ("ファイルに保存") when available.
+  async function download(filename,content,type){const blob=new Blob(['\ufeff',content],{type});
+    try{const file=new File([blob],filename,{type});if(navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia('(pointer:coarse)').matches){await navigator.share({files:[file]});return true;}}catch(e){if(e&&e.name==='AbortError')return false;}
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);return true;}
+  $('exportCsv').addEventListener('click',()=>{const cols=['日付','種目','セット番号','重量(kg)','回数','総重量(kg)','推定1RM(kg)','メモ'];const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const rows=sorted(entries).flatMap(x=>x.setsData.map((s,i)=>[x.date,x.exercise,i+1,s.weight,s.reps,s.weight*s.reps,oneRm(s.weight,s.reps)??'',x.memo||''].map(q).join(',')));download('torelog-'+today+'.csv',[cols.map(q).join(','),...rows].join('\r\n'),'text/csv;charset=utf-8').then(ok=>{if(ok)notify('セットごとのCSVを出力したよ')});});
+  $('exportJson').addEventListener('click',()=>{download('torelog-backup-'+today+'.json',JSON.stringify({app:'torelog',version:3,entries,dayParts},null,2),'application/json').then(ok=>{if(ok)notify('バックアップを保存したよ')});});
   $('importJson').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('ファイルが大きすぎます');const obj=JSON.parse(await file.text());if(obj.app!=='torelog'||!Array.isArray(obj.entries)||obj.entries.length>10000)throw new Error('トレログのバックアップではありません');const parsed=obj.entries.map(normalize);if(!parsed.every(validEntry))throw new Error('データ形式が正しくありません');if(!confirm(`バックアップの${parsed.length}件で、現在の${entries.length}件を置き換えますか？`))return;const old=entries,oldParts=dayParts;let importedParts={};if(obj.dayParts!=null){if(!obj.dayParts||typeof obj.dayParts!=='object'||Array.isArray(obj.dayParts))throw new Error('部位情報の形式が正しくありません');for(const [date,parts] of Object.entries(obj.dayParts)){if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Array.isArray(parts)||parts.some(p=>!VALID_PARTS.includes(p)))throw new Error('部位情報が正しくありません');importedParts[date]=cleanParts(parts)}}entries=parsed;dayParts=importedParts;if(!save()){entries=old;dayParts=oldParts;return;}try{localStorage.setItem(PARTS_KEY,JSON.stringify(dayParts))}catch(err){entries=old;dayParts=oldParts;save();notify('部位を復元できませんでした');return;}restoreDayParts();redraw();notify('バックアップを復元したよ');}catch(err){alert('読み込みできませんでした：'+err.message);}finally{e.target.value='';}});
 
   // Calendar-only day selections are independent of saved weight/repetition records.
@@ -1033,7 +1017,7 @@ updatePrevious();renderExtras();
   }
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshOnNewDay();scheduleDayRefresh();}});
   scheduleDayRefresh();
-  drawCustomButtons();restoreDayParts();redraw();scheduleBackfill();if(!storageWorks)notify('このブラウザでは記録の保存が制限されている可能性があります');
+  drawCustomButtons();restoreDayParts();redraw();scheduleBackfill();if(!storageWorks)notify('この端末では記録の保存が制限されている可能性があります');
 })();
 </script>
 
@@ -1046,7 +1030,7 @@ updatePrevious();renderExtras();
   const banner = document.createElement('div');
   banner.setAttribute('role','status');
   banner.style.cssText = 'display:none;position:fixed;z-index:9999;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));padding:14px;border:2px solid #caff37;border-radius:12px;background:#171b17;color:white;box-shadow:0 4px 24px #0009;font-size:14px';
-  banner.innerHTML = '<span>新しいトレログが公開されたよ。入力途中の内容を保存してから更新してね。</span> <button type="button" style="margin-left:8px;padding:8px;background:#caff37;color:#111;border:0;border-radius:7px;font-weight:bold">更新する</button>';
+  banner.innerHTML = '<span>新しい筋トレログが公開されたよ。入力途中の内容を保存してから更新してね。</span> <button type="button" style="margin-left:8px;padding:8px;background:#caff37;color:#111;border:0;border-radius:7px;font-weight:bold">更新する</button>';
   document.body.appendChild(banner);
   let pendingUrl = '';
   banner.querySelector('button').addEventListener('click',()=>{if(pendingUrl)location.replace(pendingUrl)});
